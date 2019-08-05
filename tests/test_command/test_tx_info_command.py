@@ -23,8 +23,8 @@ from tests.commons.constants import (
     TEST_KEYSTORE_PASSWORD,
     TEST_CONFIG_PATH
 )
-from prep.command.tx_info_command import _tx_by_hash, _tx_result
-from prep.utils.utils import print_tx_result, print_tx_by_hash
+from preptools.command.tx_info_command import _tx_by_hash, _tx_result
+from preptools.utils.utils import print_tx_result, print_tx_by_hash
 
 
 class Container(object):
