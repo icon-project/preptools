@@ -1,129 +1,126 @@
-import getpass
+# -*- coding: utf-8 -*-
+
+# Copyright 2019 ICON Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import argparse
 import json
 import sys
-from argparse import ArgumentParser
+import time
+from typing import Optional
 
-from iconsdk.builder.call_builder import CallBuilder
-from iconsdk.builder.transaction_builder import CallTransactionBuilder
-from iconsdk.icon_service import IconService
-from iconsdk.providers.http_provider import HTTPProvider
-from iconsdk.signed_transaction import SignedTransaction
-from iconsdk.wallet.wallet import KeyWallet
-
-ZERO_ADDRESS = f"cx{'0'*40}"
-
-
-def get_parser():
-    arg_parser = ArgumentParser()
-    subparsers = arg_parser.add_subparsers(title='Available commands', metavar='command',
-                                           description='If you want to see help message of commands,'
-                                                       'use "prep command -h"')
-    subparsers.dest = 'command'
-    subparsers.reqired = True
-
-    parser_reg = subparsers.add_parser('register', help="register prep")
-    parser_reg.add_argument('-j', '--json', required=True, help="Json file path."
-                                                                "The json file has prep register information")
-    parser_reg.add_argument('-p', '--password', required=False, help="password of keystore file")
-    parser_reg.add_argument('-k', '--key', required=True, help="keystore file path")
-    parser_reg.add_argument('-u', '--url', default="http://localhost:9000/api/v3", help="node uri")
-    parser_reg.add_argument('-n', '--nid', default=3, help="nid default(3)")
-    parser_reg.add_argument('-s', '--stepLimit', default=2_000_000)
-
-    parser_unreg = subparsers.add_parser('unregister', help="unregister prep")
-    parser_unreg.add_argument('-k', '--key', required=True, help="keystore file path")
-    parser_unreg.add_argument('-p', '--password', required=False, help="password of keystore file, optional")
-    parser_unreg.add_argument('-a', '--address', required=False, help="address to unregister."
-                                                                      "only builtinOwner can "
-                                                                      "unregister using address parameter")
-    parser_unreg.add_argument('-u', '--url', default="http://localhost:9000/api/v3", help="node uri")
-    parser_unreg.add_argument('-n', '--nid', default=3, help="nid default(3)")
-    parser_unreg.add_argument('-s', '--stepLimit', default=2_000_000)
-
-    parser_candidate = subparsers.add_parser('preps', help="get PRep list")
-    parser_candidate.add_argument('-u', '--url', default="http://localhost:9000/api/v3", help="node uri")
-    parser_candidate.add_argument('-j', '--json', required=False, help="json file path."
-                                                                       "The json file has"
-                                                                       " startRanking, endRanking information ")
-
-    return arg_parser
-
-
-def get_wallet(args: dict) -> KeyWallet:
-    key_path = args.get('key')
-    password = args.get('password')
-    if password is None:
-        getpass.getpass('Enter password : ')
-    try:
-        wallet = KeyWallet.load(key_path, password)
-        return wallet
-    except:
-        print('invalid keystore file or wrong password')
-        sys.exit(1)
+from prep.command import prep_setting_command, prep_info_command, tx_info_command
+from prep.prep_exception import PrepExceptionCode
+from prep.prep.prep import create_icon_service
+from prep.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
+from prep.utils.utils import print_tx_result, print_response
 
 
 def main():
-    cmd_args = sys.argv[1:]
-    parser = get_parser()
+    handlers = [
+        prep_setting_command.init,
+        prep_info_command.init,
+        tx_info_command.init
+    ]
 
-    args = vars(parser.parse_args(cmd_args))
-    command = args.get('command')
-    url = args.get('url')
-    step_limit = int(args.get('stepLimit', 0))
-    nid = int(args.get('nid', 0))
-    icon_service = IconService(HTTPProvider(url))
+    parser = argparse.ArgumentParser(
+        prog="prep",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="P-Rep management cli",
+        epilog=_get_epilog())
+    sub_parser = parser.add_subparsers(title="subcommands")
 
-    try:
-        if command == 'register':
-            wallet = get_wallet(args)
-            json_path = args.get('json')
-            with open(json_path, mode='r') as prep_info:
-                reg_info = json.load(prep_info)
-            public_key = wallet.bytes_public_key
-            reg_info['publicKey'] = f"0x{public_key.hex()}"
+    common_parent_parser = create_common_parser()
 
-            register_fee: int = 2000 * 10 ** 18
-            tx = CallTransactionBuilder(). \
-                from_(wallet.get_address()). \
-                to(ZERO_ADDRESS). \
-                step_limit(step_limit). \
-                value(register_fee). \
-                nid(nid). \
-                nonce(100). \
-                method("registerPRep"). \
-                params(reg_info). \
-                build()
-            signed_data = SignedTransaction(tx, wallet)
-            result = icon_service.send_transaction(signed_data)
-        elif command == 'unregister':
-            wallet = get_wallet(args)
-            params = {}
-            if args.get('address'):
-                params['address'] = args['address']
-            tx = CallTransactionBuilder().from_(wallet.get_address()).to(ZERO_ADDRESS). \
-                step_limit(step_limit).nid(nid).nonce(100).method("unregisterPRep").\
-                params(params).value(0).build()
-            signed_data = SignedTransaction(tx, wallet)
-            result = icon_service.send_transaction(signed_data)
-        elif command == 'preps':
-            json_path = args.get('json')
-            if json_path is not None:
-                with open(json_path, mode='r') as prep_info:
-                    params = json.load(prep_info)
-            else:
-                params = {}
-            call_data = CallBuilder(from_=f"hx{'0'*40}", to=ZERO_ADDRESS,
-                                    method="getPReps").params(params).build()
-            result = icon_service.call(call_data)
-        else:
-            print('unknown command')
-            sys.exit(2)
-        print('result : ', result)
-        return 0
-    except BaseException as e:
-        print(e)
-        sys.exit(3)
+    for handler in handlers:
+        handler(sub_parser, common_parent_parser)
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        return 1
+
+    args = parser.parse_args()
+
+    response: Optional[dict, int] = args.func(args)
+
+    if 'result' in response:
+        print('request success.')
+    else:
+        print('Got an error response')
+
+    print_response(json.dumps(response, indent=4))
+
+    if isinstance(response, int) is False:
+        sys.exit(PrepExceptionCode.OK.value)
+
+    sys.exit(response)
 
 
-if __name__ == '__main__':
-    main()
+def _print_tx_result(args, tx_hash: str) -> int:
+    if tx_hash.startswith("0x") and len(tx_hash) == 66:
+        time.sleep(2)
+        icon_service = create_icon_service(args.url)
+        tx_result: dict = icon_service.get_transaction_result(tx_hash)
+        print_tx_result(tx_result)
+        ret = tx_result["status"]
+    else:
+        # tx_hash is not tx hash format
+        print(tx_hash)
+        ret = 1
+
+    print("")
+
+    return ret
+
+
+def _get_epilog() -> str:
+    words = ["predefined urls:"]
+
+    for key, value in PREDEFINED_URLS.items():
+        words.append(f"    {key}: {value}")
+
+    return "\n".join(words)
+
+
+def create_common_parser() -> argparse.ArgumentParser:
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument(
+        "--url", "-u",
+        type=str,
+        required=False,
+        help=f"node url default) {DEFAULT_URL}"
+    )
+    parent_parser.add_argument(
+        "--nid", "-n",
+        type=int,
+        required=False,
+        help=f"networkId default({DEFAULT_NID} ex) mainnet(1), testnet(2)"
+    )
+    parent_parser.add_argument(
+        "--verbose", "-v",
+        required=False,
+        action="store_true"
+    )
+    parent_parser.add_argument(
+        "--config", "-c",
+        type=str,
+        required=False,
+        help="preptools config file path"
+    )
+
+    return parent_parser
+
+
+if __name__ == "__main__":
+    sys.exit(main())

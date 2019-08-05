@@ -1,0 +1,7 @@
+{
+    "name": "kokoa node",
+    "country": "KOR",
+    "website": "https://icon.kokoa.com",
+    "details": "https://icon.kokoa.com/json",
+    "p2pEndpoint": "node.example.com:7100"
+}

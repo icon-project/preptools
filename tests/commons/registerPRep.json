@@ -1,0 +1,9 @@
+{
+    "name": "banana node",
+    "country": "KOR",
+    "city": "Seoul",
+    "email": "banana@example.com",
+    "website": "https://icon.banana.com",
+    "details": "https://icon.banana.com/json",
+    "p2pEndpoint": "node.example.com:7100"
+}
