@@ -35,10 +35,9 @@ def main():
     ]
 
     parser = argparse.ArgumentParser(
-        prog="prep",
+        prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="P-Rep management cli",
-        epilog=_get_epilog())
+        description="P-Rep management cli")
     sub_parser = parser.add_subparsers(title="subcommands")
 
     common_parent_parser = create_common_parser()

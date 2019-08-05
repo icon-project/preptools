@@ -19,7 +19,7 @@ setup_options = {
     'test_suite': 'tests',
     'entry_points': {
         'console_scripts': [
-            'prep=prep:main'
+            'preptools=prep:main'
         ],
     },
     'classifiers': [
