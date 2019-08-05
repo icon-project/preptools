@@ -1,6 +1,6 @@
 import os
 
-from prep.utils.constants import PROJECT_ROOT_PATH
+from preptools.utils.constants import PROJECT_ROOT_PATH
 
 TEST_DIRECTORY = os.path.abspath(os.path.join(PROJECT_ROOT_PATH, 'tests'))
 TEST_UTIL_DIRECTORY = os.path.join(TEST_DIRECTORY, 'commons')

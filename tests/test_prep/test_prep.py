@@ -26,8 +26,8 @@ from tests.commons.constants import (
     TEST_SET_JSON_PATH,
     TEST_CONFIG_PATH
 )
-from prep.prep.prep import create_writer_by_args, create_reader_by_args, _get_common_args
-from prep.utils.utils import print_tx_result, print_tx_by_hash
+from preptools.preptools.prep import create_writer_by_args, create_reader_by_args, _get_common_args
+from preptools.utils.utils import print_tx_result, print_tx_by_hash
 
 
 class Container(object):

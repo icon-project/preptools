@@ -25,7 +25,7 @@ from tests.commons.constants import (
     TEST_SET_JSON_PATH,
     TEST_CONFIG_PATH
 )
-from prep.command.prep_setting_command import (
+from preptools.command.prep_setting_command import (
     _register_prep,
     _unregister_prep,
     _set_prep,
