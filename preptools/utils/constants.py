@@ -27,9 +27,26 @@ DEFAULT_NID = 3
 
 COLUMN = 80
 
-PREDEFINED_URLS = {
-    "mainnet": "https://ctz.solidwallet.io/api/v3",
-    "testnet": "https://test-ctz.solidwallet.io/api/v3",
-    "bicon": "https://bicon.net.solidwallet.io/api/v3",
-    "localhost": DEFAULT_URL
-}
+PREDEFINED_URLS = {}
+
+
+class ConstantKeys:
+    NAME = "name"
+    COUNTRY = "country"
+    CITY = "city"
+    EMAIL = 'email'
+    WEBSITE = 'website'
+    DETAILS = 'details'
+    P2P_ENDPOINT = 'p2pEndpoint'
+    IREP = "irep"
+
+
+fields_to_validate = (
+            ConstantKeys.NAME,
+            ConstantKeys.COUNTRY,
+            ConstantKeys.CITY,
+            ConstantKeys.EMAIL,
+            ConstantKeys.WEBSITE,
+            ConstantKeys.DETAILS,
+            ConstantKeys.P2P_ENDPOINT
+        )

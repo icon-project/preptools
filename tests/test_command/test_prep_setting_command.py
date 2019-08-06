@@ -18,18 +18,19 @@ import json
 import unittest
 
 from iconsdk.utils.convert_type import convert_hex_str_to_int
+
+from preptools.command.prep_setting_command import (
+    _register_prep,
+    _unregister_prep,
+    _set_prep,
+    _set_governance_variables
+)
 from tests.commons.constants import (
     TEST_KEYSTORE_PATH,
     TEST_KEYSTORE_PASSWORD,
     TEST_REGISTER_JSON_PATH,
     TEST_SET_JSON_PATH,
     TEST_CONFIG_PATH
-)
-from preptools.command.prep_setting_command import (
-    _register_prep,
-    _unregister_prep,
-    _set_prep,
-    _set_governance_variables
 )
 
 
@@ -50,6 +51,7 @@ class TestPRep(unittest.TestCase):
         self.args.keystore = TEST_KEYSTORE_PATH
         self.args.password = TEST_KEYSTORE_PASSWORD
         self.args.yes = True
+        self.args.interactive = False
 
     def test_register_prep(self):
         self.args.prep = TEST_REGISTER_JSON_PATH

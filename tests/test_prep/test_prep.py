@@ -49,11 +49,8 @@ class TestPRep(unittest.TestCase):
         self.args.yes = True
 
     def test_register_prep(self):
-        wallet = KeyWallet.load(TEST_KEYSTORE_PATH, TEST_KEYSTORE_PASSWORD)
-
         with open(TEST_REGISTER_JSON_PATH) as register:
             params = json.load(register)
-        params['publicKey'] = convert_bytes_to_hex_str(wallet.bytes_public_key)
 
         writer = create_writer_by_args(self.args)
         response = writer.register_prep(params)
