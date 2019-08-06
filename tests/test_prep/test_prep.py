@@ -34,7 +34,7 @@ class Container(object):
     pass
 
 
-class TestPrep(unittest.TestCase):
+class TestPRep(unittest.TestCase):
 
     def setUp(self) -> None:
         self.args = Container()

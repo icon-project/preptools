@@ -35,7 +35,7 @@ def _init_for_get_prep(sub_parser, common_parent_parser):
     parser.add_argument(
         "address",
         type=str,
-        help="Address of Prep you are looking for"
+        help="Address of PRep you are looking for"
     )
 
     parser.set_defaults(func=_get_prep)

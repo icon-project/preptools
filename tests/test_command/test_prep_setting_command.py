@@ -29,7 +29,7 @@ from preptools.command.prep_setting_command import (
     _register_prep,
     _unregister_prep,
     _set_prep,
-    _set_goveranance_variables
+    _set_governance_variables
 )
 
 
@@ -37,7 +37,7 @@ class Container(object):
     pass
 
 
-class TestPrep(unittest.TestCase):
+class TestPRep(unittest.TestCase):
 
     def setUp(self) -> None:
         self.args = Container()
@@ -71,5 +71,5 @@ class TestPrep(unittest.TestCase):
     def test_governance_variables(self):
         self.args.irep = "0x0x21e19e0c9bab2400000"
 
-        response = _set_goveranance_variables(self.args)
+        response = _set_governance_variables(self.args)
         self.assertFalse(response.get('error', False))

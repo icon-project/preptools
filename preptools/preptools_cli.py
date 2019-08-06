@@ -21,7 +21,7 @@ import time
 from typing import Optional
 
 from preptools.command import prep_setting_command, prep_info_command, tx_info_command
-from preptools.preptools_exception import PrepToolsExceptionCode
+from preptools.exception import PRepToolsExceptionCode
 from preptools.preptools.prep import create_icon_service
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
 from preptools.utils.utils import print_tx_result, print_response
@@ -61,7 +61,7 @@ def main():
     print_response(json.dumps(response, indent=4))
 
     if isinstance(response, int) is False:
-        sys.exit(PrepToolsExceptionCode.OK.value)
+        sys.exit(PRepToolsExceptionCode.OK.value)
 
     sys.exit(response)
 

@@ -70,7 +70,7 @@ class TxHandler:
         return self._call_tx(owner, to, method, params, limit, value)
 
 
-class PrepListener(object):
+class PRepListener(object):
     def __init__(self):
         self._on_send_request = None
 
@@ -82,7 +82,7 @@ class PrepListener(object):
         return self._on_send_request
 
 
-class PrepWriter(PrepListener):
+class PRepWriter(PRepListener):
     def __init__(self, service, nid: int, owner):
         super().__init__()
 
@@ -121,7 +121,7 @@ class PrepWriter(PrepListener):
         return self._call(method, params)
 
 
-class PrepReader(PrepListener):
+class PRepReader(PRepListener):
     def __init__(self, service, nid: int, address: str = EOA_ADDRESS):
         super().__init__()
 
@@ -161,7 +161,7 @@ class PrepReader(PrepListener):
         return self._tx_by_hash(tx_hash)
 
 
-def create_reader_by_args(args) -> PrepReader:
+def create_reader_by_args(args) -> PRepReader:
     url, nid, _ = _get_common_args(args)
 
     reader = create_reader(url, nid)
@@ -172,13 +172,13 @@ def create_reader_by_args(args) -> PrepReader:
     return reader
 
 
-def create_reader(url: str, nid: int) -> PrepReader:
+def create_reader(url: str, nid: int) -> PRepReader:
     url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
-    return PrepReader(icon_service, nid)
+    return PRepReader(icon_service, nid)
 
 
-def create_writer_by_args(args) -> PrepWriter:
+def create_writer_by_args(args) -> PRepWriter:
     url, nid, keystore_path = _get_common_args(args)
     password: str = args.password
     yes: bool = False
@@ -197,7 +197,7 @@ def create_writer_by_args(args) -> PrepWriter:
     return writer
 
 
-def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PrepWriter:
+def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepWriter:
     url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
 
@@ -207,7 +207,7 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> Prep
         print(e.args[0])
         sys.exit(1)
 
-    return PrepWriter(icon_service, nid, owner_wallet)
+    return PRepWriter(icon_service, nid, owner_wallet)
 
 
 def create_icon_service(url: str) -> IconService:

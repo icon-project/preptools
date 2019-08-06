@@ -1,6 +1,6 @@
 import re
 
-from preptools.preptools_exception import PrepToolsStringFormatException
+from preptools.exception import PRepToolsStringFormatException
 
 
 def check_prep(prep: dict) -> dict:
@@ -28,7 +28,7 @@ def check_prep_by_key(key: str, value: str) -> str:
     elif key == 'p2pEndpoint':
         return check_p2p_endpoint_format(value)
 
-    raise PrepToolsStringFormatException(f"There's no key named '{key}'")
+    raise PRepToolsStringFormatException(f"There's no key named '{key}'")
 
 
 def check_email_format(email: str, is_blank_able: bool = False) -> str:
@@ -38,7 +38,7 @@ def check_email_format(email: str, is_blank_able: bool = False) -> str:
     email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
     if email_pattern.match(email) is None:
-        raise PrepToolsStringFormatException("invalid Email")
+        raise PRepToolsStringFormatException("invalid Email")
 
     return email
 
@@ -50,7 +50,7 @@ def check_name_format(name: str, is_blank_able: bool = False) -> str:
     name_pattern = re.compile(r"(^[a-zA-Z' ']+$)")
 
     if name_pattern.match(name) is None:
-        raise PrepToolsStringFormatException("invalid Name")
+        raise PRepToolsStringFormatException("invalid Name")
 
     return name
 
@@ -62,7 +62,7 @@ def check_city_format(city: str, is_blank_able: bool = False) -> str:
     city_pattern = re.compile(r"(^[a-zA-Z' ']+$)")
 
     if city_pattern.match(city) is None:
-        raise PrepToolsStringFormatException("invalid city")
+        raise PRepToolsStringFormatException("invalid city")
 
     return city
 
@@ -74,7 +74,7 @@ def check_country_format(country: str, is_blank_able: bool = False) -> str:
     country_pattern = re.compile(r"(^[A-Z]{3}$)")
 
     if country_pattern.match(country) is None:
-        raise PrepToolsStringFormatException("invalid country")
+        raise PRepToolsStringFormatException("invalid country")
 
     return country
 
@@ -84,7 +84,7 @@ def check_website_format(website: str, is_blank_able: bool = False) -> str:
         return website
 
     if not _is_valid_website(website):
-        raise PrepToolsStringFormatException("invalid website")
+        raise PRepToolsStringFormatException("invalid website")
 
     return website
 
@@ -94,7 +94,7 @@ def check_details_format(details: str, is_blank_able: bool = False) -> str:
         return details
 
     if not _is_valid_details(details):
-        raise PrepToolsStringFormatException("invalid details")
+        raise PRepToolsStringFormatException("invalid details")
 
     return details
 
@@ -104,7 +104,7 @@ def check_p2p_endpoint_format(p2p_endpoint: str, is_blank_able: bool = False) ->
         return p2p_endpoint
 
     if not _is_valid_p2p_endpoint(p2p_endpoint):
-        raise PrepToolsStringFormatException("invalid p2pEndpoint")
+        raise PRepToolsStringFormatException("invalid p2pEndpoint")
 
     return p2p_endpoint
 

@@ -17,7 +17,7 @@ import argparse
 import json
 import sys
 
-from preptools.preptools_exception import PrepToolsStringFormatException
+from preptools.exception import PRepToolsStringFormatException
 
 from preptools.preptools.prep import create_writer_by_args
 from preptools.utils.format_checker import (
@@ -42,7 +42,7 @@ def init(sub_parser, common_parent_parser):
 
 
 def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
-    name = "registerPrep"
+    name = "registerPRep"
     desc = f"Register P-Rep"
 
     parser = sub_parser.add_parser(
@@ -100,7 +100,7 @@ def _get_prep_dict_from_cli(is_blank_able: bool = False):
         prep_info['p2pEndpoint'] = input('> p2pEndpoint : ')
         check_p2p_endpoint_format(prep_info['p2pEndpoint'], is_blank_able)
 
-    except PrepToolsStringFormatException as e:
+    except PRepToolsStringFormatException as e:
         print(e.args[0])
         sys.exit(1)  # invalid format entered.
 
@@ -145,7 +145,7 @@ def _get_json(path):
 
     try:
         params = check_prep(params)
-    except PrepToolsStringFormatException as e:
+    except PRepToolsStringFormatException as e:
         print(e.args[0])
         sys.exit(1)  # invalid format entered.
 
@@ -153,7 +153,7 @@ def _get_json(path):
 
 
 def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser):
-    name = "unregisterPrep"
+    name = "unregisterPRep"
     desc = f"Unregister P-Rep"
 
     parser = sub_parser.add_parser(
@@ -172,7 +172,7 @@ def _unregister_prep(args) -> str:
 
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
-    name = "setPrep"
+    name = "setPRep"
     desc = f"Change enrolled P-Rep information"
 
     parser = sub_parser.add_parser(
@@ -220,10 +220,10 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
         help="amounts of irep"
     )
 
-    parser.set_defaults(func=_set_goveranance_variables)
+    parser.set_defaults(func=_set_governance_variables)
 
 
-def _set_goveranance_variables(args) -> str:
+def _set_governance_variables(args) -> str:
     params = {
         'irep': args.irep
     }

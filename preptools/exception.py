@@ -17,7 +17,7 @@ from typing import Optional
 
 
 @unique
-class PrepToolsExceptionCode(IntEnum):
+class PRepToolsExceptionCode(IntEnum):
     """Result code enumeration
 
     Refer to http://www.simple-is-better.org/json-rpc/jsonrpc20.html#examples
@@ -29,9 +29,9 @@ class PrepToolsExceptionCode(IntEnum):
         return str(self.name).capitalize().replace('_', ' ')
 
 
-class PrepToolsBaseException(BaseException):
+class PRepToolsBaseException(BaseException):
 
-    def __init__(self, message: Optional[str], code: PrepToolsExceptionCode = PrepToolsExceptionCode.OK):
+    def __init__(self, message: Optional[str], code: PRepToolsExceptionCode = PRepToolsExceptionCode.OK):
         if message is None:
             message = str(code)
         self.__message = message
@@ -49,7 +49,7 @@ class PrepToolsBaseException(BaseException):
         return f'{self.message}'
 
 
-class PrepToolsStringFormatException(PrepToolsBaseException):
+class PRepToolsStringFormatException(PRepToolsBaseException):
     """Invalid string format for preptools"""
     def __init__(self, message: Optional[str]):
-        super().__init__(message, PrepToolsExceptionCode.STRING_FORMAT_ERROR)
+        super().__init__(message, PRepToolsExceptionCode.STRING_FORMAT_ERROR)
