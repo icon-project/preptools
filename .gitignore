@@ -1,5 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+**/__pycache__/
+**/__pycache__/*
 *.py[cod]
 *$py.class
 
@@ -14,6 +16,7 @@ dist/
 downloads/
 eggs/
 .eggs/
+.idea/
 lib/
 lib64/
 parts/
@@ -49,7 +52,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
-
+*.pyc
 # Translations
 *.mo
 *.pot
@@ -122,3 +125,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+params.docx

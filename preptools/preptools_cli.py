@@ -53,12 +53,13 @@ def main():
 
     response: Optional[dict, int] = args.func(args)
 
-    if 'result' in response:
-        print('request success.')
-    else:
-        print('Got an error response')
+    if isinstance(response, dict):
+        if 'result' in response:
+            print('request success.')
+        else:
+            print('Got an error response')
 
-    print_response(json.dumps(response, indent=4))
+        print_response(json.dumps(response, indent=4))
 
     if isinstance(response, int) is False:
         sys.exit(PrepToolsExceptionCode.OK.value)

@@ -49,7 +49,7 @@ class PrepToolsBaseException(BaseException):
         return f'{self.message}'
 
 
-class PrepToolsStringFormatException(PrepToolsBaseException):
+class InvalidFormatException(PrepToolsBaseException):
     """Invalid string format for preptools"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PrepToolsExceptionCode.STRING_FORMAT_ERROR)
