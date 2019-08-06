@@ -54,7 +54,7 @@ class TestPRep(unittest.TestCase):
         self.args.interactive = False
 
     def test_register_prep(self):
-        self.args.prep = TEST_REGISTER_JSON_PATH
+        self.args.prep_json = TEST_REGISTER_JSON_PATH
         response = _register_prep(self.args)
         print(response)
         self.assertFalse(response.get('error', False))
@@ -65,7 +65,7 @@ class TestPRep(unittest.TestCase):
         self.assertFalse(response.get('error', False))
 
     def test_set_prep(self):
-        self.args.prep = TEST_SET_JSON_PATH
+        self.args.prep_json = TEST_SET_JSON_PATH
         response = _set_prep(self.args)
         print(response)
         self.assertFalse(response.get('error', False))

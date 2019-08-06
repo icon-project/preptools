@@ -101,7 +101,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     )
 
     parser.add_argument(
-        "--prep",
+        "--prep-json",
         type=str,
         required=False,
         nargs="?",
@@ -113,7 +113,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _register_prep(args) -> str:
 
-    if args.prep:
+    if args.prep_json:
         params = _get_prep_json(args, blank_able=True)
     else:
         params = dict()
@@ -156,7 +156,7 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
 
 def _get_prep_json(args, blank_able: bool = False):
-    path = args.prep
+    path = args.prep_json
 
     with open(path) as register:
         params = json.load(register)
@@ -270,7 +270,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
     )
 
     parser.add_argument(
-        "--prep",
+        "--prep-json",
         type=str,
         required=False,
         help="json file having prepInfo"
@@ -281,7 +281,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _set_prep(args) -> str:
 
-    if args.prep:
+    if args.prep_json:
         params = _get_prep_json(args, blank_able=True)
     else:
         params = dict()
