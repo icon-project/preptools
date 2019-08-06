@@ -66,7 +66,7 @@ def _register_prep(args) -> str:
     if args.prep is not None:
         params = _get_register_json(args.prep)
     else:
-        params = _get_prep_info_for_register()
+        params = _get_prep_info_from_cli()
 
     writer = create_writer_by_args(args)
     response = writer.register_prep(params)
@@ -113,27 +113,11 @@ def _get_prep_dict_from_cli(is_blank_able: bool = False):
     return ret
 
 
-def _get_prep_info_for_register():
+def _get_prep_info_from_cli(is_set_prep: bool = False):
 
     while True:
 
-        prep_info = _get_prep_dict_from_cli()
-
-        print(json.dumps(prep_info, indent=4))
-
-        check = input('All of them are right? (Y/n): ')
-
-        if check.lower() == 'y':
-            break
-
-    return prep_info
-
-
-def _get_prep_info_for_setting():
-
-    while True:
-
-        prep_info = _get_prep_dict_from_cli(is_blank_able=True)
+        prep_info = _get_prep_dict_from_cli(is_set_prep)
 
         print(json.dumps(prep_info, indent=4))
 
@@ -211,7 +195,7 @@ def _set_prep(args) -> str:
     if args.prep is not None:
         params = _get_json(args.prep)
     else:
-        params = _get_prep_info_for_setting()
+        params = _get_prep_info_from_cli(is_set_prep=True)
 
     writer = create_writer_by_args(args)
     response = writer.set_prep(params)
