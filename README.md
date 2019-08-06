@@ -1,27 +1,55 @@
-# Prep 사용법
+# P-Rep tools (preptools) Tutorial
 
-## 설치
+This tutorial is intended to give an introduction to using preptools. this guide will walk you through the basics of setting up
+your development environment and the the usage of preptools CLI commands.
+
+## Building from source
+First, clone this project. Then go to the project directory, create a virtualenv environment, and run build script. You can then install preptools with the .whl file.
 ```
-$ python -m venv venv # 가상환경 만듬
-$ source venv/bin/activate # 가상환경 활성화
-$ ./build.sh # build스크립트 실행
-$ ls dist # build 확인
-prep-0.0.1-py3-none-any.whl
-$ pip install dist/prep-0.0.1-py3-none-any.whl # 설치
+$ python -m venv venv       # Crate a virtual environment.
+$ source venv/bin/activate  # Enter the vitual environment.
+(venv)$ ./build.sh                # run build script.
+(venv)$ ls dist                   # check result wheel file.
+preptools-0.0.1-py3-none-any.whl
+```
+
+## Installation
+In case of Installation, you can install with wheel file that you've built.
+```
+$ pip install dist/prep-0.0.1-py3-none-any.whl
+```
+
+## How to use P-Rep tools
+
+### Command-line Interfaces (CLIs)
+
+#### Overview
+Preptools provides 7 commands. Here is the available commands list.
+
+#### Usage
 
 ```
-설치하고 나면, prep이라는 커맨드를 사용하여 P-rep을 등록 또는 삭제할 수 있다.
-제공하는 명령어는 register, unregister, preps 세 가지이며 사용법은 다음과 같다.
+usage: preptools [-h] command                 
+                 ...
 
-## Prep 등록
+P-Rep management cli
 
-Prep register 명령어를 실행하기 위해선 keystore파일과 json파일이 추가적으로 필요하다(prep 정보가 있는 json파일, prep의 public-key는 keystore file로 추출하기 때문에 생략한다.)
+optional arguments:
+  -h, --help            show this help message and exit
 
-### Usage
-
-```bash
-$ prep register -k [키스토어경로] -p [키스토어 비밀번호(옵셔널)] -j [참조할 json경로] -u [노드url(기본값: http://localhost:9000/api/v3)] -n [nid(기본값:3)] -s [stepLimit(기본값: 200만)]
+subcommands:
+    registerPrep            Register P-Rep
+    unregisterPrep          Unregister P-Rep
+    setPrep                 Change enrolled P-Rep information
+    setGovernanceVariables  Change Governance variables used in network operation
+    getPRep                 Inquire P-Rep information
+    getPReps                Get live status of all registered P-Rep candidates
+    txresult                Get transaction result by transaction hash
+    txbyhash                Get transaction by hash
 ```
+
+#### Options
+
 
 ### Example
 

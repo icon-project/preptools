@@ -26,7 +26,7 @@ from tests.commons.constants import (
     TEST_SET_JSON_PATH,
     TEST_CONFIG_PATH
 )
-from preptools.preptools.prep import create_writer_by_args, create_reader_by_args, _get_common_args
+from preptools.core.prep import create_writer_by_args, create_reader_by_args, _get_common_args
 from preptools.utils.utils import print_tx_result, print_tx_by_hash
 
 

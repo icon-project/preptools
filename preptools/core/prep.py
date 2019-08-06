@@ -70,7 +70,7 @@ class TxHandler:
         return self._call_tx(owner, to, method, params, limit, value)
 
 
-class PRepListener(object):
+class PRepToolsListener(object):
     def __init__(self):
         self._on_send_request = None
 
@@ -82,7 +82,7 @@ class PRepListener(object):
         return self._on_send_request
 
 
-class PRepWriter(PRepListener):
+class PRepToolsWriter(PRepToolsListener):
     def __init__(self, service, nid: int, owner):
         super().__init__()
 
@@ -121,7 +121,7 @@ class PRepWriter(PRepListener):
         return self._call(method, params)
 
 
-class PRepReader(PRepListener):
+class PRepToolsReader(PRepToolsListener):
     def __init__(self, service, nid: int, address: str = EOA_ADDRESS):
         super().__init__()
 
@@ -154,6 +154,13 @@ class PRepReader(PRepListener):
     def get_preps(self, params):
         return self._call("getPReps", params)
 
+    def get_proposal(self, _id: str):
+        params = {"id": _id}
+        return self._call("getProposal", params)
+
+    def get_proposal_list(self, params):
+        return self._call("getProposalList", params)
+
     def get_tx_result(self, tx_hash):
         return self._tx_result(tx_hash)
 
@@ -161,7 +168,7 @@ class PRepReader(PRepListener):
         return self._tx_by_hash(tx_hash)
 
 
-def create_reader_by_args(args) -> PRepReader:
+def create_reader_by_args(args) -> PRepToolsReader:
     url, nid, _ = _get_common_args(args)
 
     reader = create_reader(url, nid)
@@ -172,13 +179,13 @@ def create_reader_by_args(args) -> PRepReader:
     return reader
 
 
-def create_reader(url: str, nid: int) -> PRepReader:
+def create_reader(url: str, nid: int) -> PRepToolsReader:
     url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
-    return PRepReader(icon_service, nid)
+    return PRepToolsReader(icon_service, nid)
 
 
-def create_writer_by_args(args) -> PRepWriter:
+def create_writer_by_args(args) -> PRepToolsWriter:
     url, nid, keystore_path = _get_common_args(args)
     password: str = args.password
     yes: bool = False
@@ -197,7 +204,7 @@ def create_writer_by_args(args) -> PRepWriter:
     return writer
 
 
-def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepWriter:
+def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepToolsWriter:
     url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
 
@@ -207,7 +214,7 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
         print(e.args[0])
         sys.exit(1)
 
-    return PRepWriter(icon_service, nid, owner_wallet)
+    return PRepToolsWriter(icon_service, nid, owner_wallet)
 
 
 def create_icon_service(url: str) -> IconService:

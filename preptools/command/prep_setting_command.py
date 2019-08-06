@@ -17,18 +17,11 @@ import argparse
 import json
 import sys
 
-from preptools.exception import PRepToolsStringFormatException
+from preptools.exception import InvalidFormatException
 
-from preptools.preptools.prep import create_writer_by_args
+from preptools.core.prep import create_writer_by_args
 from preptools.utils.format_checker import (
-    check_name_format,
-    check_country_format,
-    check_details_format,
-    check_email_format,
-    check_p2p_endpoint_format,
-    check_website_format,
-    check_city_format,
-    check_prep
+    validate_prep_data
 )
 
 
@@ -64,7 +57,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 def _register_prep(args) -> str:
 
     if args.prep is not None:
-        params = _get_register_json(args.prep)
+        params = _get_json(args.prep)
     else:
         params = _get_prep_info_from_cli()
 
@@ -74,35 +67,21 @@ def _register_prep(args) -> str:
     return response
 
 
-def _get_prep_dict_from_cli(is_blank_able: bool = False):
+def _get_prep_dict_from_cli():
 
     prep_info = dict()
 
     try:
         prep_info['name'] = input('> name : ')
-        check_name_format(prep_info['name'], is_blank_able)
-
         prep_info['country'] = input('> country : ')
-        check_country_format(prep_info['country'], is_blank_able)
-
         prep_info['city'] = input('> city : ')
-        check_city_format(prep_info['city'], is_blank_able)
-
         prep_info['email'] = input('> email : ')
-        check_email_format(prep_info['email'], is_blank_able)
-
         prep_info['website'] = input('> website : ')
-        check_website_format(prep_info['website'], is_blank_able)
-
         prep_info['details'] = input('> details : ')
-        check_details_format(prep_info['details'], is_blank_able)
-
         prep_info['p2pEndpoint'] = input('> p2pEndpoint : ')
-        check_p2p_endpoint_format(prep_info['p2pEndpoint'], is_blank_able)
 
-    except PRepToolsStringFormatException as e:
+    except InvalidFormatException as e:
         print(e.args[0])
-        sys.exit(1)  # invalid format entered.
 
     ret = dict()
 
@@ -113,11 +92,11 @@ def _get_prep_dict_from_cli(is_blank_able: bool = False):
     return ret
 
 
-def _get_prep_info_from_cli(is_set_prep: bool = False):
+def _get_prep_info_from_cli():
 
     while True:
 
-        prep_info = _get_prep_dict_from_cli(is_set_prep)
+        prep_info = _get_prep_dict_from_cli()
 
         print(json.dumps(prep_info, indent=4))
 
@@ -129,23 +108,13 @@ def _get_prep_info_from_cli(is_set_prep: bool = False):
     return prep_info
 
 
-def _get_register_json(path):
-    params = _get_json(path)
-
-    if len(params) != 7:
-        print("There's not enough argument.")
-        sys.exit(1)
-
-    return params
-
-
-def _get_json(path):
+def _get_json(path, set_prep: bool = False):
     with open(path) as register:
         params = json.load(register)
 
     try:
-        params = check_prep(params)
-    except PRepToolsStringFormatException as e:
+        validate_prep_data(params, set_prep)
+    except InvalidFormatException as e:
         print(e.args[0])
         sys.exit(1)  # invalid format entered.
 
@@ -193,7 +162,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
 def _set_prep(args) -> str:
 
     if args.prep is not None:
-        params = _get_json(args.prep)
+        params = _get_json(args.prep,set_prep=True)
     else:
         params = _get_prep_info_from_cli(is_set_prep=True)
 

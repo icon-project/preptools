@@ -15,7 +15,7 @@
 # limitations under the License.
 from typing import Optional
 
-from ..preptools.prep import create_reader_by_args
+from ..core.prep import create_reader_by_args
 
 
 def init(sub_parser, common_parent_parser):

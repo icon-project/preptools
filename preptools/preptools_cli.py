@@ -21,8 +21,8 @@ import time
 from typing import Optional
 
 from preptools.command import prep_setting_command, prep_info_command, tx_info_command
+from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode
-from preptools.preptools.prep import create_icon_service
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
 from preptools.utils.utils import print_tx_result, print_response
 
@@ -35,7 +35,7 @@ def main():
     ]
 
     parser = argparse.ArgumentParser(
-        prog="preptools",
+        prog="core",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="P-Rep management cli")
     sub_parser = parser.add_subparsers(title="subcommands")
@@ -53,12 +53,13 @@ def main():
 
     response: Optional[dict, int] = args.func(args)
 
-    if 'result' in response:
-        print('request success.')
-    else:
-        print('Got an error response')
+    if isinstance(response, dict):
+        if 'result' in response:
+            print('request success.')
+        else:
+            print('Got an error response')
 
-    print_response(json.dumps(response, indent=4))
+        print_response(json.dumps(response, indent=4))
 
     if isinstance(response, int) is False:
         sys.exit(PRepToolsExceptionCode.OK.value)
@@ -110,7 +111,7 @@ def create_common_parser() -> argparse.ArgumentParser:
         "--config", "-c",
         type=str,
         required=False,
-        help="preptools config file path"
+        help="core config file path"
     )
 
     return parent_parser

@@ -17,18 +17,15 @@
 import json
 import unittest
 
-from preptools.exception import PRepToolsStringFormatException
-from tests.commons.constants import TEST_SET_JSON_PATH, TEST_REGISTER_JSON_PATH, TEST_KEYSTORE_PATH
+from preptools.exception import InvalidFormatException
 from preptools.utils.format_checker import (
-    check_p2p_endpoint_format,
-    check_details_format,
-    check_website_format,
-    check_email_format,
-    check_country_format,
-    check_name_format,
-    check_city_format,
-    check_prep
+    _validate_country,
+    _validate_email,
+    _validate_p2p_endpoint,
+    _validate_uri,
+    validate_prep_data
 )
+from tests.commons.constants import TEST_SET_JSON_PATH, TEST_REGISTER_JSON_PATH, TEST_KEYSTORE_PATH
 
 
 class TestFormatChecker(unittest.TestCase):
@@ -38,108 +35,76 @@ class TestFormatChecker(unittest.TestCase):
 
     def test_check_email_format(self):
         # with valid param
-        email = "icon-project@iconloop.com"
+        email = "iconproject@iconloop.com"
         try:
-            check_email_format(email)
-        except PRepToolsStringFormatException as e:
+            _validate_email(email)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with invalid param
         email = "icon-project'@iconloop.com"
-        self.assertRaises(PRepToolsStringFormatException, check_email_format, email)
+        self.assertRaises(InvalidFormatException, _validate_email, email)
 
         email = "icon-project@iconloop."
-        self.assertRaises(PRepToolsStringFormatException, check_email_format, email)
+        self.assertRaises(InvalidFormatException, _validate_email, email)
 
-    def test_check_name(self):
-        # with valid param
-        name = "Kwangwon Choi"
-        try:
-            check_name_format(name)
-        except PRepToolsStringFormatException as e:
-            self.fail(e.args[0])
-
-        # with invalid param
-        name = "Kwang-won Choi"
-        self.assertRaises(PRepToolsStringFormatException, check_name_format, name)
-
-        name = "Kwangwon-Choi"
-        self.assertRaises(PRepToolsStringFormatException, check_name_format, name)
-
-    def test_check_website(self):
+    def test_check_url(self):
         # with valid param
         website = "http://www.naver.co.kr:9231/"
         try:
-            check_website_format(website)
-        except PRepToolsStringFormatException as e:
+            _validate_uri(website)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         website = "http://www.naver.co.kr:9231"
         try:
-            check_website_format(website)
-        except PRepToolsStringFormatException as e:
+            _validate_uri(website)
+        except InvalidFormatException as e:
+            self.fail(e.args[0])
+
+        # with valid param
+        details = "http://www.naver.co.kr:9231/api/v3"
+        try:
+            _validate_uri(details)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with invalid param
-        website = "http://www.naver.com:9010/api/v3"
-        self.assertRaises(PRepToolsStringFormatException, check_website_format, website)
+        details = "http://www.n,aver.co.kr:9231/api/v3"
+        self.assertRaises(InvalidFormatException, _validate_uri, details)
+
+        details = "http://www.naver.co.kr:923,1/a|p|i/v3?asdfe\_#"
+        self.assertRaises(InvalidFormatException, _validate_uri, details)
 
     def test_check_country(self):
         # with valid param
         country = "KOR"
         try:
-            check_country_format(country)
-        except PRepToolsStringFormatException as e:
+            _validate_country(country)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with invalid param
         country = "KOREA"
-        self.assertRaises(PRepToolsStringFormatException, check_country_format, country)
-
-    def test_check_city(self):
-        # with valid param
-        city = "SEOUL"
-        try:
-            check_city_format(city)
-        except PRepToolsStringFormatException as e:
-            self.fail(e.args[0])
-
-        # with invalid param
-        city = "SE0UL"
-        self.assertRaises(PRepToolsStringFormatException, check_city_format, city)
-
-    def test_check_details(self):
-        # with valid param
-        details = "http://www.naver.co.kr:9231/api/v3"
-        try:
-            check_details_format(details)
-        except PRepToolsStringFormatException as e:
-            self.fail(e.args[0])
-
-        # with invalid param
-        details = "http://www.n,aver.co.kr:9231/api/v3"
-        self.assertRaises(PRepToolsStringFormatException, check_details_format, details)
-
-        details = "http://www.naver.co.kr:923,1/a|p|i/v3?asdfe\_#"
-        self.assertRaises(PRepToolsStringFormatException, check_details_format, details)
+        self.assertRaises(InvalidFormatException, _validate_country, country)
 
     def test_check_p2pEndpoint(self):
         # with valid param
         p2p_endpoint = "127.0.0.1:9000"
         try:
-            check_p2p_endpoint_format(p2p_endpoint)
-        except PRepToolsStringFormatException as e:
+            _validate_p2p_endpoint(p2p_endpoint)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         p2p_endpoint = "www.naver.co.kr:9231"
         try:
-            check_p2p_endpoint_format(p2p_endpoint)
-        except PRepToolsStringFormatException as e:
+            _validate_p2p_endpoint(p2p_endpoint)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with invalid param
         p2p_endpoint = "http://www.naver.co.kr:9231"
-        self.assertRaises(PRepToolsStringFormatException, check_p2p_endpoint_format, p2p_endpoint)
+        self.assertRaises(InvalidFormatException, _validate_p2p_endpoint, p2p_endpoint)
 
     def test_check_prep(self):
         # with set_prep.json file
@@ -147,8 +112,8 @@ class TestFormatChecker(unittest.TestCase):
             param = json.load(set_json)
 
         try:
-            check_prep(param)
-        except PRepToolsStringFormatException as e:
+            validate_prep_data(param, True)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with register_prep.json file
@@ -156,13 +121,12 @@ class TestFormatChecker(unittest.TestCase):
             param = json.load(register_json)
 
         try:
-            check_prep(param)
-        except PRepToolsStringFormatException as e:
+            validate_prep_data(param)
+        except InvalidFormatException as e:
             self.fail(e.args[0])
 
         # with invalid file
         with open(TEST_KEYSTORE_PATH) as keystore:
             param = json.load(keystore)
 
-        self.assertRaises(PRepToolsStringFormatException, check_prep, param)
-
+        self.assertRaises(InvalidFormatException, validate_prep_data, param)
