@@ -36,7 +36,7 @@ def main():
     ]
 
     parser = argparse.ArgumentParser(
-        prog="core",
+        prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="P-Rep management cli")
     sub_parser = parser.add_subparsers(title="subcommands")
@@ -116,7 +116,7 @@ def create_common_parser() -> argparse.ArgumentParser:
         "--config", "-c",
         type=str,
         required=False,
-        help="core config file path"
+        help="preptools config file path"
     )
 
     return parent_parser

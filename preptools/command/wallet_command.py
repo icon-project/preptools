@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import getpass
 
 from iconsdk.wallet.wallet import KeyWallet
@@ -24,16 +23,15 @@ from preptools.utils.format_checker import validate_password
 
 
 def init(sub_parser, common_parent_parser):
-    _init_for_keystore(sub_parser, common_parent_parser)
+    _init_for_keystore(sub_parser)
 
 
-def _init_for_keystore(sub_parser, common_parent_parser):
+def _init_for_keystore(sub_parser):
     name = "keystore"
     desc = 'Create keystore file in the specified path. Generate privatekey, publickey pair using secp256k1 library.'
 
     parser = sub_parser.add_parser(
         name,
-        parents=[common_parent_parser],
         help=desc)
 
     parser.add_argument('path',
