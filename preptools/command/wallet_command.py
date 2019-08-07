@@ -17,8 +17,10 @@
 import json
 import getpass
 
+from iconsdk.wallet.wallet import KeyWallet
+
 from preptools.exception import InvalidFormatException
-from preptools.utils.keystore_manager import validate_password, make_key_store_content
+from preptools.utils.keystore_manager import validate_password
 
 
 def init(sub_parser, common_parent_parser):
@@ -48,10 +50,8 @@ def _keystore(args):
     password = args.password
     password = _check_keystore(password)
 
-    key_store_content = make_key_store_content(password)
-
-    with open(args.path, mode='wb') as ks:
-        ks.write(json.dumps(key_store_content).encode())
+    content = KeyWallet.create()
+    content.store(args.path, password)
 
     print(f"Made keystore file successfully")
 
