@@ -20,7 +20,7 @@ import sys
 import time
 from typing import Optional
 
-from preptools.command import prep_setting_command, prep_info_command, tx_info_command
+from preptools.command import prep_setting_command, prep_info_command, tx_info_command, wallet_command
 from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
@@ -31,7 +31,8 @@ def main():
     handlers = [
         prep_setting_command.init,
         prep_info_command.init,
-        tx_info_command.init
+        tx_info_command.init,
+        wallet_command.init
     ]
 
     parser = argparse.ArgumentParser(
