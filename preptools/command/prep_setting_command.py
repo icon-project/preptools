@@ -22,7 +22,7 @@ from preptools.exception import InvalidFormatException
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
-    validate_each_prep_data
+    validate_field_in_prep_data
 )
 
 
@@ -139,7 +139,7 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
                 if len(cmd_input.strip()) > 0:
                     try:
-                        validate_each_prep_data(field, cmd_input)
+                        validate_field_in_prep_data(field, cmd_input)
                         params[field] = cmd_input
                         break
 
