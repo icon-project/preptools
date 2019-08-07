@@ -17,11 +17,12 @@ import argparse
 import json
 import sys
 
-from preptools.exception import InvalidFormatException
-
 from preptools.core.prep import create_writer_by_args
+from preptools.exception import InvalidFormatException
+from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
-    validate_prep_data
+    validate_prep_data,
+    validate_field_in_prep_data
 )
 
 
@@ -44,7 +45,64 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         help=desc)
 
     parser.add_argument(
-        "--prep",
+        "--name",
+        type=str,
+        required=False,
+        nargs="?",
+        help="PRep name"
+    )
+
+    parser.add_argument(
+        "--country",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's country"
+    )
+
+    parser.add_argument(
+        "--city",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's city"
+    )
+
+    parser.add_argument(
+        "--email",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's email"
+    )
+
+    parser.add_argument(
+        "--website",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's homepage url"
+    )
+
+    parser.add_argument(
+        "--details",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep off-chain details"
+    )
+
+    parser.add_argument(
+        "--p2p-endpoint",
+        type=str,
+        required=False,
+        nargs="?",
+        dest="p2pEndpoint",
+        help="Network info used for connecting among P-Rep nodes"
+    )
+
+    parser.add_argument(
+        "--prep-json",
         type=str,
         required=False,
         nargs="?",
@@ -56,10 +114,13 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _register_prep(args) -> str:
 
-    if args.prep is not None:
-        params = _get_json(args.prep)
+    if args.prep_json:
+        params = _get_prep_json(args, blank_able=True)
     else:
-        params = _get_prep_info_from_cli()
+        params = dict()
+        _get_prep_input(args, params)
+
+    _get_prep_dict_from_cli(params)
 
     writer = create_writer_by_args(args)
     response = writer.register_prep(params)
@@ -67,58 +128,54 @@ def _register_prep(args) -> str:
     return response
 
 
-def _get_prep_dict_from_cli():
+def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
-    prep_info = dict()
+    for field in fields_to_validate:
 
-    try:
-        prep_info['name'] = input('> name : ')
-        prep_info['country'] = input('> country : ')
-        prep_info['city'] = input('> city : ')
-        prep_info['email'] = input('> email : ')
-        prep_info['website'] = input('> website : ')
-        prep_info['details'] = input('> details : ')
-        prep_info['p2pEndpoint'] = input('> p2pEndpoint : ')
+        while True:
+            if params.get(field, None) is None:  # param is not found.
 
-    except InvalidFormatException as e:
-        print(e.args[0])
+                cmd_input = input(f" > {field} : ")
 
-    ret = dict()
+                if len(cmd_input.strip()) > 0:
+                    try:
+                        validate_field_in_prep_data(field, cmd_input)
+                        params[field] = cmd_input
+                        break
 
-    for k, v in prep_info.items():
-        if v is not '':
-            ret[k] = v
+                    except InvalidFormatException as e:
+                        print(e.args[0])
 
-    return ret
+                elif set_prep:  # in case of set_prep, don't have to get all params.
+                    break
 
+                else:
+                    print(f"please enter {field}.")
 
-def _get_prep_info_from_cli():
-
-    while True:
-
-        prep_info = _get_prep_dict_from_cli()
-
-        print(json.dumps(prep_info, indent=4))
-
-        check = input('All of them are right? (Y/n): ')
-
-        if check.lower() == 'y':
-            break
-
-    return prep_info
+            else:
+                break
 
 
-def _get_json(path, set_prep: bool = False):
+def _get_prep_json(args, blank_able: bool = False):
+    path = args.prep_json
+
     with open(path) as register:
         params = json.load(register)
+        _get_prep_input(args, params)
 
     try:
-        validate_prep_data(params, set_prep)
+        validate_prep_data(params, blank_able)
     except InvalidFormatException as e:
         print(e.args[0])
         sys.exit(1)  # invalid format entered.
 
     return params
+
+
+def _get_prep_input(args, params: dict):
+    for key in fields_to_validate:
+        if hasattr(args, key) and getattr(args, key) is not None:
+            params[key] = getattr(args, key)
 
 
 def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -150,7 +207,70 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         help=desc)
 
     parser.add_argument(
-        "--prep",
+        "-i", "--interactive",
+        help="Activate interactive mode when prep fields are blank.",
+        action='store_true'
+    )
+
+    parser.add_argument(
+        "--name",
+        type=str,
+        required=False,
+        nargs="?",
+        help="PRep name"
+    )
+
+    parser.add_argument(
+        "--country",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's country"
+    )
+
+    parser.add_argument(
+        "--city",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's city"
+    )
+
+    parser.add_argument(
+        "--email",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's email"
+    )
+
+    parser.add_argument(
+        "--website",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep's homepage url"
+    )
+
+    parser.add_argument(
+        "--details",
+        type=str,
+        required=False,
+        nargs="?",
+        help="P-Rep off-chain details"
+    )
+
+    parser.add_argument(
+        "--p2p-endpoint",
+        type=str,
+        required=False,
+        nargs="?",
+        dest="p2pEndpoint",
+        help="Network info used for connecting among P-Rep nodes"
+    )
+
+    parser.add_argument(
+        "--prep-json",
         type=str,
         required=False,
         help="json file having prepInfo"
@@ -161,10 +281,14 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _set_prep(args) -> str:
 
-    if args.prep is not None:
-        params = _get_json(args.prep,set_prep=True)
+    if args.prep_json:
+        params = _get_prep_json(args, blank_able=True)
     else:
-        params = _get_prep_info_from_cli(is_set_prep=True)
+        params = dict()
+        _get_prep_input(args, params)
+
+    if args.interactive:
+        _get_prep_dict_from_cli(params, set_prep=True)
 
     writer = create_writer_by_args(args)
     response = writer.set_prep(params)

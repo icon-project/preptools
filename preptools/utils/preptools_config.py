@@ -1,5 +1,4 @@
 from preptools.utils.constants import DEFAULT_URL, DEFAULT_NID
-from iconsdk.utils.convert_type import convert_int_to_hex_str
 
 preptools_config = {
     "url": DEFAULT_URL,

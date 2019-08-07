@@ -18,7 +18,7 @@ import re
 import iso3166
 
 from preptools.exception import InvalidFormatException
-from ..base.type_converter_templates import ConstantKeys
+from preptools.utils.constants import fields_to_validate, ConstantKeys
 
 scheme_pattern = r'^(http:\/\/|https:\/\/)'
 path_pattern = r'(\/\S*)?$'
@@ -33,17 +33,8 @@ WEBSITE_IP_PATTERN = re.compile(f'{scheme_pattern}{ip_regex}{port_regex}{path_pa
 EMAIL_PATTERN = re.compile(email_regex)
 
 
-def validate_prep_data(data: dict, set_prep: bool = False):
-    if not set_prep:
-        fields_to_validate = (
-            ConstantKeys.NAME,
-            ConstantKeys.COUNTRY,
-            ConstantKeys.CITY,
-            ConstantKeys.EMAIL,
-            ConstantKeys.WEBSITE,
-            ConstantKeys.DETAILS,
-            ConstantKeys.P2P_ENDPOINT
-        )
+def validate_prep_data(data: dict, blank_able: bool = False):
+    if not blank_able:
 
         for key in fields_to_validate:
             if key not in data:
@@ -52,28 +43,31 @@ def validate_prep_data(data: dict, set_prep: bool = False):
                 raise InvalidFormatException("Can not set empty data")
 
     for key in data:
-        if set_prep:
-            if len(data[key].strip()) == 0:
-                continue
-        if len(data[key].strip()) < 1:
+        if len(data[key].strip()) < 1 and not blank_able:
             raise InvalidFormatException("Can not set empty data")
-        if key == ConstantKeys.P2P_ENDPOINT:
-            _validate_p2p_endpoint(data[key])
-        elif key in (ConstantKeys.WEBSITE, ConstantKeys.DETAILS):
-            _validate_uri(data[key])
-        elif key == ConstantKeys.EMAIL:
-            _validate_email(data[key])
-        elif key == ConstantKeys.COUNTRY:
-            _validate_country(data[key])
+
+        validate_field_in_prep_data(key, data[key])
 
 
-def _validate_p2p_endpoint(p2p_endpoint: str):
+def validate_field_in_prep_data(key: str, value: str):
+
+    if key == ConstantKeys.P2P_ENDPOINT:
+        validate_p2p_endpoint(value)
+    elif key in (ConstantKeys.WEBSITE, ConstantKeys.DETAILS):
+        validate_uri(value)
+    elif key == ConstantKeys.EMAIL:
+        validate_email(value)
+    elif key == ConstantKeys.COUNTRY:
+        validate_country(value)
+
+
+def validate_p2p_endpoint(p2p_endpoint: str):
     network_locate_info = p2p_endpoint.split(":")
 
     if len(network_locate_info) != 2:
         raise InvalidFormatException("Invalid endpoint format. endpoint must have port info")
 
-    _validate_port(network_locate_info[1], ConstantKeys.P2P_ENDPOINT)
+    validate_port(network_locate_info[1], ConstantKeys.P2P_ENDPOINT)
 
     if ENDPOINT_IP_PATTERN.match(p2p_endpoint):
         return
@@ -82,7 +76,7 @@ def _validate_p2p_endpoint(p2p_endpoint: str):
         raise InvalidFormatException("Invalid endpoint format")
 
 
-def _validate_uri(uri: str):
+def validate_uri(uri: str):
     uri = uri.lower()
     if WEBSITE_DOMAIN_NAME_PATTERN.match(uri):
         return
@@ -92,7 +86,7 @@ def _validate_uri(uri: str):
     raise InvalidFormatException("Invalid uri format")
 
 
-def _validate_port(port: str, validating_field: str):
+def validate_port(port: str, validating_field: str):
     try:
         port = int(port, 10)
     except ValueError:
@@ -102,11 +96,11 @@ def _validate_port(port: str, validating_field: str):
         raise InvalidFormatException(f"Invalid {validating_field} format. Port out of range: {port}")
 
 
-def _validate_email(email: str):
+def validate_email(email: str):
     if not EMAIL_PATTERN.match(email):
         raise InvalidFormatException("Invalid email format")
 
 
-def _validate_country(country_code: str):
+def validate_country(country_code: str):
     if country_code.upper() not in iso3166.countries_by_alpha3:
         raise InvalidFormatException("Invalid alpha-3 country code")

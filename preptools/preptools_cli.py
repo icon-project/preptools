@@ -51,7 +51,11 @@ def main():
 
     args = parser.parse_args()
 
-    response: Optional[dict, int] = args.func(args)
+    try:
+        response: Optional[dict, int] = args.func(args)
+    except KeyboardInterrupt:
+        print("\nexit")
+        sys.exit(0)
 
     if isinstance(response, dict):
         if 'result' in response:

@@ -6,20 +6,20 @@ with open('requirements.txt') as requirements:
     requires = list(requirements)
 
 setup_options = {
-    'name': 'core',
+    'name': 'preptools',
     'version': '0.0.1',
     'description': 'Test suite for ICON SCORE development',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
     'packages': find_packages(exclude=['tests*', 'docs']),
     'include_package_data': True,
-    'py_modules': ['core'],
+    'py_modules': ['preptools'],
     'license': "Apache License 2.0",
     'install_requires': requires,
     'test_suite': 'tests',
     'entry_points': {
         'console_scripts': [
-            'core=core:main'
+            'preptools=preptools:main'
         ],
     },
     'classifiers': [
