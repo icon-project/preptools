@@ -26,11 +26,13 @@ port_regex = r'(:[0-9]{1,5})?'
 ip_regex = r'(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'
 host_name_regex = r'(localhost|(?:[\w\d](?:[\w\d-]{0,61}[\w\d])\.)+[\w\d][\w\d-]{0,61}[\w\d])'
 email_regex = r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@' + host_name_regex + '$'
+password_regex = r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*[?!:\.,%+-/*<>{}\(\)\[\]`"\'~_^\\|@#$&]).{8,}$'
 ENDPOINT_DOMAIN_NAME_PATTERN = re.compile(f'^{host_name_regex}{port_regex}$')
 ENDPOINT_IP_PATTERN = re.compile(f'^{ip_regex}{port_regex}$')
 WEBSITE_DOMAIN_NAME_PATTERN = re.compile(f'{scheme_pattern}{host_name_regex}{port_regex}{path_pattern}$')
 WEBSITE_IP_PATTERN = re.compile(f'{scheme_pattern}{ip_regex}{port_regex}{path_pattern}$')
 EMAIL_PATTERN = re.compile(email_regex)
+PASSWORD_PATTERN = re.compile(password_regex)
 
 
 def validate_prep_data(data: dict, blank_able: bool = False):
@@ -104,3 +106,15 @@ def validate_email(email: str):
 def validate_country(country_code: str):
     if country_code.upper() not in iso3166.countries_by_alpha3:
         raise InvalidFormatException("Invalid alpha-3 country code")
+
+
+def validate_password(password) -> bool:
+    """Verify the entered password.
+
+    :param password: The password the user entered. type(str)
+    :return: bool
+    True: When the password is valid format
+    False: When the password is invalid format
+    """
+
+    return bool(PASSWORD_PATTERN.match(password))

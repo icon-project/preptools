@@ -20,7 +20,7 @@ import getpass
 from iconsdk.wallet.wallet import KeyWallet
 
 from preptools.exception import InvalidFormatException
-from preptools.utils.keystore_manager import validate_password
+from preptools.utils.format_checker import validate_password
 
 
 def init(sub_parser, common_parent_parser):
