@@ -114,6 +114,8 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _register_prep(args) -> str:
 
+    writer = create_writer_by_args(args)
+
     if args.prep_json:
         params = _get_prep_json(args, blank_able=True)
     else:
@@ -122,7 +124,6 @@ def _register_prep(args) -> str:
 
     _get_prep_dict_from_cli(params)
 
-    writer = create_writer_by_args(args)
     response = writer.register_prep(params)
 
     return response

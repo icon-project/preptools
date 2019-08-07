@@ -34,7 +34,7 @@ def _init_for_get_prep(sub_parser, common_parent_parser):
     parser.add_argument(
         "address",
         type=str,
-        help="Address of PRep you are looking for"
+        help="Address of P-Rep you are looking for"
     )
 
     parser.set_defaults(func=_get_prep)
@@ -79,7 +79,7 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
         type=str,
         required=False,
         nargs="?",
-        help="block height which ranking formed"
+        help="Block height which ranking formed"
     )
 
     parser.set_defaults(func=_get_preps)
