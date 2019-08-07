@@ -50,6 +50,6 @@ class PRepToolsBaseException(BaseException):
 
 
 class InvalidFormatException(PRepToolsBaseException):
-    """Invalid string format for core"""
+    """Invalid string format for preptools"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.STRING_FORMAT_ERROR)
