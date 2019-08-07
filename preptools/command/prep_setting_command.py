@@ -17,12 +17,12 @@ import argparse
 import json
 import sys
 
-from preptools.utils.constants import fields_to_validate
-from preptools.exception import InvalidFormatException
 from preptools.core.prep import create_writer_by_args
+from preptools.exception import InvalidFormatException
+from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
-    validate_each_prep_data
+    validate_field_in_prep_data
 )
 
 
@@ -139,7 +139,7 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
                 if len(cmd_input.strip()) > 0:
                     try:
-                        validate_each_prep_data(field, cmd_input)
+                        validate_field_in_prep_data(field, cmd_input)
                         params[field] = cmd_input
                         break
 
@@ -211,8 +211,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         help="Activate interactive mode when prep fields are blank.",
         action='store_true'
     )
-
-
 
     parser.add_argument(
         "--name",
