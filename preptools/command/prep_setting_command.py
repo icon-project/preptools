@@ -97,6 +97,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         type=str,
         required=False,
         nargs="?",
+        dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
 
@@ -266,6 +267,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         type=str,
         required=False,
         nargs="?",
+        dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
 
