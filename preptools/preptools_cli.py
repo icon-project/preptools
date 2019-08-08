@@ -55,13 +55,15 @@ def main() -> Optional:
 
     try:
         response: Optional[dict, int] = args.func(args)
-
     except PRepToolsBaseException as e:
         print(e)
         response = e.code.value
     except Exception as e:
         print(f"Exception : {e}")
         response = PRepToolsExceptionCode.COMMAND_ERROR.value
+    except KeyboardInterrupt:
+        print("\nexit")
+        response = 0
 
     if isinstance(response, dict):
         if 'result' in response:
