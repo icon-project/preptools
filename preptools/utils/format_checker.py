@@ -53,6 +53,9 @@ def validate_prep_data(data: dict, blank_able: bool = False):
 
 def validate_field_in_prep_data(key: str, value: str):
 
+    if not validate_field_key(key):
+        raise InvalidFormatException(f"Invalid key : {key}")
+
     if key == ConstantKeys.P2P_ENDPOINT:
         validate_p2p_endpoint(value)
     elif key in (ConstantKeys.WEBSITE, ConstantKeys.DETAILS):
@@ -61,6 +64,15 @@ def validate_field_in_prep_data(key: str, value: str):
         validate_email(value)
     elif key == ConstantKeys.COUNTRY:
         validate_country(value)
+
+
+def validate_field_key(key):
+
+    for ckey in fields_to_validate:
+        if key == ckey:
+            return True
+
+    return False
 
 
 def validate_p2p_endpoint(p2p_endpoint: str):

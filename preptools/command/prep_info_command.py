@@ -34,13 +34,13 @@ def _init_for_get_prep(sub_parser, common_parent_parser):
     parser.add_argument(
         "address",
         type=str,
-        help="Address of PRep you are looking for"
+        help="Address of P-Rep you are looking for"
     )
 
     parser.set_defaults(func=_get_prep)
 
 
-def _get_prep(args) -> str:
+def _get_prep(args):
     address = args.address
 
     reader = create_reader_by_args(args)
@@ -79,13 +79,13 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
         type=str,
         required=False,
         nargs="?",
-        help="block height which ranking formed"
+        help="Block height which ranking formed"
     )
 
     parser.set_defaults(func=_get_preps)
 
 
-def _get_preps(args) -> str:
+def _get_preps(args):
     params = _check_get_preps_args(args)
 
     reader = create_reader_by_args(args)

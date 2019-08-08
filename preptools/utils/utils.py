@@ -15,10 +15,13 @@
 # limitations under the License.
 
 import json
+import os
+
 from typing import TYPE_CHECKING, Union, Optional
 from urllib.parse import urlparse
 
 from .constants import COLUMN, PREDEFINED_URLS
+from preptools.exception import InvalidFileWriteException
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -86,3 +89,22 @@ def get_url(url: str) -> str:
     #     raise ValueError(f"Invalid url: {url}")
     #
     # return url
+
+
+def write_file(parent_directory: str, file_name: str, contents: str, overwrite: bool = False) -> None:
+    """Create file with the contents in the parents directory.
+
+    :param parent_directory: Location to create the file.
+    :param file_name: File name
+    :param contents: Contents of file.
+    """
+    try:
+        if not os.path.exists(parent_directory):
+            os.makedirs(parent_directory)
+        if os.path.exists(f'{parent_directory}/{file_name}') and not overwrite:
+            return
+        with open(f'{parent_directory}/{file_name}', mode='w') as file:
+            file.write(contents)
+    except (PermissionError, IsADirectoryError) as e:
+        raise InvalidFileWriteException(f"Can't write file {parent_directory}/{file_name}. {e}")
+

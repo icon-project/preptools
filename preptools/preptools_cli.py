@@ -18,21 +18,22 @@ import argparse
 import json
 import sys
 import time
+
 from typing import Optional
 
-from preptools.command import prep_setting_command, prep_info_command, tx_info_command, wallet_command
+from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
 from preptools.core.prep import create_icon_service
-from preptools.exception import PRepToolsExceptionCode
+from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
 from preptools.utils.utils import print_tx_result, print_response
 
 
-def main():
+def main() -> Optional:
     handlers = [
         prep_setting_command.init,
         prep_info_command.init,
         tx_info_command.init,
-        wallet_command.init
+        common_command.init
     ]
 
     parser = argparse.ArgumentParser(
@@ -54,9 +55,15 @@ def main():
 
     try:
         response: Optional[dict, int] = args.func(args)
+    except PRepToolsBaseException as e:
+        print(e)
+        response = e.code.value
+    except Exception as e:
+        print(f"Exception : {e}")
+        response = PRepToolsExceptionCode.COMMAND_ERROR.value
     except KeyboardInterrupt:
         print("\nexit")
-        sys.exit(0)
+        response = 0
 
     if isinstance(response, dict):
         if 'result' in response:
@@ -116,6 +123,7 @@ def create_common_parser() -> argparse.ArgumentParser:
         "--config", "-c",
         type=str,
         required=False,
+        default="preptools_config.json",
         help="preptools config file path"
     )
 

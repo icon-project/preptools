@@ -15,20 +15,26 @@
 # limitations under the License.
 
 import getpass
+import json
+import os
 
+from iconsdk.exception import KeyStoreException
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidFormatException
+from preptools.exception import InvalidFormatException, InvalidKeyStoreException
 from preptools.utils.format_checker import validate_password
+from preptools.utils.preptools_config import FN_CLI_CONF, preptools_config
+from preptools.utils.utils import write_file
 
 
 def init(sub_parser, common_parent_parser):
     _init_for_keystore(sub_parser)
+    _init_for_genconf(sub_parser)
 
 
 def _init_for_keystore(sub_parser):
     name = "keystore"
-    desc = 'Create keystore file in the specified path. Generate privatekey, publickey pair using secp256k1 library.'
+    desc = 'Create keystore file in the specified path.'
 
     parser = sub_parser.add_parser(
         name,
@@ -49,9 +55,47 @@ def _keystore(args):
     password = _check_keystore(password)
 
     content = KeyWallet.create()
-    content.store(args.path, password)
+    try:
+        content.store(args.path, password)
+    except KeyStoreException as e:
+        raise InvalidKeyStoreException(f"{e}")
 
     print(f"Made keystore file successfully")
+
+
+def _init_for_genconf(sub_parser):
+    name = "genconf"
+    desc = 'Create config file in the specified path.'
+
+    parser = sub_parser.add_parser(
+        name,
+        help=desc)
+
+    parser.add_argument('--path',
+                        type=str,
+                        default=FN_CLI_CONF,
+                        help='Path of configue file. default = /preptools_config.json')
+
+    parser.set_defaults(func=_genconf)
+
+
+def _genconf(args):
+    """Generate tbears config files. (tbears_server_config.json, tbears_cli_config.json, keystore_test1)"""
+    result = _gen_conf_file()
+
+    if result:
+        print(f"Made {result} successfully")
+    else:
+        print(f"There were configuration files already.")
+
+
+def _gen_conf_file():
+
+    if os.path.exists(FN_CLI_CONF) is False:
+        write_file('./', FN_CLI_CONF, json.dumps(preptools_config, indent=4))
+        return FN_CLI_CONF
+
+    return None
 
 
 def _check_keystore(password: str):

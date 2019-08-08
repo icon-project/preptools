@@ -17,8 +17,7 @@
 import json
 import unittest
 
-from iconsdk.wallet.wallet import KeyWallet
-from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_hex_str_to_int
+from iconsdk.utils.convert_type import convert_hex_str_to_int
 from tests.commons.constants import (
     TEST_KEYSTORE_PATH,
     TEST_KEYSTORE_PASSWORD,
@@ -42,8 +41,8 @@ class TestPRep(unittest.TestCase):
         with open(TEST_CONFIG_PATH) as configure:
             conf = json.load(configure)
 
-        self.args.url = conf['uri']
-        self.args.nid = convert_hex_str_to_int(conf['nid'])
+        self.args.url = conf['url']
+        self.args.nid = conf['nid']
         self.args.keystore = TEST_KEYSTORE_PATH
         self.args.password = TEST_KEYSTORE_PASSWORD
         self.args.yes = True

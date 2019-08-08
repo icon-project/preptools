@@ -39,8 +39,8 @@ class TestPRep(unittest.TestCase):
         with open(TEST_CONFIG_PATH) as configure:
             conf = json.load(configure)
 
-        self.args.url = conf['uri']
-        self.args.nid = convert_hex_str_to_int(conf['nid'])
+        self.args.url = conf['url']
+        self.args.nid = conf['nid']
         self.args.keystore = TEST_KEYSTORE_PATH
         self.args.password = TEST_KEYSTORE_PASSWORD
         self.args.tx_hash = '0x5f7f339e35bf8dae2d11a3a43f0956fd703e4ce66c9eb91a44106d278c8fc840'

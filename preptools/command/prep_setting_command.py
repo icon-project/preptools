@@ -15,10 +15,9 @@
 # limitations under the License.
 import argparse
 import json
-import sys
 
 from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidFormatException
+from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
@@ -112,17 +111,18 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_register_prep)
 
 
-def _register_prep(args) -> str:
+def _register_prep(args) -> dict:
+
+    writer = create_writer_by_args(args)
 
     if args.prep_json:
         params = _get_prep_json(args, blank_able=True)
+
     else:
         params = dict()
         _get_prep_input(args, params)
 
     _get_prep_dict_from_cli(params)
-
-    writer = create_writer_by_args(args)
     response = writer.register_prep(params)
 
     return response
@@ -137,19 +137,19 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
                 cmd_input = input(f" > {field} : ")
 
-                if len(cmd_input.strip()) > 0:
+                if len(cmd_input.strip()) > 0:  # field's value size > 0
                     try:
                         validate_field_in_prep_data(field, cmd_input)
                         params[field] = cmd_input
                         break
 
                     except InvalidFormatException as e:
-                        print(e.args[0])
+                        print(e)
 
                 elif set_prep:  # in case of set_prep, don't have to get all params.
                     break
 
-                else:
+                else:  # in case of register, it must have input.
                     print(f"please enter {field}.")
 
             else:
@@ -159,15 +159,15 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 def _get_prep_json(args, blank_able: bool = False):
     path = args.prep_json
 
-    with open(path) as register:
-        params = json.load(register)
-        _get_prep_input(args, params)
-
     try:
-        validate_prep_data(params, blank_able)
-    except InvalidFormatException as e:
-        print(e.args[0])
-        sys.exit(1)  # invalid format entered.
+        with open(path) as register:
+            params = json.load(register)
+            _get_prep_input(args, params)
+
+    except (FileNotFoundError, IsADirectoryError):
+        raise InvalidFileReadException(f"Cannot find json file, file path : {path}")
+
+    validate_prep_data(params, blank_able)
 
     return params
 
@@ -190,7 +190,8 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
     parser.set_defaults(func=_unregister_prep)
 
 
-def _unregister_prep(args) -> str:
+def _unregister_prep(args) -> dict:
+
     writer = create_writer_by_args(args)
     response = writer.unregister_prep()
 
@@ -279,10 +280,13 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_set_prep)
 
 
-def _set_prep(args) -> str:
+def _set_prep(args) -> dict:
+
+    writer = create_writer_by_args(args)
 
     if args.prep_json:
         params = _get_prep_json(args, blank_able=True)
+
     else:
         params = dict()
         _get_prep_input(args, params)
@@ -290,7 +294,6 @@ def _set_prep(args) -> str:
     if args.interactive:
         _get_prep_dict_from_cli(params, set_prep=True)
 
-    writer = create_writer_by_args(args)
     response = writer.set_prep(params)
 
     return response
@@ -316,10 +319,11 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
     parser.set_defaults(func=_set_governance_variables)
 
 
-def _set_governance_variables(args) -> str:
+def _set_governance_variables(args) -> dict:
     params = {
         'irep': args.irep
     }
+
     writer = create_writer_by_args(args)
     response = writer.set_governance_variables(params)
 
@@ -345,7 +349,7 @@ def create_tx_parser() -> argparse.ArgumentParser:
     parent_parser.add_argument(
         "--keystore", "-k",
         type=str,
-        required=True,
+        required=False,
         help="keystore file path"
     )
 
