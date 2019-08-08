@@ -17,7 +17,7 @@ import argparse
 import json
 
 from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidFormatException, InvalidFileReadException, InvalidKeyStoreException
+from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
@@ -191,6 +191,7 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
 
 
 def _unregister_prep(args) -> dict:
+
     writer = create_writer_by_args(args)
     response = writer.unregister_prep()
 

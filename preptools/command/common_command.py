@@ -18,9 +18,8 @@ import getpass
 import json
 import os
 
-
-from iconsdk.wallet.wallet import KeyWallet
 from iconsdk.exception import KeyStoreException
+from iconsdk.wallet.wallet import KeyWallet
 
 from preptools.exception import InvalidFormatException, InvalidKeyStoreException
 from preptools.utils.format_checker import validate_password

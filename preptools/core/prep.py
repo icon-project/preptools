@@ -24,7 +24,7 @@ from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidFileReadException, InvalidKeyStoreException
+from preptools.exception import InvalidKeyStoreException, InvalidFileReadException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
@@ -170,7 +170,6 @@ class PRepToolsReader(PRepToolsListener):
 
 def create_reader_by_args(args) -> PRepToolsReader:
     url, nid, _ = _get_common_args(args)
-
     reader = create_reader(url, nid)
 
     callback = functools.partial(_print_request, "Request")
@@ -187,7 +186,6 @@ def create_reader(url: str, nid: int) -> PRepToolsReader:
 
 def create_writer_by_args(args) -> PRepToolsWriter:
     url, nid, keystore_path = _get_common_args(args)
-
     password: str = args.password
     yes: bool = False
 
@@ -214,6 +212,7 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
 
     try:
         owner_wallet = KeyWallet.load(keystore_path, password)
+
     except KeyStoreException as e:
         raise InvalidKeyStoreException(f"{e}")
 
