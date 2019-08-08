@@ -15,7 +15,6 @@
 import functools
 import getpass
 import json
-import sys
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
@@ -25,7 +24,7 @@ from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidFileReadException
+from preptools.exception import InvalidFileReadException, InvalidKeyStoreException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
@@ -170,11 +169,7 @@ class PRepToolsReader(PRepToolsListener):
 
 
 def create_reader_by_args(args) -> PRepToolsReader:
-    try:
-        url, nid, _ = _get_common_args(args)
-    except InvalidFileReadException as e:
-        print(e)
-        sys.exit(1)
+    url, nid, _ = _get_common_args(args)
 
     reader = create_reader(url, nid)
 
@@ -191,11 +186,7 @@ def create_reader(url: str, nid: int) -> PRepToolsReader:
 
 
 def create_writer_by_args(args) -> PRepToolsWriter:
-    try:
-        url, nid, keystore_path = _get_common_args(args)
-    except InvalidFileReadException as e:
-        print(e)
-        sys.exit(1)
+    url, nid, keystore_path = _get_common_args(args)
 
     password: str = args.password
     yes: bool = False
@@ -204,7 +195,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
         yes: bool = args.yes
 
     if keystore_path is None:
-        raise KeyStoreException("There's no keystore path in cmdline, configure.")
+        raise InvalidKeyStoreException("There's no keystore path in cmdline, configure.")
 
     if password is None:
         password = getpass.getpass("> Password: ")
@@ -223,10 +214,8 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
 
     try:
         owner_wallet = KeyWallet.load(keystore_path, password)
-
     except KeyStoreException as e:
-        print(e)
-        sys.exit(1)
+        raise InvalidKeyStoreException(f"{e}")
 
     return PRepToolsWriter(icon_service, nid, owner_wallet)
 

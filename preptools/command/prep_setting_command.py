@@ -15,12 +15,9 @@
 # limitations under the License.
 import argparse
 import json
-import sys
-
-from iconsdk.exception import KeyStoreException
 
 from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidFormatException, InvalidFileReadException
+from preptools.exception import InvalidFormatException, InvalidFileReadException, InvalidKeyStoreException
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
@@ -116,19 +113,10 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _register_prep(args) -> dict:
 
-    try:
-        writer = create_writer_by_args(args)
-    except KeyStoreException as e:
-        print(e)
-        sys.exit(1)
+    writer = create_writer_by_args(args)
 
     if args.prep_json:
-
-        try:
-            params = _get_prep_json(args, blank_able=True)
-        except InvalidFileReadException as e:
-            print(e)
-            sys.exit(1)
+        params = _get_prep_json(args, blank_able=True)
 
     else:
         params = dict()
@@ -176,14 +164,10 @@ def _get_prep_json(args, blank_able: bool = False):
             params = json.load(register)
             _get_prep_input(args, params)
 
-        validate_prep_data(params, blank_able)
-
-    except InvalidFormatException as e:
-        print(e)
-        sys.exit(1)  # invalid format entered.
-
-    except (FileNotFoundError, IsADirectoryError) as e:
+    except (FileNotFoundError, IsADirectoryError):
         raise InvalidFileReadException(f"Cannot find json file, file path : {path}")
+
+    validate_prep_data(params, blank_able)
 
     return params
 
@@ -207,12 +191,7 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
 
 
 def _unregister_prep(args) -> dict:
-    try:
-        writer = create_writer_by_args(args)
-    except KeyStoreException as e:
-        print(e)
-        sys.exit(1)
-
+    writer = create_writer_by_args(args)
     response = writer.unregister_prep()
 
     return response
@@ -302,18 +281,10 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 def _set_prep(args) -> dict:
 
-    try:
-        writer = create_writer_by_args(args)
-    except KeyStoreException as e:
-        print(e)
-        sys.exit(1)
+    writer = create_writer_by_args(args)
 
     if args.prep_json:
-        try:
-            params = _get_prep_json(args, blank_able=True)
-        except InvalidFileReadException as e:
-            print(e)
-            sys.exit(1)
+        params = _get_prep_json(args, blank_able=True)
 
     else:
         params = dict()
@@ -352,12 +323,7 @@ def _set_governance_variables(args) -> dict:
         'irep': args.irep
     }
 
-    try:
-        writer = create_writer_by_args(args)
-    except KeyStoreException as e:
-        print(e)
-        sys.exit(1)
-
+    writer = create_writer_by_args(args)
     response = writer.set_governance_variables(params)
 
     return response

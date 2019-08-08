@@ -41,7 +41,8 @@ def _init_for_tx_result(sub_parser, common_parent_parser):
     parser.set_defaults(func=_tx_result)
 
 
-def _tx_result(args) -> dict:
+def _tx_result(args):
+
     reader = create_reader_by_args(args)
     response = reader.get_tx_result(args.tx_hash)
 
@@ -67,7 +68,8 @@ def _init_for_tx_by_hash(sub_parser, common_parent_parser):
     parser.set_defaults(func=_tx_by_hash)
 
 
-def _tx_by_hash(args) -> dict:
+def _tx_by_hash(args):
+
     reader = create_reader_by_args(args)
     response = reader.get_tx_by_hash(args.tx_hash)
 

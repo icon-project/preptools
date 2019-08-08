@@ -40,7 +40,7 @@ def _init_for_get_prep(sub_parser, common_parent_parser):
     parser.set_defaults(func=_get_prep)
 
 
-def _get_prep(args) -> dict:
+def _get_prep(args):
     address = args.address
 
     reader = create_reader_by_args(args)
@@ -85,7 +85,7 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
     parser.set_defaults(func=_get_preps)
 
 
-def _get_preps(args) -> dict:
+def _get_preps(args):
     params = _check_get_preps_args(args)
 
     reader = create_reader_by_args(args)

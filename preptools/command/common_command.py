@@ -17,11 +17,12 @@
 import getpass
 import json
 import os
-import sys
+
 
 from iconsdk.wallet.wallet import KeyWallet
+from iconsdk.exception import KeyStoreException
 
-from preptools.exception import InvalidFormatException
+from preptools.exception import InvalidFormatException, InvalidKeyStoreException
 from preptools.utils.format_checker import validate_password
 from preptools.utils.preptools_config import FN_CLI_CONF, preptools_config
 from preptools.utils.utils import write_file
@@ -52,15 +53,13 @@ def _init_for_keystore(sub_parser):
 
 def _keystore(args):
     password = args.password
-
-    try:
-        password = _check_keystore(password)
-    except InvalidFormatException as e:
-        print(e)
-        sys.exit(1)
+    password = _check_keystore(password)
 
     content = KeyWallet.create()
-    content.store(args.path, password)
+    try:
+        content.store(args.path, password)
+    except KeyStoreException as e:
+        raise InvalidKeyStoreException(f"{e}")
 
     print(f"Made keystore file successfully")
 
