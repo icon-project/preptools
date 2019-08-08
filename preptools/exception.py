@@ -24,6 +24,8 @@ class PRepToolsExceptionCode(IntEnum):
     """
     OK = 0
     STRING_FORMAT_ERROR = 1
+    FILE_WRITE_ERROR = 2
+    FILE_READ_ERROR = 3
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -53,3 +55,15 @@ class InvalidFormatException(PRepToolsBaseException):
     """Invalid string format for preptools"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.STRING_FORMAT_ERROR)
+
+
+class InvalidFileWriteException(PRepToolsBaseException):
+    """Invalid file write"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.FILE_WRITE_ERROR)
+
+
+class InvalidFileReadException(PRepToolsBaseException):
+    """Invalid file read"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.FILE_READ_ERROR)
