@@ -25,6 +25,7 @@ from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
+from preptools.exception import InvalidFileReadException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
@@ -66,7 +67,7 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, limit=0x50000000, value: int = 0):
+    def call(self, owner, to, method, params=None, limit=0x50000000, value: int = 0) -> dict:
         return self._call_tx(owner, to, method, params, limit, value)
 
 
@@ -90,7 +91,7 @@ class PRepToolsWriter(PRepToolsListener):
         self._owner = owner
         self._nid = nid
 
-    def _call(self, method: str, params: dict, step_limit: int = 0x10000000, value: int = 0) -> str:
+    def _call(self, method: str, params: dict, step_limit: int = 0x10000000, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
@@ -104,19 +105,19 @@ class PRepToolsWriter(PRepToolsListener):
     def _create_tx_handler(self) -> TxHandler:
         return TxHandler(self._icon_service, self._nid, self.on_send_request)
 
-    def register_prep(self, params):
+    def register_prep(self, params) -> dict:
         method = "registerPRep"
         return self._call(method, params, value=2000*10**18)
 
-    def unregister_prep(self):
+    def unregister_prep(self) -> dict:
         method = "unregisterPRep"
         return self._call(method, {})
 
-    def set_prep(self, params):
+    def set_prep(self, params) -> dict:
         method = "setPRep"
         return self._call(method, params)
 
-    def set_governance_variables(self, params):
+    def set_governance_variables(self, params) -> dict:
         method = "setGovernanceVariables"
         return self._call(method, params)
 
@@ -129,7 +130,7 @@ class PRepToolsReader(PRepToolsListener):
         self._nid = nid
         self._from = address
 
-    def _call(self, method, params=None):
+    def _call(self, method, params=None) -> dict:
         call = CallBuilder() \
             .from_(self._from) \
             .to(ZERO_ADDRESS) \
@@ -147,29 +148,33 @@ class PRepToolsReader(PRepToolsListener):
     def _tx_by_hash(self, tx_hash):
         return self._icon_service.get_transaction(tx_hash, True)
 
-    def get_prep(self, address: str):
+    def get_prep(self, address: str) -> dict:
         params = {"address": address}
         return self._call("getPRep", params)
 
-    def get_preps(self, params):
+    def get_preps(self, params) -> dict:
         return self._call("getPReps", params)
 
-    def get_proposal(self, _id: str):
+    def get_proposal(self, _id: str) -> dict:
         params = {"id": _id}
         return self._call("getProposal", params)
 
-    def get_proposal_list(self, params):
+    def get_proposal_list(self, params) -> dict:
         return self._call("getProposalList", params)
 
-    def get_tx_result(self, tx_hash):
+    def get_tx_result(self, tx_hash) -> dict:
         return self._tx_result(tx_hash)
 
-    def get_tx_by_hash(self, tx_hash):
+    def get_tx_by_hash(self, tx_hash) -> dict:
         return self._tx_by_hash(tx_hash)
 
 
 def create_reader_by_args(args) -> PRepToolsReader:
-    url, nid, _ = _get_common_args(args)
+    try:
+        url, nid, _ = _get_common_args(args)
+    except InvalidFileReadException as e:
+        print(e)
+        sys.exit(1)
 
     reader = create_reader(url, nid)
 
@@ -186,12 +191,20 @@ def create_reader(url: str, nid: int) -> PRepToolsReader:
 
 
 def create_writer_by_args(args) -> PRepToolsWriter:
-    url, nid, keystore_path = _get_common_args(args)
+    try:
+        url, nid, keystore_path = _get_common_args(args)
+    except InvalidFileReadException as e:
+        print(e)
+        sys.exit(1)
+
     password: str = args.password
     yes: bool = False
 
     if hasattr(args, 'yes'):
         yes: bool = args.yes
+
+    if keystore_path is None:
+        raise KeyStoreException("There's no keystore path in cmdline, configure.")
 
     if password is None:
         password = getpass.getpass("> Password: ")
@@ -210,8 +223,9 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
 
     try:
         owner_wallet = KeyWallet.load(keystore_path, password)
+
     except KeyStoreException as e:
-        print(e.args[0])
+        print(e)
         sys.exit(1)
 
     return PRepToolsWriter(icon_service, nid, owner_wallet)
@@ -238,11 +252,16 @@ def _get_common_args(args):
 
     if hasattr(args, 'config') \
             and args.config is not None:
-        with open(args.config) as f:
-            tmp_conf = json.load(f)
+        try:
+            with open(args.config) as f:
+                tmp_conf = json.load(f)
 
-        for k in tmp_conf:
-            conf[k] = tmp_conf[k]
+            for k in tmp_conf:
+                conf[k] = tmp_conf[k]
+
+        except (FileNotFoundError, IsADirectoryError):
+            if args.config != 'preptools_config.json':
+                raise InvalidFileReadException(f"Cannot read configure file, file path : {args.config}")
 
     url: str = get_url(_replace_attribute('url', args, conf))
     nid: int = _replace_attribute('nid', args, conf)

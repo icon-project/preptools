@@ -17,8 +17,10 @@ import argparse
 import json
 import sys
 
+from iconsdk.exception import KeyStoreException
+
 from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidFormatException
+from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.format_checker import (
     validate_prep_data,
@@ -112,17 +114,27 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_register_prep)
 
 
-def _register_prep(args) -> str:
+def _register_prep(args) -> dict:
+
+    try:
+        writer = create_writer_by_args(args)
+    except KeyStoreException as e:
+        print(e)
+        sys.exit(1)
 
     if args.prep_json:
-        params = _get_prep_json(args, blank_able=True)
+
+        try:
+            params = _get_prep_json(args, blank_able=True)
+        except InvalidFileReadException as e:
+            print(e)
+            sys.exit(1)
+
     else:
         params = dict()
         _get_prep_input(args, params)
 
     _get_prep_dict_from_cli(params)
-
-    writer = create_writer_by_args(args)
     response = writer.register_prep(params)
 
     return response
@@ -137,19 +149,19 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 
                 cmd_input = input(f" > {field} : ")
 
-                if len(cmd_input.strip()) > 0:
+                if len(cmd_input.strip()) > 0:  # field's value size > 0
                     try:
                         validate_field_in_prep_data(field, cmd_input)
                         params[field] = cmd_input
                         break
 
                     except InvalidFormatException as e:
-                        print(e.args[0])
+                        print(e)
 
                 elif set_prep:  # in case of set_prep, don't have to get all params.
                     break
 
-                else:
+                else:  # in case of register, it must have input.
                     print(f"please enter {field}.")
 
             else:
@@ -159,15 +171,19 @@ def _get_prep_dict_from_cli(params, set_prep: bool = False):
 def _get_prep_json(args, blank_able: bool = False):
     path = args.prep_json
 
-    with open(path) as register:
-        params = json.load(register)
-        _get_prep_input(args, params)
-
     try:
+        with open(path) as register:
+            params = json.load(register)
+            _get_prep_input(args, params)
+
         validate_prep_data(params, blank_able)
+
     except InvalidFormatException as e:
-        print(e.args[0])
+        print(e)
         sys.exit(1)  # invalid format entered.
+
+    except (FileNotFoundError, IsADirectoryError) as e:
+        raise InvalidFileReadException(f"Cannot find json file, file path : {path}")
 
     return params
 
@@ -190,8 +206,13 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
     parser.set_defaults(func=_unregister_prep)
 
 
-def _unregister_prep(args) -> str:
-    writer = create_writer_by_args(args)
+def _unregister_prep(args) -> dict:
+    try:
+        writer = create_writer_by_args(args)
+    except KeyStoreException as e:
+        print(e)
+        sys.exit(1)
+
     response = writer.unregister_prep()
 
     return response
@@ -279,10 +300,21 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_set_prep)
 
 
-def _set_prep(args) -> str:
+def _set_prep(args) -> dict:
+
+    try:
+        writer = create_writer_by_args(args)
+    except KeyStoreException as e:
+        print(e)
+        sys.exit(1)
 
     if args.prep_json:
-        params = _get_prep_json(args, blank_able=True)
+        try:
+            params = _get_prep_json(args, blank_able=True)
+        except InvalidFileReadException as e:
+            print(e)
+            sys.exit(1)
+
     else:
         params = dict()
         _get_prep_input(args, params)
@@ -290,7 +322,6 @@ def _set_prep(args) -> str:
     if args.interactive:
         _get_prep_dict_from_cli(params, set_prep=True)
 
-    writer = create_writer_by_args(args)
     response = writer.set_prep(params)
 
     return response
@@ -316,11 +347,17 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
     parser.set_defaults(func=_set_governance_variables)
 
 
-def _set_governance_variables(args) -> str:
+def _set_governance_variables(args) -> dict:
     params = {
         'irep': args.irep
     }
-    writer = create_writer_by_args(args)
+
+    try:
+        writer = create_writer_by_args(args)
+    except KeyStoreException as e:
+        print(e)
+        sys.exit(1)
+
     response = writer.set_governance_variables(params)
 
     return response
@@ -345,7 +382,7 @@ def create_tx_parser() -> argparse.ArgumentParser:
     parent_parser.add_argument(
         "--keystore", "-k",
         type=str,
-        required=True,
+        required=False,
         help="keystore file path"
     )
 
