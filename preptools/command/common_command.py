@@ -17,6 +17,7 @@
 import getpass
 import json
 import os
+import sys
 
 from iconsdk.wallet.wallet import KeyWallet
 
@@ -51,7 +52,12 @@ def _init_for_keystore(sub_parser):
 
 def _keystore(args):
     password = args.password
-    password = _check_keystore(password)
+
+    try:
+        password = _check_keystore(password)
+    except InvalidFormatException as e:
+        print(e)
+        sys.exit(1)
 
     content = KeyWallet.create()
     content.store(args.path, password)
