@@ -48,7 +48,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         type=str,
         required=False,
         nargs="?",
-        help="PRep name"
+        help="P-Rep name"
     )
 
     parser.add_argument(
@@ -105,7 +105,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         type=str,
         required=False,
         nargs="?",
-        help="json file having prepInfo"
+        help="json file having P-Rep information"
     )
 
     parser.set_defaults(func=_register_prep)

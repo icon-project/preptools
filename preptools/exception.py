@@ -28,6 +28,7 @@ class PRepToolsExceptionCode(IntEnum):
     FILE_WRITE_ERROR = 3
     FILE_READ_ERROR = 4
     KEYSTORE_ERROR = 5
+    DATA_TYPE_ERROR = 6
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -81,3 +82,9 @@ class InvalidKeyStoreException(PRepToolsBaseException):
     """Invalid Keystore"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.KEYSTORE_ERROR)
+
+
+class InvalidDataTypeException(PRepToolsBaseException):
+    """Invalid Keystore"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
