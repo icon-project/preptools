@@ -18,13 +18,13 @@ import json
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
-from iconsdk.exception import KeyStoreException
+from iconsdk.exception import KeyStoreException, DataTypeException
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidKeyStoreException, InvalidFileReadException
+from preptools.exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
@@ -142,10 +142,16 @@ class PRepToolsReader(PRepToolsListener):
         return self._icon_service.call(call, True)
 
     def _tx_result(self, tx_hash):
-        return self._icon_service.get_transaction_result(tx_hash, True)
+        try:
+            return self._icon_service.get_transaction_result(tx_hash, True)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
 
     def _tx_by_hash(self, tx_hash):
-        return self._icon_service.get_transaction(tx_hash, True)
+        try:
+            return self._icon_service.get_transaction(tx_hash, True)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
 
     def get_prep(self, address: str) -> dict:
         params = {"address": address}

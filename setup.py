@@ -7,7 +7,7 @@ with open('requirements.txt') as requirements:
 
 setup_options = {
     'name': 'preptools',
-    'version': '0.0.1',
+    'version': '1.0.0',
     'description': 'Test suite for ICON SCORE development',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',

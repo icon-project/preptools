@@ -62,7 +62,6 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
         "--start-ranking",
         type=str,
         required=False,
-        nargs="?",
         help="Get P-Rep list which starts from start ranking"
     )
 
@@ -70,7 +69,6 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
         "--end-ranking",
         type=str,
         required=False,
-        nargs="?",
         help="Get P-Rep list which ends with end ranking, inclusive"
     )
 
@@ -78,7 +76,6 @@ def _init_for_get_preps(sub_parser, common_parent_parser):
         "--block-height",
         type=str,
         required=False,
-        nargs="?",
         help="Block height which ranking formed"
     )
 
