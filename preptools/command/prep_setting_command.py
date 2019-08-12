@@ -19,7 +19,7 @@ import json
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
-from preptools.utils.format_checker import (
+from preptools.utils.validation_checker import (
     validate_prep_data,
     validate_field_in_prep_data
 )

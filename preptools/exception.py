@@ -29,6 +29,7 @@ class PRepToolsExceptionCode(IntEnum):
     FILE_READ_ERROR = 4
     KEYSTORE_ERROR = 5
     DATA_TYPE_ERROR = 6
+    ARGUMENT_ERROR = 7
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -88,3 +89,9 @@ class InvalidDataTypeException(PRepToolsBaseException):
     """Invalid Keystore"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
+
+
+class InvalidArgumentException(PRepToolsBaseException):
+    """INvalid Argument"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.ARGUMENT_ERROR)

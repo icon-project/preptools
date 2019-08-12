@@ -112,6 +112,18 @@ class PRepToolsWriter(PRepToolsListener):
         method = "unregisterPRep"
         return self._call(method, {})
 
+    def register_proposal(self, params) -> dict:
+        method = "registerProposal"
+        return self._call(method, params)
+
+    def cancel_proposal(self, params) -> dict:
+        method = "cancelProposal"
+        return self._call(method,params)
+
+    def vote_proposal(self, params) -> dict:
+        method = "voteProposal"
+        return self._call(method, params)
+
     def set_prep(self, params) -> dict:
         method = "setPRep"
         return self._call(method, params)
@@ -164,7 +176,7 @@ class PRepToolsReader(PRepToolsListener):
         params = {"id": _id}
         return self._call("getProposal", params)
 
-    def get_proposal_list(self, params) -> dict:
+    def get_proposals(self, params) -> dict:
         return self._call("getProposalList", params)
 
     def get_tx_result(self, tx_hash) -> dict:

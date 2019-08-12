@@ -22,7 +22,7 @@ from iconsdk.exception import KeyStoreException
 from iconsdk.wallet.wallet import KeyWallet
 
 from preptools.exception import InvalidFormatException, InvalidKeyStoreException
-from preptools.utils.format_checker import validate_password
+from preptools.utils.validation_checker import validate_password
 from preptools.utils.preptools_config import FN_CLI_CONF, preptools_config
 from preptools.utils.utils import write_file
 

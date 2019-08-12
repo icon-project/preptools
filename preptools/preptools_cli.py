@@ -21,7 +21,14 @@ import time
 
 from typing import Optional
 
-from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
+from preptools.command import (
+    prep_setting_command,
+    proposal_setting_command,
+    prep_info_command,
+    proposal_info_command,
+    tx_info_command,
+    common_command
+ )
 from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
@@ -31,7 +38,9 @@ from preptools.utils.utils import print_tx_result, print_response
 def main() -> Optional:
     handlers = [
         prep_setting_command.init,
+        proposal_setting_command.init,
         prep_info_command.init,
+        proposal_info_command.init,
         tx_info_command.init,
         common_command.init
     ]

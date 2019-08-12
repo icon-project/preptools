@@ -17,7 +17,7 @@ import re
 
 import iso3166
 
-from preptools.exception import InvalidFormatException
+from preptools.exception import InvalidFormatException, InvalidDataTypeException, InvalidArgumentException
 from preptools.utils.constants import fields_to_validate, ConstantKeys
 
 scheme_pattern = r'^(http:\/\/|https:\/\/)'
@@ -130,3 +130,60 @@ def validate_password(password) -> bool:
     """
 
     return bool(PASSWORD_PATTERN.match(password))
+
+
+def valid_proposal_text_param(args) -> bool:
+
+    if args.value is None:
+        raise InvalidArgumentException("Type 0 have to has 'value'")
+
+    if not isinstance(args.value, str):
+        raise InvalidDataTypeException("value's type should be string")
+
+    return True
+
+
+def valid_proposal_reivision_update_param(args) -> bool:
+
+    if args.code is None or args.name is None:
+        raise InvalidArgumentException("Type 1 have to has 'code' and 'name'")
+
+    return True
+
+
+def valid_proposal_malicious_score_param(args) -> bool:
+
+    if args.address is None or args.type is None:
+        raise InvalidArgumentException("Type 2 have to has 'address' and 'type'")
+
+    return True
+
+
+def valid_proposal_prep_disqualification_param(args) -> bool:
+
+    if args.address is None:
+        raise InvalidArgumentException("Type 3 have to has 'address")
+
+    return True
+
+
+def valid_proposal_step_price(args) -> bool:
+
+    if args.value is None:
+        raise InvalidArgumentException("Type 4 have to has 'value'")
+
+    try:
+        int(args.value)
+    except Exception:
+        raise InvalidDataTypeException("value's type should be integer")
+
+    return True
+
+
+valid_proposal_param_by_type = [
+    valid_proposal_text_param,                      # type 0
+    valid_proposal_reivision_update_param,          # type 1
+    valid_proposal_malicious_score_param,           # type 2
+    valid_proposal_prep_disqualification_param,     # type 3
+    valid_proposal_step_price                       # type 4
+]
