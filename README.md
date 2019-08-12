@@ -14,7 +14,21 @@ preptools-0.0.1-py3-none-any.whl
 ```
 
 ## Installation
-In case of Installation, you can install with wheel file that you've built.
+This chapter will explain how to install T-Bears on your system.
+
+### Requirements
+
+* OS: MacOS or Linux
+  * Windows is not supported.
+
+* Python
+  * Make a virtualenv for Python 3.6.5+ (3.7 is also supported)
+  * Check your Python version
+    ```bash
+    $ python3 -V
+    ```
+### Setup
+In case of install, you can install with wheel file that you've built.
 ```
 $ pip install dist/prep-0.0.1-py3-none-any.whl
 ```
