@@ -6,8 +6,8 @@ your development environment and the the usage of preptools CLI commands.
 ## Building from source
 First, clone this project. Then go to the project directory, create a virtualenv environment, and run build script. You can then install preptools with the .whl file.
 ```
-$ python -m venv venv       # Crate a virtual environment.
-$ source venv/bin/activate  # Enter the vitual environment.
+$ python -m venv venv             # Crate a virtual environment.
+$ source venv/bin/activate        # Enter the vitual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
 preptools-0.0.1-py3-none-any.whl
