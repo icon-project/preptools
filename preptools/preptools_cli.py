@@ -135,6 +135,11 @@ def create_common_parser() -> argparse.ArgumentParser:
         default="preptools_config.json",
         help="preptools config file path"
     )
+    parent_parser.add_argument(
+        "--yes", "-y",
+        help="Don't want to ask send transaction.",
+        action='store_true'
+    )
 
     return parent_parser
 
