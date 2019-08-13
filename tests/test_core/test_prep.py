@@ -156,6 +156,21 @@ class TestPRep(unittest.TestCase):
         self.assertFalse(nid == self.args.nid)
         self.assertFalse(keystore == self.args.keystore)
 
+    def test_register_proposal(self):
+        pass
+
+    def test_cancel_proposal(self):
+        pass
+
+    def test_vote_proposal(self):
+        pass
+
+    def test_get_proposal(self):
+        pass
+
+    def test_get_proposals(self):
+        pass
+
 
 def is_request_equal(first_dict: dict, second_dict: dict) -> bool:
 

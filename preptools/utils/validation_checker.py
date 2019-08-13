@@ -134,46 +134,43 @@ def validate_password(password) -> bool:
 
 def valid_proposal_text_param(args) -> bool:
 
-    if args.value is None:
-        raise InvalidArgumentException("Type 0 have to has 'value'")
-
-    if not isinstance(args.value, str):
-        raise InvalidDataTypeException("value's type should be string")
+    if args.value_value is None:
+        raise InvalidArgumentException("Type 0 have to has 'value' value.")
 
     return True
 
 
 def valid_proposal_reivision_update_param(args) -> bool:
 
-    if args.code is None or args.name is None:
-        raise InvalidArgumentException("Type 1 have to has 'code' and 'name'")
+    if args.value_code is None or args.value_name is None:
+        raise InvalidArgumentException("Type 1 have to has 'code' and 'name' value.")
 
     return True
 
 
 def valid_proposal_malicious_score_param(args) -> bool:
 
-    if args.address is None or args.type is None:
-        raise InvalidArgumentException("Type 2 have to has 'address' and 'type'")
+    if args.value_address is None or args.value_type is None:
+        raise InvalidArgumentException("Type 2 have to has 'address' and 'type' value.")
 
     return True
 
 
 def valid_proposal_prep_disqualification_param(args) -> bool:
 
-    if args.address is None:
-        raise InvalidArgumentException("Type 3 have to has 'address")
+    if args.value_address is None:
+        raise InvalidArgumentException("Type 3 have to has 'address' value.")
 
     return True
 
 
 def valid_proposal_step_price(args) -> bool:
 
-    if args.value is None:
-        raise InvalidArgumentException("Type 4 have to has 'value'")
+    if args.value_value is None:
+        raise InvalidArgumentException("Type 4 have to has 'value' value.")
 
     try:
-        int(args.value)
+        int(args.value_value)
     except Exception:
         raise InvalidDataTypeException("value's type should be integer")
 

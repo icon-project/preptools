@@ -53,9 +53,9 @@ fields_to_validate = (
 
 
 proposal_param_by_type = [
-    ["value"],              # type 0
-    ["code", "name"],       # type 1
-    ["address", "type"],    # type 2
-    ["address"],            # type 3
-    ["value"]               # type 4
+    ["value_value"],                    # type 0
+    ["value_code", "value_name"],       # type 1
+    ["value_address", "value_type"],    # type 2
+    ["value_address"],                  # type 3
+    ["value_value"]                     # type 4
 ]

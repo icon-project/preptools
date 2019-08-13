@@ -17,11 +17,11 @@
 import json
 import argparse
 
-from typing import Optional, Union
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidArgumentException
 from preptools.utils.constants import proposal_param_by_type
+from preptools.utils.utils import print_proposal_value
 from preptools.utils.validation_checker import valid_proposal_param_by_type
 
 
@@ -67,36 +67,36 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
     )
 
     parser.add_argument(
-        "--value",
+        "--value-value",
         type=str,
-        help="text message when type 0"
-             "step price in loop when type 4 (required when type 0 or 4)"
+        help="type 0:text message, "
+             "type 4:step price in loop (required when type 0 or 4)"
     )
 
     parser.add_argument(
-        "--code",
+        "--value-code",
         type=int,
         help="revision code (required when type 1)"
     )
 
     parser.add_argument(
-        "--name",
+        "--value-name",
         type=str,
         help="icon-service version (required when type 1)"
     )
 
     parser.add_argument(
-        "--address",
+        "--value-address",
         type=str,
-        help="address of SCORE when type 2"
-             "address of main/sub P-Rep when type 3 (required when type 2 or 3)"
+        help="type 2: address of SCORE, "
+             "type 3: address of main/sub P-Rep (required when type 2 or 3)"
     )
 
-    # parser.add_argument(
-    #     "--type",
-    #     type=int,
-    #     help="0x0 : freeze, 0x1 : unfreeze (required when type 2)"
-    # ) ?
+    parser.add_argument(
+        "--value-type",
+        type=int,
+        help="0x0 : freeze, 0x1 : unfreeze (required when type 2)"
+    )
 
     parser.set_defaults(func=_register_proposal)
 
@@ -107,10 +107,14 @@ def _register_proposal(args) -> dict:
         "title": args.title,
         "description": args.desc,
         "type": convert_int_to_hex_str(int(args.type)),
-        "value": _convert_value_to_hex_str(_get_value_by_type(args))
+        "value": None
     }
 
+    value = _get_value_by_type(args)
+    params['value'] = _convert_value_to_hex_str(value)
+
     writer = create_writer_by_args(args)
+    print_proposal_value(value)
     response = writer.register_proposal(params)
 
     return response

@@ -56,6 +56,11 @@ def print_response(content: Union[str, dict]):
     print("")
 
 
+def print_proposal_value(params: dict):
+    print_title("Value")
+    print_dict(params)
+
+
 def print_tx_result(tx_result: dict):
     print_title("Transaction Result")
     print_dict(tx_result)
