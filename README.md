@@ -10,7 +10,7 @@ $ python -m venv venv             # Crate a virtual environment.
 $ source venv/bin/activate        # Enter the vitual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
-preptools-0.0.1-py3-none-any.whl
+preptools-1.0.0-py3-none-any.whl
 ```
 
 ## Installation
@@ -30,7 +30,7 @@ This chapter will explain how to install T-Bears on your system.
 ### Setup
 In case of install, you can install with wheel file that you've built.
 ```
-$ pip install dist/prep-0.0.1-py3-none-any.whl
+$ pip install dist/preptools-1.0.0-py3-none-any.whl
 ```
 
 ## How to use P-Rep tools
@@ -52,16 +52,17 @@ optional arguments:
   -h, --help                show this help message and exit
 
 subcommands:
-    registerPrep            Register P-Rep
-    unregisterPrep          Unregister P-Rep
-    setPrep                 Change enrolled P-Rep information
-    setGovernanceVariables  Change Governance variables used in network operation
-    getPRep                 Inquire P-Rep information
-    getPReps                Get live status of all registered P-Rep candidates
-    txresult                Get transaction result by transaction hash
-    txbyhash                Get transaction by hash
-    keystore                Create keystore file in the specified path.
-    genconf                 Create config file in the specified path.
+    registerPRep        Register P-Rep
+    unregisterPRep      Unregister P-Rep
+    setPRep             Change enrolled P-Rep information
+    setGovernanceVariables
+                        Change Governance variables used in network operation
+    getPRep             Inquire P-Rep information
+    getPReps            Get live status of all registered P-Rep candidates
+    txresult            Get transaction result by hash
+    txbyhash            Get transaction by hash
+    keystore            Create keystore file in the specified path.
+    genconf             Create config file in the specified path.
 ```
 
 #### Options
@@ -76,7 +77,7 @@ subcommands:
 Commands that setting the P-Rep info. There are four commands `preptools registerPRep`, `preptools unregisterPRep`, 
 `preptools setPRep` and `preptools setGovernanceVariables`. 
 Whenever this commands are called, it loads the configuration from `preptools_config.json`.
-If you want to use other configuration file, you can specify the file location with the -c option.
+If you want to use other configuration file, you can specify the file location with the `-c` option.
 #### preptools registerPRep
 
 **Description**
@@ -99,11 +100,10 @@ There are three way of register P-Rep.
 ```bash
 usage: preptools registerPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                               [--password PASSWORD] [--keystore KEYSTORE]
-                              [--name [NAME]] [--country [COUNTRY]]
-                              [--city [CITY]] [--email [EMAIL]]
-                              [--website [WEBSITE]] [--details [DETAILS]]
-                              [--p2p-endpoint [P2PENDPOINT]]
-                              [--prep-json [PREP_JSON]]
+                              [--name NAME] [--country COUNTRY] [--city CITY]
+                              [--email EMAIL] [--website WEBSITE]
+                              [--details DETAILS] [--p2p-endpoint P2PENDPOINT]
+                              [--prep-json PREP_JSON]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -115,44 +115,45 @@ optional arguments:
                         keystore password
   --keystore KEYSTORE, -k KEYSTORE
                         keystore file path
-  --name [NAME]         P-Rep name
-  --country [COUNTRY]   P-Rep's country
-  --city [CITY]         P-Rep's city
-  --email [EMAIL]       P-Rep's email
-  --website [WEBSITE]   P-Rep's homepage url
-  --details [DETAILS]   P-Rep off-chain details
-  --p2p-endpoint [P2PENDPOINT]
+  --name NAME           P-Rep name
+  --country COUNTRY     P-Rep's country
+  --city CITY           P-Rep's city
+  --email EMAIL         P-Rep's email
+  --website WEBSITE     P-Rep's homepage url
+  --details DETAILS     P-Rep off-chain details
+  --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
-  --prep-json [PREP_JSON]
-                        json file having prepInfo
+  --prep-json PREP_JSON
+                        json file having P-Rep information
 ```
 
 **Options**
 
-| shorthand, Name | default                     | Description                                          |
-| :-------------- | :-------------------------- | :--------------------------------------------------- |
-| -h, --help      |                             | show this help message and exit                      |
-| -u, --url       | http://127.0.0.1/api/v3     | node url                                             |
-| -n, --nid       | 3                           | network id                                           |
-| -c, --config    | ./preptools_config.json     | preptools config file path                           |
-| -p, --password  |                             | keystore password                                    |
-| -k, --keystore  |                             | keystore file path                                   |
-| --name          |                             | P-Rep name                                           |
-| --country       |                             | P-Rep's country                                      |
-| --city          |                             | P-Rep's city                                         |
-| --email         |                             | P-Rep's email                                        |
-| --website       |                             | P-Rep's homepage url                                 |
-| --details       |                             | P-Rep off chain details                              |
-| --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes   |
-| --prep-json     |                             | json file having P-Rep information                   |
+| shorthand, Name | default                     | Description                                                           |
+| :-------------- | :-------------------------- | :---------------------------------------------------------------------|
+| -h, --help      |                             | show this help message and exit                                       |
+| -u, --url       | http://127.0.0.1/api/v3     | node url                                                              |
+| -n, --nid       | 3                           | network id                                                            |
+| -c, --config    | ./preptools_config.json     | preptools config file path                                            |
+| -p, --password  |                             | keystore password                                                     |
+| -k, --keystore  |                             | keystore file path                                                    |
+| --name          |                             | P-Rep name                                                            |
+| --country       |                             | P-Rep's country. This require [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) standard.|
+| --city          |                             | P-Rep's city.                                                         |
+| --email         |                             | P-Rep's email.                ex) "example@iconloop.com"              |
+| --website       |                             | P-Rep's homepage url.         ex) "https://node.example.com/"         |
+| --details       |                             | P-Rep off chain details.      ex) "https://node.example.com/json"     |
+| --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
+|                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
+| --prep-json     |                             | json file having P-Rep information                                    |
 
 **Examples**
 ```bash
 (venv) $ cat registerPRep.json 
 {
     "name": "banana node",
-    "country": "KOR",
-    "city": "Seoul",
+    "country": "USA",
+    "city": "New York",
     "email": "banana@example.com",
     "website": "https://icon.banana.com",
     "details": "https://icon.banana.com/json",
@@ -175,8 +176,8 @@ optional arguments:
     "data_type": "call",
     "params": {
         "name": "banana node",
-        "country": "KOR",
-        "city": "Seoul",
+        "country": "USA",
+        "city": "New York",
         "email": "banana@example.com",
         "website": "https://icon.banana.com",
         "details": "https://icon.banana.com/json",
@@ -203,8 +204,8 @@ request success.
 
 (venv) preptools registerPRep -k test_keystore --prep-json registerPRep.json --name "kokoa node"
 > Password: 
- > country : KOR
- > city : SEOUL
+ > country : USA
+ > city : New York
 [Request] ======================================================================
 {
     "from_": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
@@ -223,8 +224,8 @@ request success.
         "details": "https://icon.banana.com/json",
         "p2pEndpoint": "node.example.com:7100",
         "name": "kokoa node",
-        "country": "KOR",
-        "city": "SEOUL"
+        "country": "USA",
+        "city": "New York"
     }
 }
 
@@ -327,9 +328,9 @@ There are three way of set P-Rep.
 ```bash
 usage: preptools setPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                          [--password PASSWORD] [--keystore KEYSTORE] [-i]
-                         [--name [NAME]] [--country [COUNTRY]] [--city [CITY]]
-                         [--email [EMAIL]] [--website [WEBSITE]]
-                         [--details [DETAILS]] [--p2p-endpoint [P2PENDPOINT]]
+                         [--name NAME] [--country COUNTRY] [--city CITY]
+                         [--email EMAIL] [--website WEBSITE]
+                         [--details DETAILS] [--p2p-endpoint P2PENDPOINT]
                          [--prep-json PREP_JSON]
 
 optional arguments:
@@ -343,13 +344,13 @@ optional arguments:
   --keystore KEYSTORE, -k KEYSTORE
                         keystore file path
   -i, --interactive     Activate interactive mode when prep fields are blank.
-  --name [NAME]         PRep name
-  --country [COUNTRY]   P-Rep's country
-  --city [CITY]         P-Rep's city
-  --email [EMAIL]       P-Rep's email
-  --website [WEBSITE]   P-Rep's homepage url
-  --details [DETAILS]   P-Rep off-chain details
-  --p2p-endpoint [P2PENDPOINT]
+  --name NAME           PRep name
+  --country COUNTRY     P-Rep's country
+  --city CITY           P-Rep's city
+  --email EMAIL         P-Rep's email
+  --website WEBSITE     P-Rep's homepage url
+  --details DETAILS     P-Rep off-chain details
+  --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
   --prep-json PREP_JSON
                         json file having prepInfo
@@ -357,30 +358,32 @@ optional arguments:
 
 **Options**
 
-| shorthand, Name | default                     | Description                                          |
-| :-------------- | :-------------------------- | :--------------------------------------------------- |
-| -h, --help      |                             | show this help message and exit                      |
-| -u, --url       | http://127.0.0.1/api/v3     | node url                                             |
-| -n, --nid       | 3                           | network id                                           |
-| -c, --config    | ./preptools_config.json     | preptools config file path                           |
-| -p, --password  |                             | keystore password                                    |
-| -k, --keystore  |                             | keystore file path                                   |
-| -i, --interactive|                            | Activate interactive mode when prep fields are blank.|
-| --name          |                             | P-Rep name                                           |
-| --country       |                             | P-Rep's country                                      |
-| --city          |                             | P-Rep's city                                         |
-| --email         |                             | P-Rep's email                                        |
-| --website       |                             | P-Rep's homepage url                                 |
-| --details       |                             | P-Rep off chain details                              |
-| --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes   |
-| --prep-json     |                             | json file having P-Rep information                   |
+| shorthand, Name | default                     | Description                                                           |
+| :-------------- | :-------------------------- | :---------------------------------------------------------------------|
+| -h, --help      |                             | show this help message and exit                                       |
+| -u, --url       | http://127.0.0.1/api/v3     | node url                                                              |
+| -n, --nid       | 3                           | network id                                                            |
+| -c, --config    | ./preptools_config.json     | preptools config file path                                            |
+| -p, --password  |                             | keystore password                                                     |
+| -k, --keystore  |                             | keystore file path                                                    |
+| -i, --interactive|                            | Activate interactive mode when prep fields are blank.                 |
+| --name          |                             | P-Rep name                                                            |
+| --country       |                             | P-Rep's country. This require [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) standard.|
+| --city          |                             | P-Rep's city.                                                         |
+| --email         |                             | P-Rep's email.                ex) "example@iconloop.com"              |
+| --website       |                             | P-Rep's homepage url.         ex) "https://node.example.com/"         |
+| --details       |                             | P-Rep off chain details.      ex) "https://node.example.com/json"     |
+| --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
+|                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
+| --prep-json     |                             | json file having P-Rep information                                    |
+
 
 **Examples**
 ```bash
 (venv) $ cat setPRep.json 
 {
     "name": "kokoa node",
-    "country": "KOR",
+    "country": "USA",
     "website": "https://icon.kokoa.com",
     "details": "https://icon.kokoa.com/json",
     "p2pEndpoint": "node.example.com:7100"
@@ -402,7 +405,7 @@ optional arguments:
     "data_type": "call",
     "params": {
         "name": "kokoa node",
-        "country": "KOR",
+        "country": "USA",
         "website": "https://icon.kokoa.com",
         "details": "https://icon.kokoa.com/json",
         "p2pEndpoint": "node.example.com:7100"
@@ -420,7 +423,7 @@ request success.
 
 (venv) $ preptools setPRep -k test_keystore --prep-json setPRep.json -i
 > Password: 
- > city : SEOUL
+ > city : New York
  > email : 
 [Request] ======================================================================
 {
@@ -436,11 +439,11 @@ request success.
     "data_type": "call",
     "params": {
         "name": "kokoa node",
-        "country": "KOR",
+        "country": "USA",
         "website": "https://icon.kokoa.com",
         "details": "https://icon.kokoa.com/json",
         "p2pEndpoint": "node.example.com:7100",
-        "city": "SEOUL"
+        "city": "New York"
     }
 }
 
@@ -470,7 +473,7 @@ Other items besides irep may be added later.
 usage: preptools setGovernanceVariables [-h] [--url URL] [--nid NID]
                                         [--config CONFIG]
                                         [--password PASSWORD]
-                                        [--keystore KEYSTORE] --irep [IREP]
+                                        [--keystore KEYSTORE] --irep IREP
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -482,8 +485,7 @@ optional arguments:
                         keystore password
   --keystore KEYSTORE, -k KEYSTORE
                         keystore file path
-  --irep [IREP]         amounts of irep
-
+  --irep IREP           amounts of irep
 ```
 
 **Options**
@@ -541,7 +543,6 @@ Inquire P-Rep information
 
 **Usage**
 ```bash
-(venv) $ preptools getPRep -h
 usage: preptools getPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                          address
 
@@ -587,8 +588,8 @@ request success.
         "status": "0x1",
         "grade": "0x2",
         "name": "kokoa node",
-        "country": "KOR",
-        "city": "SEOUL",
+        "country": "USA",
+        "city": "New York",
         "stake": "0x0",
         "delegated": "0x0",
         "totalBlocks": "0x0",
@@ -614,9 +615,9 @@ Get live status of all registered P-Rep candidates
 **Usage**
 ```bash
 usage: preptools getPReps [-h] [--url URL] [--nid NID] [--config CONFIG]
-                          [--start-ranking [START_RANKING]]
-                          [--end-ranking [END_RANKING]]
-                          [--block-height [BLOCK_HEIGHT]]
+                          [--start-ranking START_RANKING]
+                          [--end-ranking END_RANKING]
+                          [--block-height BLOCK_HEIGHT]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -624,11 +625,11 @@ optional arguments:
   --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
-  --start-ranking [START_RANKING]
+  --start-ranking START_RANKING
                         Get P-Rep list which starts from start ranking
-  --end-ranking [END_RANKING]
+  --end-ranking END_RANKING
                         Get P-Rep list which ends with end ranking, inclusive
-  --block-height [BLOCK_HEIGHT]
+  --block-height BLOCK_HEIGHT
                         Block height which ranking formed
 ```
 
@@ -667,8 +668,8 @@ request success.
         "preps": [
             {
                 "name": "Banana node",
-                "country": "KOR",
-                "city": "Seoul",
+                "country": "USA",
+                "city": "New York",
                 "grade": "0x0",
                 "address": "hx8f21e5c54f006b6a5d5fe65486908592151a7c57",
                 "irep": "0xc350",
@@ -711,8 +712,8 @@ request success.
         "preps": [
             {
                 "name": "Banana node",
-                "country": "KOR",
-                "city": "Seoul",
+                "country": "USA",
+                "city": "New York",
                 "grade": "0x0",
                 "address": "hx8f21e5c54f006b6a5d5fe65486908592151a7c57",
                 "irep": "0xc350",
@@ -738,7 +739,7 @@ Commands that generate configuration file and keystore file.
 
 **Description**
 
-Create a keystore file in the given path. Generate a private and public key pair using secp256k1 library.
+Create a keystore file in the given path.
 
 **Usage**
 
@@ -928,7 +929,7 @@ request success.
             "method": "setPRep",
             "params": {
                 "name": "kokoa node",
-                "country": "KOR",
+                "country": "USA",
                 "website": "https://icon.kokoa.com",
                 "details": "https://icon.kokoa.com/json",
                 "p2pEndpoint": "node.example.com:7100"
@@ -947,14 +948,14 @@ request success.
 ### Configuration Files
 #### preptools_config.json
 
-For every P-Rep tools CLI commands except `genconf` and `keystore` this file is used to configure the default parameters and initial settings.
+For every P-Rep tools CLI commands except `genconf` and `keystore`, this file is used to configure the default parameters and initial settings.
 
 In this configuration file, you can define default options values for some CLI commands. 
 
 ```json
 {
     "uri": "http://127.0.0.1:9000/api/v3",
-    "nid": "0x3",
+    "nid": 3,
     "keyStore": null
 }
 ```
@@ -962,7 +963,7 @@ In this configuration file, you can define default options values for some CLI c
 | Field              | Data  type | Description                                                  |
 | ------------------ | :--------- | :----------------------------------------------------------- |
 | uri                | string     | URI to send the request.                                     |
-| nid                | string     | Network ID. 3 is reserved for P-Rep tools.                     |
+| nid                | int        | Network ID. 3 is reserved for P-Rep tools.                     |
 | keyStore           | string     | Keystore file path.                                          |
 
 ## References

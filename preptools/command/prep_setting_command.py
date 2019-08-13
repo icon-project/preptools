@@ -47,7 +47,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--name",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep name"
     )
 
@@ -55,7 +54,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--country",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's country"
     )
 
@@ -63,7 +61,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--city",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's city"
     )
 
@@ -71,7 +68,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--email",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's email"
     )
 
@@ -79,7 +75,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--website",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's homepage url"
     )
 
@@ -87,7 +82,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep off-chain details"
     )
 
@@ -95,7 +89,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--p2p-endpoint",
         type=str,
         required=False,
-        nargs="?",
         dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
@@ -104,7 +97,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        nargs="?",
         help="json file having P-Rep information"
     )
 
@@ -217,7 +209,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--name",
         type=str,
         required=False,
-        nargs="?",
         help="PRep name"
     )
 
@@ -225,7 +216,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--country",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's country"
     )
 
@@ -233,7 +223,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--city",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's city"
     )
 
@@ -241,7 +230,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--email",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's email"
     )
 
@@ -249,7 +237,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--website",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's homepage url"
     )
 
@@ -257,7 +244,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep off-chain details"
     )
 
@@ -265,7 +251,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--p2p-endpoint",
         type=str,
         required=False,
-        nargs="?",
         dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
@@ -312,7 +297,6 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
         "--irep",
         type=str,
         required=True,
-        nargs="?",
         help="amounts of irep"
     )
 
