@@ -46,7 +46,6 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--title",
         type=str,
         required=True,
-        nargs="?",
         help="Proposal title"
     )
 
@@ -54,7 +53,6 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--desc",
         type=str,
         required=True,
-        nargs="?",
         help="Proposal description"
     )
 
@@ -62,7 +60,6 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--type",
         type=int,
         required=True,
-        nargs="?",
         help="type of Proposal"
     )
 
@@ -114,7 +111,8 @@ def _register_proposal(args) -> dict:
     params['value'] = _convert_value_to_hex_str(value)
 
     writer = create_writer_by_args(args)
-    print_proposal_value(value)
+    if not args.yes or args.verbose:
+        print_proposal_value(value)
     response = writer.register_proposal(params)
 
     return response
@@ -181,7 +179,6 @@ def _init_for_vote_proposal(sub_parser, common_parent_parser, tx_parent_parser):
         "--id",
         type=str,
         required=True,
-        nargs="?",
         help="hash of registerProposal TX"
     )
 
@@ -189,7 +186,6 @@ def _init_for_vote_proposal(sub_parser, common_parent_parser, tx_parent_parser):
         "--vote",
         type=str,
         required=True,
-        nargs="?",
         help="0x0 : disagree, 0x1 : agree"
     )
 

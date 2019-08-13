@@ -25,7 +25,7 @@ from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
 from preptools.exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
-from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
+from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN, GOVERNANCE_ADDRESS
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
 
@@ -90,11 +90,11 @@ class PRepToolsWriter(PRepToolsListener):
         self._owner = owner
         self._nid = nid
 
-    def _call(self, method: str, params: dict, step_limit: int = 0x10000000, value: int = 0) -> dict:
+    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, step_limit: int = 0x10000000, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
-            to=ZERO_ADDRESS,
+            to=to,
             limit=step_limit,
             method=method,
             params=params,
@@ -114,15 +114,15 @@ class PRepToolsWriter(PRepToolsListener):
 
     def register_proposal(self, params) -> dict:
         method = "registerProposal"
-        return self._call(method, params)
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
     def cancel_proposal(self, params) -> dict:
         method = "cancelProposal"
-        return self._call(method,params)
+        return self._call(method,params, to=GOVERNANCE_ADDRESS)
 
     def vote_proposal(self, params) -> dict:
         method = "voteProposal"
-        return self._call(method, params)
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
     def set_prep(self, params) -> dict:
         method = "setPRep"
@@ -141,10 +141,10 @@ class PRepToolsReader(PRepToolsListener):
         self._nid = nid
         self._from = address
 
-    def _call(self, method, params=None) -> dict:
+    def _call(self, method, params=None, to: str = ZERO_ADDRESS) -> dict:
         call = CallBuilder() \
             .from_(self._from) \
-            .to(ZERO_ADDRESS) \
+            .to(to) \
             .method(method) \
             .params(params) \
             .build()
@@ -174,10 +174,10 @@ class PRepToolsReader(PRepToolsListener):
 
     def get_proposal(self, _id: str) -> dict:
         params = {"id": _id}
-        return self._call("getProposal", params)
+        return self._call("getProposal", params, to=GOVERNANCE_ADDRESS)
 
     def get_proposals(self, params) -> dict:
-        return self._call("getProposalList", params)
+        return self._call("getProposalList", params, to=GOVERNANCE_ADDRESS)
 
     def get_tx_result(self, tx_hash) -> dict:
         return self._tx_result(tx_hash)
@@ -205,10 +205,6 @@ def create_reader(url: str, nid: int) -> PRepToolsReader:
 def create_writer_by_args(args) -> PRepToolsWriter:
     url, nid, keystore_path = _get_common_args(args)
     password: str = args.password
-    yes: bool = False
-
-    if hasattr(args, 'yes'):
-        yes: bool = args.yes
 
     if keystore_path is None:
         raise InvalidKeyStoreException("There's no keystore path in cmdline, configure.")
@@ -218,7 +214,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
 
     writer = create_writer(url, nid, keystore_path, password)
 
-    callback = functools.partial(_confirm_callback, yes=yes)
+    callback = functools.partial(_confirm_callback, yes=args.yes, verbose=args.verbose)
     writer.set_on_send_request(callback)
 
     return writer
@@ -242,8 +238,9 @@ def create_icon_service(url: str) -> IconService:
     return IconService(HTTPProvider(url))
 
 
-def _confirm_callback(content: dict, yes: bool) -> bool:
-    _print_request("Request", content)
+def _confirm_callback(content: dict, yes: bool, verbose: bool) -> bool:
+    if not yes or verbose:
+        _print_request("Request", content)
 
     if not yes:
         ret: str = input("> Continue? [Y/n]")

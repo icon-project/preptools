@@ -138,7 +138,14 @@ def create_common_parser() -> argparse.ArgumentParser:
     parent_parser.add_argument(
         "--yes", "-y",
         help="Don't want to ask send transaction.",
-        action='store_true'
+        action='store_true',
+        dest='yes'
+    )
+    parent_parser.add_argument(
+        "--verbose", "-v",
+        help="Verbose mode",
+        action='store_true',
+        dest='verbose'
     )
 
     return parent_parser
