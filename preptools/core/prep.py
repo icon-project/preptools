@@ -177,7 +177,7 @@ class PRepToolsReader(PRepToolsListener):
         return self._call("getProposal", params, to=GOVERNANCE_ADDRESS)
 
     def get_proposals(self, params) -> dict:
-        return self._call("getProposalList", params, to=GOVERNANCE_ADDRESS)
+        return self._call("getProposals", params, to=GOVERNANCE_ADDRESS)
 
     def get_tx_result(self, tx_hash) -> dict:
         return self._tx_result(tx_hash)

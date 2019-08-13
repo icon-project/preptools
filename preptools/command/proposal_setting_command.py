@@ -17,7 +17,7 @@
 import json
 import argparse
 
-from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
+from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str, convert_params_value_to_hex_str
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidArgumentException
 from preptools.utils.constants import proposal_param_by_type
@@ -92,7 +92,7 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
     parser.add_argument(
         "--value-type",
         type=int,
-        help="0x0 : freeze, 0x1 : unfreeze (required when type 2)"
+        help="0 : freeze, 1 : unfreeze (required when type 2)"
     )
 
     parser.set_defaults(func=_register_proposal)
@@ -128,11 +128,17 @@ def _get_value_by_type(args) -> dict:
 
 def _make_dict_with_args(param_list, args) -> dict:
     value = dict()
+    prefix = 'value_'
 
     for key in param_list:
-        value[key] = getattr(args, key)
+        if key.startswith(prefix):
+            key_str = key[len(prefix):]
+        else:
+            return None
 
-    return value
+        value[key_str] = getattr(args, key)
+
+    return convert_params_value_to_hex_str(value)
 
 
 def _init_for_cancel_proposal(sub_parser, common_parent_parser, tx_parent_parser):
@@ -184,9 +190,9 @@ def _init_for_vote_proposal(sub_parser, common_parent_parser, tx_parent_parser):
 
     parser.add_argument(
         "--vote",
-        type=str,
+        type=int,
         required=True,
-        help="0x0 : disagree, 0x1 : agree"
+        help="0 : disagree, 1 : agree"
     )
 
     parser.set_defaults(func=_vote_proposal)
