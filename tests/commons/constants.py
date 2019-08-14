@@ -7,95 +7,161 @@ TEST_UTIL_DIRECTORY = os.path.join(TEST_DIRECTORY, 'commons')
 IN_MEMORY_ZIP_TEST_DIRECTORY = os.path.join(TEST_UTIL_DIRECTORY, 'test_in_memory_zip')
 
 TEST_CONFIG_PATH = os.path.join(TEST_UTIL_DIRECTORY, 'preptools_config.json')
+TEST_WRONG_CONFIG_PATH = os.path.join(TEST_UTIL_DIRECTORY, 'wrong_preptools_config.json')
 TEST_KEYSTORE_PATH = os.path.join(TEST_UTIL_DIRECTORY, 'test_keystore')
 TEST_KEYSTORE_PASSWORD = 'qwer1234%'
 TEST_REGISTER_JSON_PATH = os.path.join(TEST_UTIL_DIRECTORY, 'registerPRep.json')
 TEST_SET_JSON_PATH = os.path.join(TEST_UTIL_DIRECTORY, 'setPRep.json')
 
-register_sample = {
-    "from_": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
-    "to": "cx0000000000000000000000000000000000000000",
-    "value": 2000000000000000000000,
-    "step_limit": 268435456,
-    "nid": 3,
-    "nonce": None,
-    "version": 3,
-    "timestamp": None,
-    "method": "registerPRep",
-    "data_type": "call",
+REGISTER_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_sendTransaction",
+    "id": 1234,
     "params": {
-        "name": "banana node",
-        "country": "KOR",
-        "city": "Seoul",
-        "email": "banana@example.com",
-        "website": "https://icon.banana.com",
-        "details": "https://icon.banana.com/json",
-        "p2pEndpoint": "node.example.com:7100"
+        "version": "0x3",
+        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
+        "to": "cx0000000000000000000000000000000000000000",
+        "stepLimit": "0x10000000",
+        "timestamp": "0x58f962d10ff4e",
+        "nid": "0x3",
+        "value": "0x6c6b935b8bbd400000",
+        "dataType": "call",
+        "data": {
+            "method": "registerPRep",
+            "params": {
+                "name": "banana node",
+                "country": "KOR",
+                "city": "Seoul",
+                "email": "banana@example.com",
+                "website": "https://icon.banana.com",
+                "details": "https://icon.banana.com/json",
+                "p2pEndpoint": "node.example.com:7100"
+            }
+        },
+        "signature": "nJpIQckwQFsoOjlGtfLde1JyWtfho0bIucsa8yGbsyp3IxWcERCiNAah1Npjco0DH6htB/zFvBEi2ITMPvt3NwA="
     }
 }
 
-set_sample = {
-    "from_": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
-    "to": "cx0000000000000000000000000000000000000000",
-    "value": 0,
-    "step_limit": 268435456,
-    "nid": 3,
-    "nonce": None,
-    "version": 3,
-    "timestamp": None,
-    "method": "setPRep",
-    "data_type": "call",
+
+SET_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_sendTransaction",
+    "id": 1234,
     "params": {
-        "name": "kokoa node",
-        "country": "KOR",
-        "website": "https://icon.kokoa.com",
-        "details": "https://icon.kokoa.com/json",
-        "p2pEndpoint": "node.example.com:7100"
+        "version": "0x3",
+        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
+        "to": "cx0000000000000000000000000000000000000000",
+        "stepLimit": "0x10000000",
+        "timestamp": "0x58f9665c32947",
+        "nid": "0x3",
+        "value": "0x0",
+        "dataType": "call",
+        "data": {
+            "method": "setPRep",
+            "params": {
+                "name": "kokoa node",
+                "country": "KOR",
+                "website": "https://icon.kokoa.com",
+                "details": "https://icon.kokoa.com/json",
+                "p2pEndpoint": "node.example.com:7100"
+            }
+        },
+        "signature": "Yp1sSvRp4qEA7VtXQeY5mxXi1PXT5Ep3acB+AcwESBZCJMaMrwBA5fXIIKXDH257asEcgFNiq1zn24LEgJRXegE="
     }
 }
 
-unregister_sample = {
-    "from_": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
-    "to": "cx0000000000000000000000000000000000000000",
-    "value": 0,
-    "step_limit": 268435456,
-    "nid": 3,
-    "nonce": None,
-    "version": 3,
-    "timestamp": None,
-    "method": "unregisterPRep",
-    "data_type": "call",
-    "params": {}
-}
-
-set_governance_variables_sample = {
-    "from_": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
-    "to": "cx0000000000000000000000000000000000000000",
-    "value": 0,
-    "step_limit": 268435456,
-    "nid": 3,
-    "nonce": None,
-    "version": 3,
-    "timestamp": None,
-    "method": "setGovernanceVariables",
-    "data_type": "call",
+UNREGISTER_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_sendTransaction",
+    "id": 1234,
     "params": {
-        "irep": "0x30"
+        "version": "0x3",
+        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
+        "to": "cx0000000000000000000000000000000000000000",
+        "stepLimit": "0x10000000",
+        "timestamp": "0x58f96635f8cb1",
+        "nid": "0x3",
+        "value": "0x0",
+        "dataType": "call",
+        "data": {
+            "method": "unregisterPRep"
+        },
+        "signature": "5nrgXNw2mxlbkYwpaR/5XzFQKK/PwTymELmlhTnKcDIVbQEsL59o0KPjEiEwavJE/XohF/TYTXxJLh16O0da0QA="
     }
 }
 
-get_prep_sample = {
-    "from_": "hx1234567890123456789012345678901234567890",
-    "to": "cx0000000000000000000000000000000000000000",
-    "method": "getPRep",
+SET_GOVERNANCE_VARIABLES_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_sendTransaction",
+    "id": 1234,
     "params": {
-        "address": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
+        "version": "0x3",
+        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
+        "to": "cx0000000000000000000000000000000000000000",
+        "stepLimit": "0x10000000",
+        "timestamp": "0x58f966811dde2",
+        "nid": "0x3",
+        "value": "0x0",
+        "dataType": "call",
+        "data": {
+            "method": "setGovernanceVariables",
+            "params": {
+                "irep": "0x0x21e19e0c9bab2400000"
+            }
+        },
+        "signature": "eY1hw7cfTIDxb5EV5En+uL2MT2BOagHt527nzIoC20QxQo8nCquwUGLbsDBTNBwuoq4UZmf7EDcMwJxSULzbNQA="
     }
 }
 
-get_preps_sample = {
-    "from_": "hx1234567890123456789012345678901234567890",
-    "to": "cx0000000000000000000000000000000000000000",
-    "method": "getPReps",
-    "params": None
+
+GET_PREP_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_call",
+    "id": 1234,
+    "params": {
+        "to": "cx0000000000000000000000000000000000000000",
+        "dataType": "call",
+        "data": {
+            "method": "getPRep",
+            "params": {
+                "address": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
+            }
+        },
+        "from": "hx1234567890123456789012345678901234567890"
+    }
+}
+
+
+GET_PREPS_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_call",
+    "id": 1234,
+    "params": {
+        "to": "cx0000000000000000000000000000000000000000",
+        "dataType": "call",
+        "data": {
+            "method": "getPReps"
+        },
+        "from": "hx1234567890123456789012345678901234567890"
+    }
+}
+
+
+GET_TRANSACTION_RESULT_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_getTransactionResult",
+    "id": 1234,
+    "params": {
+        "txHash": "0x001d8d2b99c0169df7f7545168451a2fb0608cc218e74ecec15516bf836bcd39"
+    }
+}
+
+
+GET_TRANSACTION_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_getTransactionByHash",
+    "id": 1234,
+    "params": {
+        "txHash": "0x1a4809d0a0446da469361e63a36265238f1dec6ff1afa10383231a64ed650692"
+    }
 }
