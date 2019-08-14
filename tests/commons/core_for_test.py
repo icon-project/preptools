@@ -39,6 +39,9 @@ class IconService:
         result = self.make_request('icx_getTransactionByHash', params)
         return result
 
+    def estimate_step(self, transaction):
+        return 10000000
+
     def make_request(self, method, params) -> dict:
 
         rpc_dict = {

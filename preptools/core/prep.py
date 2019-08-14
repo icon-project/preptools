@@ -42,11 +42,10 @@ class TxHandler:
         self._nid = nid
         self._on_send_request = on_send_request
 
-    def _call_tx(self, owner, to, method, params, limit, value: int = 0):
+    def _call_tx(self, owner, to, method, params, value: int = 0):
         transaction = CallTransactionBuilder() \
             .from_(owner.get_address()) \
             .to(to) \
-            .step_limit(limit) \
             .version(3) \
             .nid(self._nid) \
             .method(method) \
@@ -54,11 +53,13 @@ class TxHandler:
             .value(value) \
             .build()
 
+        step_limit = self._icon_service.estimate_step(transaction) + 10000  # add some margin
+
         ret = self._call_on_send_request(transaction.to_dict())
         if not ret:
             return
 
-        return self._icon_service.send_transaction(SignedTransaction(transaction, owner), full_response=True)
+        return self._icon_service.send_transaction(SignedTransaction(transaction, owner, step_limit), full_response=True)
 
     def _call_on_send_request(self, content: dict) -> bool:
         if self._on_send_request:
@@ -66,8 +67,8 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, limit=0x50000000, value: int = 0) -> dict:
-        return self._call_tx(owner, to, method, params, limit, value)
+    def call(self, owner, to, method, params=None, value: int = 0) -> dict:
+        return self._call_tx(owner, to, method, params, value)
 
 
 class PRepToolsListener(object):
@@ -90,12 +91,11 @@ class PRepToolsWriter(PRepToolsListener):
         self._owner = owner
         self._nid = nid
 
-    def _call(self, method: str, params: dict, step_limit: int = 0x10000000, value: int = 0) -> dict:
+    def _call(self, method: str, params: dict, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
             to=ZERO_ADDRESS,
-            limit=step_limit,
             method=method,
             params=params,
             value=value
