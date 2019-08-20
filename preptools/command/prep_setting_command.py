@@ -82,7 +82,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        help="P-Rep off-chain details"
+        help="json url including P-Rep detailed information"
     )
 
     parser.add_argument(
@@ -97,7 +97,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file having P-Rep information"
+        help="json file including P-Rep information"
     )
 
     parser.set_defaults(func=_register_prep)
@@ -244,7 +244,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        help="P-Rep off-chain details"
+        help="json url including P-Rep details information"
     )
 
     parser.add_argument(
@@ -259,7 +259,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file having prepInfo"
+        help="json file including P-Rep information"
     )
 
     parser.set_defaults(func=_set_prep)
