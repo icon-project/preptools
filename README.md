@@ -5,7 +5,7 @@ the development environment and the usage of preptools CLI commands.
 
 ## Building from source
 First, clone this project. Then go to the project directory, create a virtualenv environment, and run the build script. Then install preptools with the .whl file.
-```
+```bash
 $ python -m venv venv             # Create a virtual environment.
 $ source venv/bin/activate        # Enter the virtual environment.
 (venv)$ ./build.sh                # run build script.
@@ -30,7 +30,7 @@ This chapter explains how to install P-Rep Tools on your system.
 ### Setup
 Install the preptools with the .whl file as below.
 ```
-$ pip install dist/preptools-1.0.0-py3-none-any.whl
+(venv) $ pip install dist/preptools-1.0.0-py3-none-any.whl
 ```
 
 ## How to use P-Rep tools
@@ -486,7 +486,7 @@ optional arguments:
                         keystore password
   --keystore KEYSTORE, -k KEYSTORE
                         keystore file path
-  --irep IREP           amounts of irep
+  --irep IREP           amounts of irep in loop
 ```
 
 **Options**
@@ -499,12 +499,12 @@ optional arguments:
 | -c, --config    | ./preptools_config.json     | preptools config file path                           |
 | -p, --password  |                             | keystore password                                    |
 | -k, --keystore  |                             | keystore file path                                   |
-| --irep          |                             | amounts of irep                                      |
+| --irep          |                             | amounts of irep in loop                                    |
 
 **Examples**
 
 ```bash
-(venv) $ preptools setGovernanceVariables --irep 0x0x21e19e0c9bab2400000
+(venv) $ preptools setGovernanceVariables --irep 50_000_000_000_000_000_000_000
 > Password: 
 [Request] ======================================================================
 {
@@ -519,7 +519,7 @@ optional arguments:
     "method": "setGovernanceVariables",
     "data_type": "call",
     "params": {
-        "irep": "0x0x21e19e0c9bab2400000"
+        "irep": "0xa968163f0a57b400000"
     }
 }
 
@@ -570,7 +570,7 @@ optional arguments:
 
 **Examples**
 ```bash
-venv) $ preptools getPRep hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6
+(venv) $ preptools getPRep hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6
 [Request] ======================================================================
 {
     "from_": "hx1234567890123456789012345678901234567890",
@@ -768,7 +768,7 @@ optional arguments:
 **Examples**
 
 ```bash
-(work) $ preptools keystore keystore_file
+(venv) $ preptools keystore keystore_file
 Input your keystore password:
 Retype your keystore password:
 Made file successfully
@@ -798,7 +798,7 @@ optional arguments:
 **Examples**
 
 ```bash
-(work) $ preptools genconf
+(venv) $ preptools genconf
 Made ./preptools_config.json successfully
 ```
 

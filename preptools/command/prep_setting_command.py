@@ -16,6 +16,8 @@
 import argparse
 import json
 
+from iconsdk.utils.convert_type import convert_int_to_hex_str
+
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
@@ -295,7 +297,7 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
 
     parser.add_argument(
         "--irep",
-        type=str,
+        type=int,
         required=True,
         help="amounts of irep"
     )
@@ -305,7 +307,7 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
 
 def _set_governance_variables(args) -> dict:
     params = {
-        'irep': args.irep
+        'irep': convert_int_to_hex_str(args.irep)
     }
 
     writer = create_writer_by_args(args)
