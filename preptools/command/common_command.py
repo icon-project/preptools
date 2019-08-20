@@ -74,7 +74,7 @@ def _init_for_genconf(sub_parser):
     parser.add_argument('--path',
                         type=str,
                         default=FN_CLI_CONF,
-                        help='Path of configue file. default = /preptools_config.json')
+                        help='Path of configue file. default(./preptools_config.json)')
 
     parser.set_defaults(func=_genconf)
 
