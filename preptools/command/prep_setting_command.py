@@ -16,6 +16,8 @@
 import argparse
 import json
 
+from iconsdk.utils.convert_type import convert_int_to_hex_str
+
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
@@ -82,7 +84,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        help="P-Rep off-chain details"
+        help="json url including P-Rep detailed information"
     )
 
     parser.add_argument(
@@ -97,7 +99,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file having P-Rep information"
+        help="json file including P-Rep information"
     )
 
     parser.set_defaults(func=_register_prep)
@@ -244,7 +246,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        help="P-Rep off-chain details"
+        help="json url including P-Rep details information"
     )
 
     parser.add_argument(
@@ -259,7 +261,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file having prepInfo"
+        help="json file including P-Rep information"
     )
 
     parser.set_defaults(func=_set_prep)
@@ -295,7 +297,7 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
 
     parser.add_argument(
         "--irep",
-        type=str,
+        type=int,
         required=True,
         help="amounts of irep"
     )
@@ -305,7 +307,7 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
 
 def _set_governance_variables(args) -> dict:
     params = {
-        'irep': args.irep
+        'irep': convert_int_to_hex_str(args.irep)
     }
 
     writer = create_writer_by_args(args)

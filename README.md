@@ -1,20 +1,20 @@
 # P-Rep tools (preptools) Tutorial
 
-This tutorial is intended to give an introduction to using preptools. this guide will walk you through the basics of setting up
-your development environment and the the usage of preptools CLI commands.
+This tutorial is intended to give an introduction to using preptools. This guide will walk through the basics of setting up
+the development environment and the usage of preptools CLI commands.
 
 ## Building from source
-First, clone this project. Then go to the project directory, create a virtualenv environment, and run build script. You can then install preptools with the .whl file.
-```
-$ python -m venv venv             # Crate a virtual environment.
-$ source venv/bin/activate        # Enter the vitual environment.
+First, clone this project. Then go to the project directory, create a virtualenv environment, and run the build script. Then install preptools with the .whl file.
+```bash
+$ python -m venv venv             # Create a virtual environment.
+$ source venv/bin/activate        # Enter the virtual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
 preptools-1.0.0-py3-none-any.whl
 ```
 
 ## Installation
-This chapter will explain how to install T-Bears on your system.
+This chapter explains how to install P-Rep Tools on your system.
 
 ### Requirements
 
@@ -28,9 +28,9 @@ This chapter will explain how to install T-Bears on your system.
     $ python3 -V
     ```
 ### Setup
-In case of install, you can install with wheel file that you've built.
+Install the preptools with the .whl file as below.
 ```
-$ pip install dist/preptools-1.0.0-py3-none-any.whl
+(venv) $ pip install dist/preptools-1.0.0-py3-none-any.whl
 ```
 
 ## How to use P-Rep tools
@@ -38,7 +38,7 @@ $ pip install dist/preptools-1.0.0-py3-none-any.whl
 ### Command-line Interfaces (CLIs)
 
 #### Overview
-Preptools provides 7 commands. Here is the available commands list.
+preptools provides several commands. Here is the list of the available commands.
 
 #### Usage
 
@@ -46,10 +46,10 @@ Preptools provides 7 commands. Here is the available commands list.
 usage: preptools [-h] command                 
                  ...
 
-P-Rep management cli
+P-Rep management CLI
 
 optional arguments:
-  -h, --help                show this help message and exit
+  -h, --help            show this help message and exit
 
 subcommands:
     registerPRep        Register P-Rep
@@ -72,28 +72,27 @@ subcommands:
 | -h, --help      |         | Show this help message and exit |
 
 
-### Preptools setting commands
+### preptools setting commands
 
-Commands that setting the P-Rep info. There are four commands `preptools registerPRep`, `preptools unregisterPRep`, 
-`preptools setPRep` and `preptools setGovernanceVariables`. 
-Whenever this commands are called, it loads the configuration from `preptools_config.json`.
-If you want to use other configuration file, you can specify the file location with the `-c` option.
+There are four commands to set up the P-Rep information: `preptools registerPRep`, `preptools unregisterPRep`, 
+`preptools setPRep`, and `preptools setGovernanceVariables`. 
+Whenever the commands are called, they load the configuration from `preptools_config.json`.
+In order to use other configuration file, please specify the file location with the `-c` option.
 #### preptools registerPRep
 
 **Description**
 
 Register P-Rep.   
-There are three way of register P-Rep.   
+There are three ways of registering a P-Rep.   
   - Using command line option  
-    You can input P-Rep information with --[OPT_NAME] OPT_VALUE.  
-    The priority of json and command line is command line > json 
+    Input P-Rep information with --[OPT_NAME] OPT_VALUE.  
+    The order of priority is command line > json 
      
   - Using json file  
-    You can input P-Rep information with --prep-json JSON_PATH.  
-    
+    Input P-Rep information with --prep-json JSON_PATH.  
     
   - Using interactive mode  
-    If any information that have to entered remain, interactive mode activate and get P-Rep information.
+    Additional P-Rep information will be collected in interactive mode if needed. 
 
 **Usage**
 
@@ -107,8 +106,8 @@ usage: preptools registerPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -120,11 +119,11 @@ optional arguments:
   --city CITY           P-Rep's city
   --email EMAIL         P-Rep's email
   --website WEBSITE     P-Rep's homepage url
-  --details DETAILS     P-Rep off-chain details
+  --details DETAILS     json url including P-Rep detailed information
   --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
   --prep-json PREP_JSON
-                        json file having P-Rep information
+                        json file including P-Rep information
 ```
 
 **Options**
@@ -142,7 +141,8 @@ optional arguments:
 | --city          |                             | P-Rep's city.                                                         |
 | --email         |                             | P-Rep's email.                ex) "example@iconloop.com"              |
 | --website       |                             | P-Rep's homepage url.         ex) "https://node.example.com/"         |
-| --details       |                             | P-Rep off chain details.      ex) "https://node.example.com/json"     |
+| --details       |                             | json url including P-Rep detailed information                         |
+|                 |                             | ex) "https://node.example.com/json"                                    |
 | --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
 |                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
 | --prep-json     |                             | json file having P-Rep information                                    |
@@ -253,8 +253,8 @@ usage: preptools unregisterPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -313,7 +313,7 @@ Change enrolled P-Rep information.
 There are three way of set P-Rep.   
   - Using command line option  
     You can input P-Rep information with --[OPT_NAME] OPT_VALUE.  
-    The priority of json and command line is command line > json 
+    The order of priority is command line > json. 
      
   - Using json file  
     You can input P-Rep information with --prep-json JSON_PATH.  
@@ -335,8 +335,8 @@ usage: preptools setPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -349,11 +349,11 @@ optional arguments:
   --city CITY           P-Rep's city
   --email EMAIL         P-Rep's email
   --website WEBSITE     P-Rep's homepage url
-  --details DETAILS     P-Rep off-chain details
+  --details DETAILS     json url including P-Rep detailed information
   --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
   --prep-json PREP_JSON
-                        json file having prepInfo
+                        json file including P-Rep information
 ```
 
 **Options**
@@ -372,7 +372,8 @@ optional arguments:
 | --city          |                             | P-Rep's city.                                                         |
 | --email         |                             | P-Rep's email.                ex) "example@iconloop.com"              |
 | --website       |                             | P-Rep's homepage url.         ex) "https://node.example.com/"         |
-| --details       |                             | P-Rep off chain details.      ex) "https://node.example.com/json"     |
+| --details       |                             | json url including P-Rep detailed information                         |
+|                 |                             |ex) "https://node.example.com/json"                                    |
 | --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
 |                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
 | --prep-json     |                             | json file having P-Rep information                                    |
@@ -462,7 +463,7 @@ request success.
 
 **Description**  
 
-Change Governance variables used in network operation  
+Change Governance variables used in network operation.  
 You can only change it once per term.  
 Other items besides irep may be added later.  
 
@@ -477,15 +478,15 @@ usage: preptools setGovernanceVariables [-h] [--url URL] [--nid NID]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
                         keystore password
   --keystore KEYSTORE, -k KEYSTORE
                         keystore file path
-  --irep IREP           amounts of irep
+  --irep IREP           amounts of irep in loop
 ```
 
 **Options**
@@ -498,12 +499,12 @@ optional arguments:
 | -c, --config    | ./preptools_config.json     | preptools config file path                           |
 | -p, --password  |                             | keystore password                                    |
 | -k, --keystore  |                             | keystore file path                                   |
-| --irep          |                             | amounts of irep                                      |
+| --irep          |                             | amounts of irep in loop                                    |
 
 **Examples**
 
 ```bash
-(venv) $ preptools setGovernanceVariables --irep 0x0x21e19e0c9bab2400000
+(venv) $ preptools setGovernanceVariables --irep 50_000_000_000_000_000_000_000
 > Password: 
 [Request] ======================================================================
 {
@@ -518,7 +519,7 @@ optional arguments:
     "method": "setGovernanceVariables",
     "data_type": "call",
     "params": {
-        "irep": "0x0x21e19e0c9bab2400000"
+        "irep": "0xa968163f0a57b400000"
     }
 }
 
@@ -551,8 +552,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```
@@ -569,7 +570,7 @@ optional arguments:
 
 **Examples**
 ```bash
-venv) $ preptools getPRep hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6
+(venv) $ preptools getPRep hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6
 [Request] ======================================================================
 {
     "from_": "hx1234567890123456789012345678901234567890",
@@ -621,8 +622,8 @@ usage: preptools getPReps [-h] [--url URL] [--nid NID] [--config CONFIG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --start-ranking START_RANKING
@@ -733,7 +734,7 @@ request success.
 
 ### Preptools Common commands
 
-Commands that generate configuration file and keystore file.
+Commands that generate configuration file and keystore file. There are two commands `keystore` and `genconf`.
 
 #### preptools keystore
 
@@ -767,7 +768,7 @@ optional arguments:
 **Examples**
 
 ```bash
-(work) $ preptools keystore keystore_file
+(venv) $ preptools keystore keystore_file
 Input your keystore password:
 Retype your keystore password:
 Made file successfully
@@ -784,7 +785,7 @@ usage: preptools genconf [-h] [--path PATH]
 
 optional arguments:
   -h, --help   show this help message and exit
-  --path PATH  Path of configue file. default = /preptools_config.json
+  --path PATH  Path of configue file. default(./preptools_config.json)
 ```
 
 **Options**
@@ -797,13 +798,13 @@ optional arguments:
 **Examples**
 
 ```bash
-(work) $ preptools genconf
+(venv) $ preptools genconf
 Made ./preptools_config.json successfully
 ```
 
 ### Preptools Other commands
 
-Commands that are related to transaction.
+Commands that are related to transaction. There are two commands `txresult` and `txbyhash`.
 
 #### preptools txresult
 
@@ -822,8 +823,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```
@@ -892,8 +893,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --url URL, -u URL     node url default) http://127.0.0.1:9000/api/v3
-  --nid NID, -n NID     networkId default(3 ex) mainnet(1), testnet(2)
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```
@@ -966,10 +967,71 @@ In this configuration file, you can define default options values for some CLI c
 | nid                | int        | Network ID. 3 is reserved for P-Rep tools.                     |
 | keyStore           | string     | Keystore file path.                                          |
 
+## JSON Standard for Public Representative Detailed Information 
+
+This is the JSON standard for detailed information about the P-Rep. P-Rep can submit the url of detailed information via the `registerPRep` and `setPRep` action on the ICON Blockchain. We strongly recommend that you register this information.
+
+```json
+{
+    "representative": {
+        "logo": {
+            "logo_256": "https://icon.foundation/img/img-256.png",
+            "logo_1024": "https://icon.foundation/img/img-1024.png",
+            "logo_svg": "https://icon.foundation/img/img-logo.svg"
+        },
+        "media": {
+            "steemit": "",
+            "twitter": "",
+            "youtube": "",
+            "facebook": "",
+            "github": "",
+            "reddit": "",
+            "keybase": "",
+            "telegram": "",
+            "wechat": ""
+        }
+    },
+    "server": {
+        "location": {
+            "country": "",
+            "city": ""
+        },
+        "server_type": "",
+        "api_endpoint": ""
+    }
+}
+```
+
+- representative: Basic information of Public Representative
+  - logo: Logo images of P-Rep
+    -  logo_256: image 256x256px
+    -  logo_1024: image 1024x1024px
+    -  logo_sgv: image svg
+  - media: URL and username of social media
+    -  steemit: Steemit URL
+    -  twitter: Twitter URL
+    -  youtube: Youtube URL
+    -  Facebook: Facebook URL
+    -  github: Github URL
+    -  reddit: Raddit URL
+    -  keybase: Username
+    -  telegram: Username
+    -  wechat: Username
+- server: Server information of Public Representative
+  - location: Server location
+    -  name: Node location in human readable format [City, State]
+    -  country: Node country code [XX]
+  - server_type: Type of server ‘cloud, on-premise, hybrid’
+  - api_endpoint: HTTP endpoint http://host:port
+
+### How to use
+Create a JSON file and upload it to your domain server. When you call the `registerPRep` or `setPRep`function, input the url of this file into the `details` field.
+
 ## References
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
-- [ICON Sdk Python](https://github.com/icon-project/icon-sdk-python)
+- [ICON SDK PYTHON](https://github.com/icon-project/icon-sdk-python)
 
 ## License
 
 This project follows the Apache 2.0 License. Please refer to [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.
+
