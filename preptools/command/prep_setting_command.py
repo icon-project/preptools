@@ -106,7 +106,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 
 def _register_prep(args) -> dict:
-
     writer = create_writer_by_args(args)
 
     if args.prep_json:
