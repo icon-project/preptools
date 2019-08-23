@@ -15,6 +15,7 @@
 import functools
 import getpass
 import json
+from urllib.parse import urlparse, ParseResult
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
@@ -59,7 +60,7 @@ class TxHandler:
         if not ret:
             return
 
-        return self._icon_service.send_transaction(SignedTransaction(transaction, owner, step_limit), full_response=True)
+        return self._icon_service.send_transaction(SignedTransaction(transaction, owner, step_limit))
 
     def _call_on_send_request(self, content: dict) -> bool:
         if self._on_send_request:
@@ -139,7 +140,7 @@ class PRepToolsReader(PRepToolsListener):
 
         self.on_send_request(call.to_dict())
 
-        return self._icon_service.call(call, True)
+        return self._icon_service.call(call)
 
     def _tx_result(self, tx_hash):
         try:
@@ -185,8 +186,7 @@ def create_reader_by_args(args) -> PRepToolsReader:
 
 
 def create_reader(url: str, nid: int) -> PRepToolsReader:
-    url: str = get_url(url)
-    icon_service = IconService(HTTPProvider(url))
+    icon_service = create_icon_service(url)
     return PRepToolsReader(icon_service, nid)
 
 
@@ -213,8 +213,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
 
 
 def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepToolsWriter:
-    url: str = get_url(url)
-    icon_service = IconService(HTTPProvider(url))
+    icon_service = create_icon_service(url)
 
     try:
         owner_wallet = KeyWallet.load(keystore_path, password)
@@ -227,7 +226,10 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
 
 def create_icon_service(url: str) -> IconService:
     url: str = get_url(url)
-    return IconService(HTTPProvider(url))
+    result: 'ParseResult' = urlparse(url)
+    base_url: str = f"{result.scheme}://{result.netloc}"
+
+    return IconService(HTTPProvider(base_url, 3))
 
 
 def _confirm_callback(content: dict, yes: bool) -> bool:
