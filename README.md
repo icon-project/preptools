@@ -27,9 +27,22 @@ This chapter explains how to install P-Rep Tools on your system.
     ```bash
     $ python3 -V
     ```
+
 ### Setup
-Install the preptools with the .whl file as below.
+
+#### Install dependencies
+
+Some native tools and libraries are needed to install preptools without any errors.
+
+```bash
+$ sudo apt-get install -y libssl-dev build-essential automake pkg-config libtool libffi-dev libgmp-dev libyaml-cpp-dev
+$ sudo apt-get install -y python3.7-dev libsecp256k1-dev python3-pip 
 ```
+
+#### Install preptools
+Install the preptools with the .whl file as below.
+
+```bash
 (venv) $ pip install dist/preptools-1.0.0-py3-none-any.whl
 ```
 
