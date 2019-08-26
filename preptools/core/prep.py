@@ -144,10 +144,10 @@ class PRepToolsReader(PRepToolsListener):
         return self._icon_service.call(call)
 
     def _tx_result(self, tx_hash):
-        return self._icon_service.get_transaction_result(tx_hash, True)
+        return self._icon_service.get_transaction_result(tx_hash)
 
     def _tx_by_hash(self, tx_hash):
-        return self._icon_service.get_transaction(tx_hash, True)
+        return self._icon_service.get_transaction(tx_hash)
 
     def get_prep(self, address: str) -> dict:
         params = {"address": address}

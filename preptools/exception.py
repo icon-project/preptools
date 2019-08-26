@@ -33,9 +33,10 @@ class PRepToolsExceptionCode(IntEnum):
     # ZIP_MEMORY_ERROR = 6
     # URL_ERROR = 7
 
-    STRING_FORMAT_ERROR = 8
-    FILE_WRITE_ERROR = 9
-    FILE_READ_ERROR = 10
+    COMMAND_ERROR = 8
+    STRING_FORMAT_ERROR = 9
+    FILE_WRITE_ERROR = 10
+    FILE_READ_ERROR = 11
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -59,6 +60,12 @@ class PRepToolsBaseException(BaseException):
 
     def __str__(self):
         return f'{self.message}'
+
+
+class InvalidCommandException(PRepToolsBaseException):
+    """Invalid Command"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.COMMAND_ERROR)
 
 
 class InvalidFormatException(PRepToolsBaseException):
