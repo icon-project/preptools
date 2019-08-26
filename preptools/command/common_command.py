@@ -57,6 +57,8 @@ def _keystore(args):
 
     print(f"Made keystore file successfully")
 
+    return 0
+
 
 def _init_for_genconf(sub_parser):
     name = "genconf"
@@ -82,6 +84,8 @@ def _genconf(args):
         print(f"Made {result} successfully")
     else:
         print(f"There were configuration files already.")
+
+    return 0
 
 
 def _gen_conf_file():
