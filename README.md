@@ -46,6 +46,11 @@ Install the preptools with the .whl file as below.
 (venv) $ pip install dist/preptools-1.0.0-py3-none-any.whl
 ```
 
+Install the preptools with pypi
+```bash
+(venv) $ pip install preptools
+```
+
 ## How to use P-Rep tools
 
 ### Command-line Interfaces (CLIs)
