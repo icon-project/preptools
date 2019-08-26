@@ -23,12 +23,19 @@ class PRepToolsExceptionCode(IntEnum):
     Refer to http://www.simple-is-better.org/json-rpc/jsonrpc20.html#examples
     """
     OK = 0
-    COMMAND_ERROR = 1
-    STRING_FORMAT_ERROR = 2
-    FILE_WRITE_ERROR = 3
-    FILE_READ_ERROR = 4
-    KEYSTORE_ERROR = 5
-    DATA_TYPE_ERROR = 6
+
+    # Exceptions in SDK
+    # KEY_STORE_ERROR = 1
+    # ADDRESS_ERROR = 2
+    # BALANCE_ERROR = 3
+    # DATA_TYPE_ERROR = 4
+    # JSON_RPC_ERROR = 5
+    # ZIP_MEMORY_ERROR = 6
+    # URL_ERROR = 7
+
+    STRING_FORMAT_ERROR = 8
+    FILE_WRITE_ERROR = 9
+    FILE_READ_ERROR = 10
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -54,12 +61,6 @@ class PRepToolsBaseException(BaseException):
         return f'{self.message}'
 
 
-class InvalidCommandException(PRepToolsBaseException):
-    """Invalid string format for preptools"""
-    def __init__(self, message: Optional[str]):
-        super().__init__(message, PRepToolsExceptionCode.COMMAND_ERROR)
-
-
 class InvalidFormatException(PRepToolsBaseException):
     """Invalid string format for preptools"""
     def __init__(self, message: Optional[str]):
@@ -76,15 +77,3 @@ class InvalidFileReadException(PRepToolsBaseException):
     """Invalid file read"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.FILE_READ_ERROR)
-
-
-class InvalidKeyStoreException(PRepToolsBaseException):
-    """Invalid Keystore"""
-    def __init__(self, message: Optional[str]):
-        super().__init__(message, PRepToolsExceptionCode.KEYSTORE_ERROR)
-
-
-class InvalidDataTypeException(PRepToolsBaseException):
-    """Invalid Keystore"""
-    def __init__(self, message: Optional[str]):
-        super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
