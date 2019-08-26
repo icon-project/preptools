@@ -15,12 +15,11 @@
 # limitations under the License.
 
 import argparse
-import json
 import sys
 import time
-
 from typing import Optional
 
+from iconsdk.exception import IconServiceBaseException
 from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
 from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
@@ -55,7 +54,7 @@ def main() -> Optional:
 
     try:
         response: Optional[dict, int] = args.func(args)
-    except PRepToolsBaseException as e:
+    except (PRepToolsBaseException, IconServiceBaseException) as e:
         print(e)
         response = e.code.value
     except Exception as e:
@@ -65,10 +64,8 @@ def main() -> Optional:
         print("\nexit")
         response = 0
 
-    if isinstance(response, dict):
-        print_response(json.dumps(response, indent=4))
-
     if isinstance(response, int) is False:
+        print_response(response)
         sys.exit(PRepToolsExceptionCode.OK.value)
 
     sys.exit(response)

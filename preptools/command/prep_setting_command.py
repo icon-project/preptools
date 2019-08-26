@@ -17,7 +17,6 @@ import argparse
 import json
 
 from iconsdk.utils.convert_type import convert_int_to_hex_str
-
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
@@ -105,7 +104,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_register_prep)
 
 
-def _register_prep(args) -> dict:
+def _register_prep(args) -> str:
     writer = create_writer_by_args(args)
 
     if args.prep_json:
@@ -118,7 +117,7 @@ def _register_prep(args) -> dict:
     _get_prep_dict_from_cli(params)
     response = writer.register_prep(params)
 
-    return response
+    return 'txHash : ' + response
 
 
 def _get_prep_dict_from_cli(params, set_prep: bool = False):
@@ -183,12 +182,12 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
     parser.set_defaults(func=_unregister_prep)
 
 
-def _unregister_prep(args) -> dict:
+def _unregister_prep(args) -> str:
 
     writer = create_writer_by_args(args)
     response = writer.unregister_prep()
 
-    return response
+    return 'txHash : ' + response
 
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -266,7 +265,7 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_set_prep)
 
 
-def _set_prep(args) -> dict:
+def _set_prep(args) -> str:
 
     writer = create_writer_by_args(args)
 
@@ -282,7 +281,7 @@ def _set_prep(args) -> dict:
 
     response = writer.set_prep(params)
 
-    return response
+    return 'txHash : ' + response
 
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
@@ -304,7 +303,7 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
     parser.set_defaults(func=_set_governance_variables)
 
 
-def _set_governance_variables(args) -> dict:
+def _set_governance_variables(args) -> str:
     params = {
         'irep': convert_int_to_hex_str(args.irep)
     }
@@ -312,7 +311,7 @@ def _set_governance_variables(args) -> dict:
     writer = create_writer_by_args(args)
     response = writer.set_governance_variables(params)
 
-    return response
+    return 'txHash : ' + response
 
 
 def create_tx_parser() -> argparse.ArgumentParser:

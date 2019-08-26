@@ -19,13 +19,13 @@ from urllib.parse import urlparse, ParseResult
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
-from iconsdk.exception import KeyStoreException, DataTypeException
+from iconsdk.exception import KeyStoreException
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
+from preptools.exception import InvalidFileReadException
 
-from preptools.exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
@@ -54,11 +54,12 @@ class TxHandler:
             .value(value) \
             .build()
 
-        step_limit = self._icon_service.estimate_step(transaction) + 10000  # add some margin.
-
         ret = self._call_on_send_request(transaction.to_dict())
+
         if not ret:
             return
+
+        step_limit = self._icon_service.estimate_step(transaction) + 10000  # add some margin.
 
         return self._icon_service.send_transaction(SignedTransaction(transaction, owner, step_limit))
 
@@ -68,7 +69,7 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, value: int = 0) -> dict:
+    def call(self, owner, to, method, params=None, value: int = 0) -> str:
         return self._call_tx(owner, to, method, params, value)
 
 
@@ -92,7 +93,7 @@ class PRepToolsWriter(PRepToolsListener):
         self._owner = owner
         self._nid = nid
 
-    def _call(self, method: str, params: dict, value: int = 0) -> dict:
+    def _call(self, method: str, params: dict, value: int = 0):
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
@@ -105,19 +106,19 @@ class PRepToolsWriter(PRepToolsListener):
     def _create_tx_handler(self) -> TxHandler:
         return TxHandler(self._icon_service, self._nid, self.on_send_request)
 
-    def register_prep(self, params) -> dict:
+    def register_prep(self, params) -> str:
         method = "registerPRep"
         return self._call(method, params, value=2000*10**18)
 
-    def unregister_prep(self) -> dict:
+    def unregister_prep(self) -> str:
         method = "unregisterPRep"
         return self._call(method, {})
 
-    def set_prep(self, params) -> dict:
+    def set_prep(self, params) -> str:
         method = "setPRep"
         return self._call(method, params)
 
-    def set_governance_variables(self, params) -> dict:
+    def set_governance_variables(self, params) -> str:
         method = "setGovernanceVariables"
         return self._call(method, params)
 
@@ -143,16 +144,10 @@ class PRepToolsReader(PRepToolsListener):
         return self._icon_service.call(call)
 
     def _tx_result(self, tx_hash):
-        try:
-            return self._icon_service.get_transaction_result(tx_hash, True)
-        except DataTypeException:
-            raise InvalidDataTypeException("This hash value is unrecognized.")
+        return self._icon_service.get_transaction_result(tx_hash)
 
     def _tx_by_hash(self, tx_hash):
-        try:
-            return self._icon_service.get_transaction(tx_hash, True)
-        except DataTypeException:
-            raise InvalidDataTypeException("This hash value is unrecognized.")
+        return self._icon_service.get_transaction(tx_hash)
 
     def get_prep(self, address: str) -> dict:
         params = {"address": address}
@@ -199,7 +194,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
         yes: bool = args.yes
 
     if keystore_path is None:
-        raise InvalidKeyStoreException("There's no keystore path in cmdline, configure.")
+        raise KeyStoreException("There's no keystore path in cmdline, configure.")
 
     if password is None:
         password = getpass.getpass("> Password: ")
@@ -215,11 +210,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
 def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepToolsWriter:
     icon_service = create_icon_service(url)
 
-    try:
-        owner_wallet = KeyWallet.load(keystore_path, password)
-
-    except KeyStoreException as e:
-        raise InvalidKeyStoreException(f"{e}")
+    owner_wallet = KeyWallet.load(keystore_path, password)
 
     return PRepToolsWriter(icon_service, nid, owner_wallet)
 
@@ -229,7 +220,9 @@ def create_icon_service(url: str) -> IconService:
     result: 'ParseResult' = urlparse(url)
     base_url: str = f"{result.scheme}://{result.netloc}"
 
-    return IconService(HTTPProvider(base_url, 3))
+    icon_service = IconService(HTTPProvider(base_url, 3))
+
+    return icon_service
 
 
 def _confirm_callback(content: dict, yes: bool) -> bool:
