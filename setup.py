@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 
+import os
+
 from setuptools import setup, find_packages
-from VERSION import __version__
+
+version = os.environ.get('VERSION')
+if version is None:
+    with open(os.path.join('.', 'VERSION')) as version_file:
+        version = version_file.read().strip()
 
 with open('requirements.txt') as requirements:
     requires = list(requirements)
 
 setup_options = {
     'name': 'preptools',
-    'version': __version__,
+    'version': version,
     'description': 'Test suite for ICON SCORE development',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
