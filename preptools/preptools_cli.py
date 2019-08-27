@@ -20,6 +20,7 @@ import time
 from typing import Optional
 
 from iconsdk.exception import IconServiceBaseException
+from preptools.utils.utils import get_preptools_version
 from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
 from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
@@ -38,7 +39,8 @@ def main() -> Optional:
     parser = argparse.ArgumentParser(
         prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="P-Rep management cli")
+        description=f"P-Rep management command line interface v{get_preptools_version()}")
+
     sub_parser = parser.add_subparsers(title="subcommands")
 
     common_parent_parser = create_common_parser()
