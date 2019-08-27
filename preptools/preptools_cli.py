@@ -64,7 +64,7 @@ def main() -> Optional:
         print("\nexit")
         response = 0
 
-    if isinstance(response, int) is False:
+    if isinstance(response, int) is False and response:
         print_response(response)
         sys.exit(PRepToolsExceptionCode.OK.value)
 
