@@ -19,6 +19,8 @@ import sys
 import time
 from typing import Optional
 
+from VERSION import __version__
+
 from iconsdk.exception import IconServiceBaseException
 from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
 from preptools.core.prep import create_icon_service
@@ -39,6 +41,9 @@ def main() -> Optional:
         prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="P-Rep management cli")
+
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
+
     sub_parser = parser.add_subparsers(title="subcommands")
 
     common_parent_parser = create_common_parser()

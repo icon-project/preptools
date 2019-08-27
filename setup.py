@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+from VERSION import __version__
 
 with open('requirements.txt') as requirements:
     requires = list(requirements)
 
 setup_options = {
     'name': 'preptools',
-    'version': '1.0.2',
+    'version': __version__,
     'description': 'Test suite for ICON SCORE development',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
