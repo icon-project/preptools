@@ -36,10 +36,11 @@ def main() -> Optional:
         common_command.init
     ]
 
+    version = get_preptools_version()
     parser = argparse.ArgumentParser(
         prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=f"P-Rep management command line interface v{get_preptools_version()}")
+        description=f"P-Rep management command line interface v{version}")
 
     sub_parser = parser.add_subparsers(title="subcommands")
 

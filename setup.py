@@ -15,7 +15,7 @@ with open('requirements.txt') as requirements:
 setup_options = {
     'name': 'preptools',
     'version': version,
-    'description': 'Test suite for ICON SCORE development',
+    'description': 'P-Rep management command line interface',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
     'packages': find_packages(exclude=['tests*', 'docs']),
