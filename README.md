@@ -61,22 +61,28 @@ preptools provides several commands. Here is the list of the available commands.
 #### Usage
 
 ```
-usage: preptools [-h] command                 
+usage: preptools [-h]
                  ...
 
-P-Rep management CLI
+P-Rep management command line interface v1.0.2
 
 optional arguments:
   -h, --help            show this help message and exit
 
 subcommands:
+  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,registerProposal,cancelProposal,voteProposal,getPRep,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
     registerPRep        Register P-Rep
     unregisterPRep      Unregister P-Rep
     setPRep             Change enrolled P-Rep information
     setGovernanceVariables
                         Change Governance variables used in network operation
+    registerProposal    Register Proposal
+    cancelProposal      Cancel Proposal
+    voteProposal        Vote Proposal
     getPRep             Inquire P-Rep information
     getPReps            Get live status of all registered P-Rep candidates
+    getProposal         Inquire Proposal information using transaction hash
+    getProposals        Inquire all of network proposal list.
     txresult            Get transaction result by hash
     txbyhash            Get transaction by hash
     keystore            Create keystore file in the specified path.
@@ -90,18 +96,18 @@ subcommands:
 | -h, --help      |         | Show this help message and exit |
 
 
-### preptools setting commands
+###Setting PRep commands
 
 There are four commands to set up the P-Rep information: `preptools registerPRep`, `preptools unregisterPRep`, 
 `preptools setPRep`, and `preptools setGovernanceVariables`. 
 Whenever the commands are called, they load the configuration from `preptools_config.json`.
 In order to use other configuration file, please specify the file location with the `-c` option.
-#### preptools registerPRep
+####registerPRep
 
 **Description**
 
 Register P-Rep.   
-There are three ways of registering a P-Rep.   
+There are two ways of registering a P-Rep.   
   - Using command line option  
     Input P-Rep information with --[OPT_NAME] OPT_VALUE.  
     The order of priority is command line > json 
@@ -109,9 +115,6 @@ There are three ways of registering a P-Rep.
   - Using json file  
     Input P-Rep information with --prep-json JSON_PATH.  
     
-  - Using interactive mode  
-    Additional P-Rep information will be collected in interactive mode if needed. 
-
 **Usage**
 
 ```bash
@@ -257,7 +260,7 @@ request success.
 }
 ```
 
-#### preptools unregisterPRep
+####unregisterPRep
 
 **Description**
 
@@ -323,7 +326,7 @@ request success.
 }
 ```
 
-#### preptools setPRep
+####setPRep
 
 **Description**  
 
@@ -477,7 +480,7 @@ request success.
 
 ```
 
-#### preptools setGovernanceVariables
+####setGovernanceVariables
 
 **Description**  
 
@@ -555,7 +558,7 @@ request success.
 
 Commands that show the P-Rep information. There are two commands `preptools getPRep` and `preptools getPReps`.
 
-#### preptools getPRep
+####getPRep
 **Description**  
 
 Inquire P-Rep information
@@ -626,7 +629,7 @@ request success.
 }
 ```
 
-#### preptools getPReps
+####getPReps
 **Description**  
 
 Get live status of all registered P-Rep candidates
@@ -750,11 +753,481 @@ request success.
 }
 ```
 
-### Preptools Common commands
+###Network Proposal commands
+
+There are 3 commands to network-proposal: `registerProposal`, `cancelProposal` and `voteProposal`
+Whenever the commands are called, they load the configuration from `preptools_config.json`.
+In order to use other configuration file, please specify the file location with the `-c` option.
+
+####registerProposal
+refer [registerProposal request format](https://github.com/icon-project/governance#registerproposal)
+
+**Description**
+
+Register Network-proposal
+
+**Usage**
+
+```bash
+usage: preptools registerProposal [-h] [--url URL] [--nid NID]
+                                  [--config CONFIG] [--yes] [--verbose]
+                                  [--password PASSWORD] [--keystore KEYSTORE]
+                                  --title TITLE --desc DESC --type TYPE
+                                  [--value-value VALUE_VALUE]
+                                  [--value-code VALUE_CODE]
+                                  [--value-name VALUE_NAME]
+                                  [--value-address VALUE_ADDRESS]
+                                  [--value-type VALUE_TYPE]
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -p, --password  |         | Keystore file's password                 |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+| -y, --yes | | Do not confirm if you want to send request |
+| --title  |         | title of network-proposal                 |
+| --desc  |         | description of network-proposal              |
+| --type  |         | type of network-proposal(0,1,2,3,4)                 |
+| --value-value  |         | value of value field                 |
+| --value-code  |         | value of code field                 |
+| --value-address  |         | value of address field                 |
+| --value-type  |         | value of type field                 |
+
+**Examples**
+```bash
+(venv)$ preptools registerProposal -c preptools_config.json -k prep_keys0 -p qwer1234% --title pro0 --desc "first proposal" --type 4 --value-value 1234
+[Value] ========================================================================
+{
+    "value": "1234"
+}
+[Request] ======================================================================
+{
+    "from_": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+    "to": "cx0000000000000000000000000000000000000001",
+    "value": 0,
+    "step_limit": 268435456,
+    "nid": 3,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "registerProposal",
+    "data_type": "call",
+    "params": {
+        "title": "pro0",
+        "description": "first proposal",
+        "type": "0x4",
+        "value": "0x7b2276616c7565223a202231323334227d"
+    }
+}
+
+> Continue? [Y/n]Y
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4",
+    "id": 1234
+}
+```
+
+####voteProposal
+refer [voteProposal request format](https://github.com/icon-project/governance#voteproposal)
+
+**Description**
+
+Vote Network-proposal
+
+**Usage**
+
+```bash
+usage: preptools voteProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
+                              [--yes] [--verbose] [--password PASSWORD]
+                              [--keystore KEYSTORE] --id ID --vote VOTE
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --id ID               hash of registerProposal TX
+  --vote VOTE           0 : disagree, 1 : agree
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+| -y, --yes | | Do not confirm if you want to send request |
+| -p, --password | | password of keystore file |
+| -k, --keystore | | path of keystore file |
+| --id  |         | id of network-proposal to vote                 |
+| --vote  |         | voting value(0: disagree, 1: agree)                 |
+
+
+**Examples**
+```bash
+(venv)$ preptools voteProposal -k prep_keys1 --id 0x515d0c7470e56358a6085ca93d305c4c28d004c10d110b26570dadc34bf2e492 --vote 0
+> Password:
+[Request] ======================================================================
+{
+    "from_": "hx85d62b91d70bc2390b636a8d64136a413e671e3a",
+    "to": "cx0000000000000000000000000000000000000001",
+    "value": 0,
+    "step_limit": 268435456,
+    "nid": 3,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "voteProposal",
+    "data_type": "call",
+    "params": {
+        "id": "0x515d0c7470e56358a6085ca93d305c4c28d004c10d110b26570dadc34bf2e492",
+        "vote": 0
+    }
+}
+
+> Continue? [Y/n]Y
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": "0x22ca6eb228586ed2a00924f18bc57f1819214bf0d5c5d305b03d72a931360cc8",
+    "id": 1234
+}
+
+```
+
+####cancelProposal
+
+refer [cancelProposal request format](https://github.com/icon-project/governance#cancelproposal)
+
+**Description**
+
+Cancel Network-proposal
+
+**Usage**
+
+```bash
+usage: preptools cancelProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
+                                [--yes] [--verbose] [--password PASSWORD]
+                                [--keystore KEYSTORE] --id [ID]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --id [ID]             hash of registerProposal TX
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| --config            |         | configuration file path. |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+| -y, --yes | | Do not confirm if you want to send request |
+| -p, --password | | password of keystore file |
+| -k, --keystore | | path of keystore file |
+| -h, --help      |         | show this help message and exit          |
+| --id  |         | id of network-proposal to cancel                 |
+
+**Examples**
+```bash
+(venv) inwonkim-1:icon-service-test-suite inwonkim$ preptools cancelProposal -k prep_keys0 --id 0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4
+> Password:
+[Request] ======================================================================
+{
+    "from_": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+    "to": "cx0000000000000000000000000000000000000001",
+    "value": 0,
+    "step_limit": 268435456,
+    "nid": 3,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "cancelProposal",
+    "data_type": "call",
+    "params": {
+        "id": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4"
+    }
+}
+
+> Continue? [Y/n]Y
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": "0x344887e8b9b30e523991e44602eee51857fd7a55e5437b34a7e8d0f2ede8c019",
+    "id": 1234
+}
+```
+
+###Querying Network Proposal commands
+
+There are 2 commands to network-proposal: `getProposal` and `getProposals`.
+Whenever the commands are called, they load the configuration from `preptools_config.json`.
+In order to use other configuration file, please specify the file location with the `-c` option.
+
+####getProposal
+refer [getProposal request format](https://github.com/icon-project/governance#getproposal)
+
+**Description**
+
+Querying Network-proposal with given proposal-id
+
+**Usage**
+
+```bash
+usage: preptools getProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
+                             [--yes] [--verbose]
+                             transaction_hash
+
+positional arguments:
+  transaction_hash      hash of registerProposal transaction
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| -c, --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+
+
+**examples**
+```bash
+(venv)$ preptools getProposal 0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4
+[Request] ======================================================================
+{
+    "from_": "hx1234567890123456789012345678901234567890",
+    "to": "cx0000000000000000000000000000000000000001",
+    "method": "getProposal",
+    "params": {
+        "id": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4"
+    }
+}
+
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "id": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4",
+        "proposer": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+        "proposerName": "nodehxb74e29fba1809a105fdec433040a4e713bbe91fe",
+        "status": "0x0",
+        "startBlockHeight": "0x2c",
+        "endBlockHeight": "0x2f",
+        "contents": {
+            "title": "pro0",
+            "description": "first proposal",
+            "type": "0x4",
+            "value": {
+                "value": "1234"
+            }
+        },
+        "vote": {
+            "agree": {
+                "list": [],
+                "amount": "0x0"
+            },
+            "disagree": {
+                "list": [],
+                "amount": "0x0"
+            },
+            "noVote": {
+                "list": [
+                    "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+                    "hx85d62b91d70bc2390b636a8d64136a413e671e3a",
+                    "hxd891096dd01c1af790c29d55022a35357684643c",
+                    "hx44ae89b457ccfb1bacbe35d278933ba887373b1b",
+                    "hxf2c6b56e6dfcfe7c3b9fbd3d1ca1d08973b8d363",
+                    "hxe54bdf4b25affa59c8963f1e4a6c45183aee167f",
+                    "hx02ccb9e378a35e11a65b5c60e796fded98383b37",
+                    "hx064c3d9b4982aae0253b9a8b3dd106823c107c25",
+                    "hxcd294f136f39232d97081f2dfa22886c76f45afb",
+                    "hxd685153db2a09347115cf0d8d1c5f9ab174bd802",
+                    "hx383b555e0301b77b1c326815bccaaaf382ecd238",
+                    "hxb0bfb180fb60ac68a0d3dbcadf509af07dd1f501",
+                    "hxa5861173d2bd05dd9bfc5c5d74faa654f8d37c7b",
+                    "hxee194a44eb4d06fb7c8a9515f74eb41735046be2",
+                    "hx6e220a1b6c0fc12b2d3cc6122fccf2e9ec3d1406",
+                    "hxa46f74425c0e588be8c93bbabf1be2c67da12066",
+                    "hx81c5db07cd6c1c569e0a5abebdb7b108157d80b5",
+                    "hx46ca63475e630e7c3a8c3f8c0e2981b675f32919",
+                    "hxffa3675581c0209c2adcc598767c77d43f999a33",
+                    "hx9259b69bbdea01f32e97d91401ada24d12965ae3",
+                    "hx282c3778a572d4d0d1eb8e65ab53daaedea3f68e",
+                    "hx25b84c8fe8bfabda4fb30523a1923a79cc304af5"
+                ],
+                "amount": "0x10658da4dff32a862400000"
+            }
+        }
+    },
+    "id": 1234
+}
+```
+
+####getProposals
+refer [getProposals request format](https://github.com/icon-project/governance#getproposals)
+
+**Description**
+
+Querying all Network-proposal
+
+**Usage**
+
+```bash
+usage: preptools getProposals [-h] [--url URL] [--nid NID] [--config CONFIG]
+                              [--yes] [--verbose] [--type [TYPE]]
+                              [--status [STATUS]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --type [TYPE]         type of network proposal to filter
+  --status [STATUS]     status of network proposal to filter
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| -c, --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+| --type | | Type of network proposal to filter |
+| --status | | Status of network proposal to filter |
+
+**examples**
+```bash
+(venv)$ preptools getProposals
+[Request] ======================================================================
+{
+    "from_": "hx1234567890123456789012345678901234567890",
+    "to": "cx0000000000000000000000000000000000000001",
+    "method": "getProposals",
+    "params": null
+}
+
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "proposals": [
+            {
+                "id": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4",
+                "proposer": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+                "proposerName": "nodehxb74e29fba1809a105fdec433040a4e713bbe91fe",
+                "status": "0x0",
+                "startBlockHeight": "0x2c",
+                "endBlockHeight": "0x2f",
+                "contents": {
+                    "title": "pro0",
+                    "description": "first proposal",
+                    "type": "0x4",
+                    "value": {
+                        "value": "1234"
+                    }
+                },
+                "vote": {
+                    "agree": {
+                        "count": "0x0",
+                        "amount": "0x0"
+                    },
+                    "disagree": {
+                        "count": "0x0",
+                        "amount": "0x0"
+                    },
+                    "noVote": {
+                        "count": "0x16",
+                        "amount": "0x10658da4dff32a862400000"
+                    }
+                }
+            },
+            {
+                "id": "0x515d0c7470e56358a6085ca93d305c4c28d004c10d110b26570dadc34bf2e492",
+                "proposer": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+                "proposerName": "nodehxb74e29fba1809a105fdec433040a4e713bbe91fe",
+                "status": "0x0",
+                "startBlockHeight": "0x2c",
+                "endBlockHeight": "0x2f",
+                "contents": {
+                    "title": "pro1",
+                    "description": "second proposal",
+                    "type": "0x4",
+                    "value": {
+                        "value": "1234"
+                    }
+                },
+                "vote": {
+                    "agree": {
+                        "count": "0x0",
+                        "amount": "0x0"
+                    },
+                    "disagree": {
+                        "count": "0x1",
+                        "amount": "0xbecc41ad16b07a7600000"
+                    },
+                    "noVote": {
+                        "count": "0x15",
+                        "amount": "0xfa6c16332dc7a0bae00000"
+                    }
+                }
+            }
+        ]
+    },
+    "id": 1234
+}
+```
+###Preptools Common commands
 
 Commands that generate configuration file and keystore file. There are two commands `keystore` and `genconf`.
 
-#### preptools keystore
+####keystore
 
 **Description**
 
@@ -781,7 +1254,6 @@ optional arguments:
 | path            |         | a keystore file path that is to be generated |
 | -h, --help      |         | show this help message and exit          |
 | -p, --password  |         | Keystore file's password                 |
-| path            |         | Path of keystore file                    |
 
 **Examples**
 
@@ -792,7 +1264,7 @@ Retype your keystore password:
 Made file successfully
 ```
 
-#### preptools genconf
+####genconf
 
 **Description**
 
@@ -824,7 +1296,7 @@ Made ./preptools_config.json successfully
 
 Commands that are related to transaction. There are two commands `txresult` and `txbyhash`.
 
-#### preptools txresult
+####txresult
 
 **Description**
 
@@ -894,7 +1366,7 @@ request success.
 
 ```
 
-#### tbears txbyhash
+####txbyhash
 
 **Description**
 
