@@ -15,18 +15,17 @@
 import functools
 import getpass
 import json
-from urllib.parse import urlparse, ParseResult
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
-from iconsdk.exception import KeyStoreException
+from iconsdk.exception import KeyStoreException, DataTypeException
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
-from preptools.exception import InvalidFileReadException
 
-from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN
+from preptools.exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
+from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN, GOVERNANCE_ADDRESS
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict, get_url
 
@@ -43,10 +42,11 @@ class TxHandler:
         self._nid = nid
         self._on_send_request = on_send_request
 
-    def _call_tx(self, owner, to, method, params, value: int = 0):
+    def _call_tx(self, owner, to, method, params, limit, value: int = 0):
         transaction = CallTransactionBuilder() \
             .from_(owner.get_address()) \
             .to(to) \
+            .step_limit(limit) \
             .version(3) \
             .nid(self._nid) \
             .method(method) \
@@ -55,13 +55,10 @@ class TxHandler:
             .build()
 
         ret = self._call_on_send_request(transaction.to_dict())
-
         if not ret:
             return
 
-        step_limit = self._icon_service.estimate_step(transaction) + 10000  # add some margin.
-
-        return self._icon_service.send_transaction(SignedTransaction(transaction, owner, step_limit))
+        return self._icon_service.send_transaction(SignedTransaction(transaction, owner), full_response=True)
 
     def _call_on_send_request(self, content: dict) -> bool:
         if self._on_send_request:
@@ -69,8 +66,8 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, value: int = 0) -> str:
-        return self._call_tx(owner, to, method, params, value)
+    def call(self, owner, to, method, params=None, limit=0x50000000, value: int = 0) -> dict:
+        return self._call_tx(owner, to, method, params, limit, value)
 
 
 class PRepToolsListener(object):
@@ -93,11 +90,12 @@ class PRepToolsWriter(PRepToolsListener):
         self._owner = owner
         self._nid = nid
 
-    def _call(self, method: str, params: dict, value: int = 0):
+    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, step_limit: int = 0x10000000, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
-            to=ZERO_ADDRESS,
+            to=to,
+            limit=step_limit,
             method=method,
             params=params,
             value=value
@@ -106,19 +104,31 @@ class PRepToolsWriter(PRepToolsListener):
     def _create_tx_handler(self) -> TxHandler:
         return TxHandler(self._icon_service, self._nid, self.on_send_request)
 
-    def register_prep(self, params) -> str:
+    def register_prep(self, params) -> dict:
         method = "registerPRep"
         return self._call(method, params, value=2000*10**18)
 
-    def unregister_prep(self) -> str:
+    def unregister_prep(self) -> dict:
         method = "unregisterPRep"
         return self._call(method, {})
 
-    def set_prep(self, params) -> str:
+    def register_proposal(self, params) -> dict:
+        method = "registerProposal"
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
+
+    def cancel_proposal(self, params) -> dict:
+        method = "cancelProposal"
+        return self._call(method,params, to=GOVERNANCE_ADDRESS)
+
+    def vote_proposal(self, params) -> dict:
+        method = "voteProposal"
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
+
+    def set_prep(self, params) -> dict:
         method = "setPRep"
         return self._call(method, params)
 
-    def set_governance_variables(self, params) -> str:
+    def set_governance_variables(self, params) -> dict:
         method = "setGovernanceVariables"
         return self._call(method, params)
 
@@ -131,23 +141,29 @@ class PRepToolsReader(PRepToolsListener):
         self._nid = nid
         self._from = address
 
-    def _call(self, method, params=None) -> dict:
+    def _call(self, method, params=None, to: str = ZERO_ADDRESS) -> dict:
         call = CallBuilder() \
             .from_(self._from) \
-            .to(ZERO_ADDRESS) \
+            .to(to) \
             .method(method) \
             .params(params) \
             .build()
 
         self.on_send_request(call.to_dict())
 
-        return self._icon_service.call(call)
+        return self._icon_service.call(call, True)
 
     def _tx_result(self, tx_hash):
-        return self._icon_service.get_transaction_result(tx_hash)
+        try:
+            return self._icon_service.get_transaction_result(tx_hash, True)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
 
     def _tx_by_hash(self, tx_hash):
-        return self._icon_service.get_transaction(tx_hash)
+        try:
+            return self._icon_service.get_transaction(tx_hash, True)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
 
     def get_prep(self, address: str) -> dict:
         params = {"address": address}
@@ -158,10 +174,10 @@ class PRepToolsReader(PRepToolsListener):
 
     def get_proposal(self, _id: str) -> dict:
         params = {"id": _id}
-        return self._call("getProposal", params)
+        return self._call("getProposal", params, to=GOVERNANCE_ADDRESS)
 
-    def get_proposal_list(self, params) -> dict:
-        return self._call("getProposalList", params)
+    def get_proposals(self, params) -> dict:
+        return self._call("getProposals", params, to=GOVERNANCE_ADDRESS)
 
     def get_tx_result(self, tx_hash) -> dict:
         return self._tx_result(tx_hash)
@@ -181,52 +197,50 @@ def create_reader_by_args(args) -> PRepToolsReader:
 
 
 def create_reader(url: str, nid: int) -> PRepToolsReader:
-    icon_service = create_icon_service(url)
+    url: str = get_url(url)
+    icon_service = IconService(HTTPProvider(url))
     return PRepToolsReader(icon_service, nid)
 
 
 def create_writer_by_args(args) -> PRepToolsWriter:
     url, nid, keystore_path = _get_common_args(args)
     password: str = args.password
-    yes: bool = False
-
-    if hasattr(args, 'yes'):
-        yes: bool = args.yes
 
     if keystore_path is None:
-        raise KeyStoreException("There's no keystore path in cmdline, configure.")
+        raise InvalidKeyStoreException("There's no keystore path in cmdline, configure.")
 
     if password is None:
         password = getpass.getpass("> Password: ")
 
     writer = create_writer(url, nid, keystore_path, password)
 
-    callback = functools.partial(_confirm_callback, yes=yes)
+    callback = functools.partial(_confirm_callback, yes=args.yes, verbose=args.verbose)
     writer.set_on_send_request(callback)
 
     return writer
 
 
 def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepToolsWriter:
-    icon_service = create_icon_service(url)
+    url: str = get_url(url)
+    icon_service = IconService(HTTPProvider(url))
 
-    owner_wallet = KeyWallet.load(keystore_path, password)
+    try:
+        owner_wallet = KeyWallet.load(keystore_path, password)
+
+    except KeyStoreException as e:
+        raise InvalidKeyStoreException(f"{e}")
 
     return PRepToolsWriter(icon_service, nid, owner_wallet)
 
 
 def create_icon_service(url: str) -> IconService:
     url: str = get_url(url)
-    result: 'ParseResult' = urlparse(url)
-    base_url: str = f"{result.scheme}://{result.netloc}"
-
-    icon_service = IconService(HTTPProvider(base_url, 3))
-
-    return icon_service
+    return IconService(HTTPProvider(url))
 
 
-def _confirm_callback(content: dict, yes: bool) -> bool:
-    _print_request("Request", content)
+def _confirm_callback(content: dict, yes: bool, verbose: bool) -> bool:
+    if not yes or verbose:
+        _print_request("Request", content)
 
     if not yes:
         ret: str = input("> Continue? [Y/n]")

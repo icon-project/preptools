@@ -20,7 +20,7 @@ from iconsdk.utils.convert_type import convert_int_to_hex_str
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
-from preptools.utils.format_checker import (
+from preptools.utils.validation_checker import (
     validate_prep_data,
     validate_field_in_prep_data
 )
@@ -48,6 +48,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--name",
         type=str,
         required=False,
+        nargs="?",
         help="P-Rep name"
     )
 
@@ -98,7 +99,8 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file including P-Rep information"
+        nargs="?",
+        help="json file having P-Rep information"
     )
 
     parser.set_defaults(func=_register_prep)
@@ -118,7 +120,7 @@ def _register_prep(args) -> str:
     response = writer.register_prep(params)
 
     if response:
-        return 'txHash : ' + response
+        return f'txHash : {response}'
 
 
 def _get_prep_dict_from_cli(params, set_prep: bool = False):
@@ -189,7 +191,7 @@ def _unregister_prep(args) -> str:
     response = writer.unregister_prep()
 
     if response:
-        return 'txHash : ' + response
+        return f'txHash : {response}'
 
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -284,7 +286,7 @@ def _set_prep(args) -> str:
     response = writer.set_prep(params)
 
     if response:
-        return 'txHash : ' + response
+        return f'txHash : {response}'
 
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
@@ -315,7 +317,7 @@ def _set_governance_variables(args) -> str:
     response = writer.set_governance_variables(params)
 
     if response:
-        return 'txHash : ' + response
+        return f'txHash : {response}'
 
 
 def create_tx_parser() -> argparse.ArgumentParser:

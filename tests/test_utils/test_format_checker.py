@@ -18,7 +18,7 @@ import json
 import unittest
 
 from preptools.exception import InvalidFormatException
-from preptools.utils.format_checker import (
+from preptools.utils.validation_checker import (
     validate_country,
     validate_email,
     validate_p2p_endpoint,
