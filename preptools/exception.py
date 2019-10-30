@@ -23,13 +23,20 @@ class PRepToolsExceptionCode(IntEnum):
     Refer to http://www.simple-is-better.org/json-rpc/jsonrpc20.html#examples
     """
     OK = 0
-    COMMAND_ERROR = 1
-    STRING_FORMAT_ERROR = 2
-    FILE_WRITE_ERROR = 3
-    FILE_READ_ERROR = 4
-    KEYSTORE_ERROR = 5
-    DATA_TYPE_ERROR = 6
-    ARGUMENT_ERROR = 7
+
+    # Exceptions in SDK
+    # KEY_STORE_ERROR = 1
+    # ADDRESS_ERROR = 2
+    # BALANCE_ERROR = 3
+    # DATA_TYPE_ERROR = 4
+    # JSON_RPC_ERROR = 5
+    # ZIP_MEMORY_ERROR = 6
+    # URL_ERROR = 7
+
+    COMMAND_ERROR = 8
+    STRING_FORMAT_ERROR = 9
+    FILE_WRITE_ERROR = 10
+    FILE_READ_ERROR = 11
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -56,7 +63,7 @@ class PRepToolsBaseException(BaseException):
 
 
 class InvalidCommandException(PRepToolsBaseException):
-    """Invalid string format for preptools"""
+    """Invalid Command"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.COMMAND_ERROR)
 

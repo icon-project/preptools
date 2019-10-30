@@ -34,8 +34,7 @@ def _init_for_tx_result(sub_parser, common_parent_parser):
     parser.add_argument(
         "tx_hash",
         type=str,
-        nargs="?",
-        help="Enter the transaction hash"
+        help="transaction hash to get transaction result"
     )
 
     parser.set_defaults(func=_tx_result)
@@ -61,8 +60,7 @@ def _init_for_tx_by_hash(sub_parser, common_parent_parser):
     parser.add_argument(
         "tx_hash",
         type=str,
-        nargs="?",
-        help="Enter the transaction hash"
+        help="transaction hash to get transaction information"
     )
 
     parser.set_defaults(func=_tx_by_hash)

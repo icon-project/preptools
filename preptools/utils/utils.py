@@ -16,12 +16,13 @@
 
 import json
 import os
-
 from typing import TYPE_CHECKING, Union, Optional
 from urllib.parse import urlparse
 
-from .constants import COLUMN, PREDEFINED_URLS
+import pkg_resources
 from preptools.exception import InvalidFileWriteException
+
+from .constants import COLUMN, PREDEFINED_URLS, PROJECT_ROOT_PATH
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -96,12 +97,29 @@ def get_url(url: str) -> str:
     # return url
 
 
+def get_preptools_version() -> str:
+    """Get version of tbears.
+    The location of the file that holds the version information is different when packaging and when executing.
+    :return: version of tbears.
+    """
+    try:
+        version = pkg_resources.get_distribution('preptools').version
+    except pkg_resources.DistributionNotFound:
+        version_path = os.path.join(PROJECT_ROOT_PATH, 'VERSION')
+        with open(version_path, mode='r') as version_file:
+            version = version_file.read()
+    except:
+        version = 'unknown'
+    return version
+
+
 def write_file(parent_directory: str, file_name: str, contents: str, overwrite: bool = False) -> None:
     """Create file with the contents in the parents directory.
 
     :param parent_directory: Location to create the file.
     :param file_name: File name
     :param contents: Contents of file.
+    :param overwrite: Whether overwrite file or not
     """
     try:
         if not os.path.exists(parent_directory):
@@ -112,4 +130,3 @@ def write_file(parent_directory: str, file_name: str, contents: str, overwrite: 
             file.write(contents)
     except (PermissionError, IsADirectoryError) as e:
         raise InvalidFileWriteException(f"Can't write file {parent_directory}/{file_name}. {e}")
-

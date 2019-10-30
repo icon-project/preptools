@@ -16,6 +16,7 @@
 import argparse
 import json
 
+from iconsdk.utils.convert_type import convert_int_to_hex_str
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils.constants import fields_to_validate
@@ -55,7 +56,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--country",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's country"
     )
 
@@ -63,7 +63,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--city",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's city"
     )
 
@@ -71,7 +70,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--email",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's email"
     )
 
@@ -79,7 +77,6 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--website",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's homepage url"
     )
 
@@ -87,15 +84,13 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        nargs="?",
-        help="P-Rep off-chain details"
+        help="json url including P-Rep detailed information"
     )
 
     parser.add_argument(
         "--p2p-endpoint",
         type=str,
         required=False,
-        nargs="?",
         dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
@@ -111,8 +106,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     parser.set_defaults(func=_register_prep)
 
 
-def _register_prep(args) -> dict:
-
+def _register_prep(args) -> str:
     writer = create_writer_by_args(args)
 
     if args.prep_json:
@@ -125,7 +119,8 @@ def _register_prep(args) -> dict:
     _get_prep_dict_from_cli(params)
     response = writer.register_prep(params)
 
-    return response
+    if response:
+        return f'txHash : {response}'
 
 
 def _get_prep_dict_from_cli(params, set_prep: bool = False):
@@ -190,12 +185,13 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
     parser.set_defaults(func=_unregister_prep)
 
 
-def _unregister_prep(args) -> dict:
+def _unregister_prep(args) -> str:
 
     writer = create_writer_by_args(args)
     response = writer.unregister_prep()
 
-    return response
+    if response:
+        return f'txHash : {response}'
 
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -217,7 +213,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--name",
         type=str,
         required=False,
-        nargs="?",
         help="PRep name"
     )
 
@@ -225,7 +220,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--country",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's country"
     )
 
@@ -233,7 +227,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--city",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's city"
     )
 
@@ -241,7 +234,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--email",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's email"
     )
 
@@ -249,7 +241,6 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--website",
         type=str,
         required=False,
-        nargs="?",
         help="P-Rep's homepage url"
     )
 
@@ -257,15 +248,13 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--details",
         type=str,
         required=False,
-        nargs="?",
-        help="P-Rep off-chain details"
+        help="json url including P-Rep details information"
     )
 
     parser.add_argument(
         "--p2p-endpoint",
         type=str,
         required=False,
-        nargs="?",
         dest="p2pEndpoint",
         help="Network info used for connecting among P-Rep nodes"
     )
@@ -274,13 +263,13 @@ def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
         "--prep-json",
         type=str,
         required=False,
-        help="json file having prepInfo"
+        help="json file including P-Rep information"
     )
 
     parser.set_defaults(func=_set_prep)
 
 
-def _set_prep(args) -> dict:
+def _set_prep(args) -> str:
 
     writer = create_writer_by_args(args)
 
@@ -296,7 +285,8 @@ def _set_prep(args) -> dict:
 
     response = writer.set_prep(params)
 
-    return response
+    if response:
+        return f'txHash : {response}'
 
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
@@ -310,24 +300,24 @@ def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_pare
 
     parser.add_argument(
         "--irep",
-        type=str,
+        type=int,
         required=True,
-        nargs="?",
         help="amounts of irep"
     )
 
     parser.set_defaults(func=_set_governance_variables)
 
 
-def _set_governance_variables(args) -> dict:
+def _set_governance_variables(args) -> str:
     params = {
-        'irep': args.irep
+        'irep': convert_int_to_hex_str(args.irep)
     }
 
     writer = create_writer_by_args(args)
     response = writer.set_governance_variables(params)
 
-    return response
+    if response:
+        return f'txHash : {response}'
 
 
 def create_tx_parser() -> argparse.ArgumentParser:
