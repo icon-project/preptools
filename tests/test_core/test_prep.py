@@ -83,7 +83,6 @@ class TestPRep(unittest.TestCase):
     def test_unregister_prep(self):
         writer = create_writer(self.args.keystore, self.args.password)
         response = writer.unregister_prep()
-        print(json.dumps(response, indent=4))
         self.assertTrue(is_request_equal(response, UNREGISTER_SAMPLE))
 
     def test_set_prep(self):
