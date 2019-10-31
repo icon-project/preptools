@@ -1,14 +1,21 @@
 #!/usr/bin/env python
 
+import os
+
 from setuptools import setup, find_packages
+
+version = os.environ.get('VERSION')
+if version is None:
+    with open(os.path.join('.', 'VERSION')) as version_file:
+        version = version_file.read().strip()
 
 with open('requirements.txt') as requirements:
     requires = list(requirements)
 
 setup_options = {
     'name': 'preptools',
-    'version': '1.0.2',
-    'description': 'Test suite for ICON SCORE development',
+    'version': version,
+    'description': 'P-Rep management command line interface',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
     'packages': find_packages(exclude=['tests*', 'docs']),

@@ -20,25 +20,38 @@ import time
 from typing import Optional
 
 from iconsdk.exception import IconServiceBaseException
-from preptools.command import prep_setting_command, prep_info_command, tx_info_command, common_command
+
+from preptools.command import (
+    prep_setting_command,
+    proposal_setting_command,
+    prep_info_command,
+    proposal_info_command,
+    tx_info_command,
+    common_command
+)
 from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
+from preptools.utils.utils import get_preptools_version
 from preptools.utils.utils import print_tx_result, print_response
 
 
 def main() -> Optional:
     handlers = [
         prep_setting_command.init,
+        proposal_setting_command.init,
         prep_info_command.init,
+        proposal_info_command.init,
         tx_info_command.init,
         common_command.init
     ]
 
+    version = get_preptools_version()
     parser = argparse.ArgumentParser(
         prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="P-Rep management cli")
+        description=f"P-Rep management command line interface v{version}")
+
     sub_parser = parser.add_subparsers(title="subcommands")
 
     common_parent_parser = create_common_parser()
@@ -64,7 +77,7 @@ def main() -> Optional:
         print("\nexit")
         response = 0
 
-    if isinstance(response, int) is False:
+    if isinstance(response, int) is False and response:
         print_response(response)
         sys.exit(PRepToolsExceptionCode.OK.value)
 
@@ -117,6 +130,18 @@ def create_common_parser() -> argparse.ArgumentParser:
         required=False,
         default="preptools_config.json",
         help="preptools config file path"
+    )
+    parent_parser.add_argument(
+        "--yes", "-y",
+        help="Don't want to ask send transaction.",
+        action='store_true',
+        dest='yes'
+    )
+    parent_parser.add_argument(
+        "--verbose", "-v",
+        help="Verbose mode",
+        action='store_true',
+        dest='verbose'
     )
 
     return parent_parser

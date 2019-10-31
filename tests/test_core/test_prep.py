@@ -83,7 +83,6 @@ class TestPRep(unittest.TestCase):
     def test_unregister_prep(self):
         writer = create_writer(self.args.keystore, self.args.password)
         response = writer.unregister_prep()
-        print(json.dumps(response, indent=4))
         self.assertTrue(is_request_equal(response, UNREGISTER_SAMPLE))
 
     def test_set_prep(self):
@@ -155,6 +154,21 @@ class TestPRep(unittest.TestCase):
         self.assertFalse(url == self.args.url)
         self.assertFalse(nid == self.args.nid)
         self.assertFalse(keystore == self.args.keystore)
+
+    def test_register_proposal(self):
+        pass
+
+    def test_cancel_proposal(self):
+        pass
+
+    def test_vote_proposal(self):
+        pass
+
+    def test_get_proposal(self):
+        pass
+
+    def test_get_proposals(self):
+        pass
 
 
 def is_request_equal(first_dict: dict, second_dict: dict) -> bool:

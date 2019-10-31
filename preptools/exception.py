@@ -84,3 +84,21 @@ class InvalidFileReadException(PRepToolsBaseException):
     """Invalid file read"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.FILE_READ_ERROR)
+
+
+class InvalidKeyStoreException(PRepToolsBaseException):
+    """Invalid Keystore"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.KEYSTORE_ERROR)
+
+
+class InvalidDataTypeException(PRepToolsBaseException):
+    """Invalid Keystore"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
+
+
+class InvalidArgumentException(PRepToolsBaseException):
+    """INvalid Argument"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.ARGUMENT_ERROR)

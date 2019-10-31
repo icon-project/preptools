@@ -19,10 +19,11 @@ import json
 import os
 
 from iconsdk.wallet.wallet import KeyWallet
+
 from preptools.exception import InvalidFormatException
-from preptools.utils.format_checker import validate_password
 from preptools.utils.preptools_config import FN_CLI_CONF, preptools_config
 from preptools.utils.utils import write_file
+from preptools.utils.validation_checker import validate_password
 
 
 def init(sub_parser, common_parent_parser):

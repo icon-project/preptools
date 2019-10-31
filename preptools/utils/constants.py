@@ -50,3 +50,12 @@ fields_to_validate = (
             ConstantKeys.DETAILS,
             ConstantKeys.P2P_ENDPOINT
         )
+
+
+proposal_param_by_type = [
+    ["value_value"],                    # type 0
+    ["value_code", "value_name"],       # type 1
+    ["value_address", "value_type"],    # type 2
+    ["value_address"],                  # type 3
+    ["value_value"]                     # type 4
+]
