@@ -128,7 +128,7 @@ usage: preptools registerPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -275,7 +275,7 @@ usage: preptools unregisterPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -357,7 +357,7 @@ usage: preptools setPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -500,7 +500,7 @@ usage: preptools setGovernanceVariables [-h] [--url URL] [--nid NID]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --password PASSWORD, -p PASSWORD
@@ -574,7 +574,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```
@@ -644,7 +644,7 @@ usage: preptools getPReps [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --start-ranking START_RANKING
@@ -787,7 +787,7 @@ usage: preptools registerProposal [-h] [--url URL] [--nid NID]
 | -h, --help      |         | show this help message and exit          |
 | -p, --password  |         | Keystore file's password                 |
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
-| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -n, --nid      |    3| networkId mainnet(1), testnet(80)          |
 | -v, --verbose      |         | verbose mode flag          |
 | -y, --yes | | Do not confirm if you want to send request |
 | --title  |         | title of network-proposal                 |
@@ -852,7 +852,7 @@ usage: preptools voteProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --yes, -y             Don't want to ask send transaction.
@@ -871,7 +871,7 @@ optional arguments:
 | --config            |         | configuration file path. |
 | -h, --help      |         | show this help message and exit          |
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
-| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -n, --nid      |    3| networkId mainnet(1), testnet(80)          |
 | -v, --verbose      |         | verbose mode flag          |
 | -y, --yes | | Do not confirm if you want to send request |
 | -p, --password | | password of keystore file |
@@ -931,7 +931,7 @@ usage: preptools cancelProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --yes, -y             Don't want to ask send transaction.
@@ -948,7 +948,7 @@ optional arguments:
 | :-------------- | :------ | :--------------------------------------- |
 | --config            |         | configuration file path. |
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
-| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -n, --nid      |    3| networkId mainnet(1), testnet(80)          |
 | -v, --verbose      |         | verbose mode flag          |
 | -y, --yes | | Do not confirm if you want to send request |
 | -p, --password | | password of keystore file |
@@ -1013,7 +1013,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --yes, -y             Don't want to ask send transaction.
@@ -1026,7 +1026,7 @@ optional arguments:
 | -c, --config            |         | configuration file path. |
 | -h, --help      |         | show this help message and exit          |
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
-| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -n, --nid      |    3| networkId mainnet(1), testnet(80)          |
 | -v, --verbose      |         | verbose mode flag          |
 
 
@@ -1121,7 +1121,7 @@ usage: preptools getProposals [-h] [--url URL] [--nid NID] [--config CONFIG]
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
   --yes, -y             Don't want to ask send transaction.
@@ -1136,7 +1136,7 @@ optional arguments:
 | -c, --config            |         | configuration file path. |
 | -h, --help      |         | show this help message and exit          |
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
-| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -n, --nid      |    3| networkId mainnet(1), testnet(80)          |
 | -v, --verbose      |         | verbose mode flag          |
 | --type | | Type of network proposal to filter |
 | --status | | Status of network proposal to filter |
@@ -1314,7 +1314,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```
@@ -1384,7 +1384,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(80)
   --config CONFIG, -c CONFIG
                         preptools config file path
 ```

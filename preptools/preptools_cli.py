@@ -122,7 +122,7 @@ def create_common_parser() -> argparse.ArgumentParser:
         "--nid", "-n",
         type=int,
         required=False,
-        help=f"networkId default({DEFAULT_NID}) ex) mainnet(1), testnet(2)"
+        help=f"networkId default({DEFAULT_NID}) ex) mainnet(1), testnet(80)"
     )
     parent_parser.add_argument(
         "--config", "-c",
