@@ -123,6 +123,7 @@ usage: preptools registerPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                               [--name NAME] [--country COUNTRY] [--city CITY]
                               [--email EMAIL] [--website WEBSITE]
                               [--details DETAILS] [--p2p-endpoint P2PENDPOINT]
+			      [--node-address NODEADDRESS]
                               [--prep-json PREP_JSON]
 
 optional arguments:
@@ -143,6 +144,8 @@ optional arguments:
   --details DETAILS     json url including P-Rep detailed information
   --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
+  --node-address NODEADDRESS
+                        PRep Node Key (Default: Own Address)
   --prep-json PREP_JSON
                         json file including P-Rep information
 ```
@@ -163,10 +166,12 @@ optional arguments:
 | --email         |                             | P-Rep's email.                ex) "example@iconloop.com"              |
 | --website       |                             | P-Rep's homepage url.         ex) "https://node.example.com/"         |
 | --details       |                             | json url including P-Rep detailed information                         |
-|                 |                             | ex) "https://node.example.com/json"                                    |
+|                 |                             | ex) "https://node.example.com/json"                                   |
 | --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
 |                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
+| --node-address  |                             | PRep Node Key (default: Operator Key)                                 |
 | --prep-json     |                             | json file having P-Rep information                                    |
+
 
 **Examples**
 ```bash
@@ -178,7 +183,8 @@ optional arguments:
     "email": "banana@example.com",
     "website": "https://icon.banana.com",
     "details": "https://icon.banana.com/json",
-    "p2pEndpoint": "node.example.com:7100"
+    "p2pEndpoint": "node.example.com:7100",
+    "nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
 }
 
 (venv) $ preptools registerPRep -k test_keystore --prep-json registerPRep.json 
@@ -202,7 +208,8 @@ optional arguments:
         "email": "banana@example.com",
         "website": "https://icon.banana.com",
         "details": "https://icon.banana.com/json",
-        "p2pEndpoint": "node.example.com:7100"
+        "p2pEndpoint": "node.example.com:7100",
+        "nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
     }
 }
 
@@ -220,7 +227,8 @@ request success.
     "email": "banana@example.com",
     "website": "https://icon.banana.com",
     "details": "https://icon.banana.com/json",
-    "p2pEndpoint": "node.example.com:7100"
+    "p2pEndpoint": "node.example.com:7100",
+    "nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
 }
 
 (venv) preptools registerPRep -k test_keystore --prep-json registerPRep.json --name "kokoa node"
@@ -352,6 +360,7 @@ usage: preptools setPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                          [--name NAME] [--country COUNTRY] [--city CITY]
                          [--email EMAIL] [--website WEBSITE]
                          [--details DETAILS] [--p2p-endpoint P2PENDPOINT]
+                         [--node-address NODEADDRESS]
                          [--prep-json PREP_JSON]
 
 optional arguments:
@@ -373,6 +382,8 @@ optional arguments:
   --details DETAILS     json url including P-Rep detailed information
   --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
+  --node-address NODEADDRESS
+                        PRep Node Key (Default: Own Address)
   --prep-json PREP_JSON
                         json file including P-Rep information
 ```
@@ -397,6 +408,7 @@ optional arguments:
 |                 |                             |ex) "https://node.example.com/json"                                    |
 | --p2p-endpoint  |                             | Network info used for connection among P-Rep nodes.                   |
 |                 |                             |                               ex) “123.45.67.89:7100” or “node.example.com:7100”|
+| --node-address  |				| PRep Node Key (Default: Own Address)					|
 | --prep-json     |                             | json file having P-Rep information                                    |
 
 
@@ -408,7 +420,8 @@ optional arguments:
     "country": "USA",
     "website": "https://icon.kokoa.com",
     "details": "https://icon.kokoa.com/json",
-    "p2pEndpoint": "node.example.com:7100"
+    "p2pEndpoint": "node.example.com:7100",
+    "nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
 }
 
 (venv) $ preptools setPRep -k test_keystore --prep-json setPRep.json 
@@ -430,7 +443,8 @@ optional arguments:
         "country": "USA",
         "website": "https://icon.kokoa.com",
         "details": "https://icon.kokoa.com/json",
-        "p2pEndpoint": "node.example.com:7100"
+        "p2pEndpoint": "node.example.com:7100",
+	"nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
     }
 }
 
@@ -465,7 +479,8 @@ request success.
         "website": "https://icon.kokoa.com",
         "details": "https://icon.kokoa.com/json",
         "p2pEndpoint": "node.example.com:7100",
-        "city": "New York"
+        "city": "New York",
+	"nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
     }
 }
 
@@ -623,7 +638,7 @@ request success.
         "website": "https://icon.kokoa.com",
         "details": "https://icon.kokoa.com/json",
         "p2pEndpoint": "node.example.com:7100",
-        "publicKey": "0x040d60ccc4fd29307304a8e84715e6e1a2e643bcff14fbf90d9099dfc84585a6f6f0b6944594efebe433a12a005ba56d215d6e51697a3360b5d741f8db89955c66"
+        "nodeAddress": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d400"
     },
     "id": 1234
 }

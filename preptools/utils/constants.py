@@ -39,6 +39,7 @@ class ConstantKeys:
     DETAILS = 'details'
     P2P_ENDPOINT = 'p2pEndpoint'
     IREP = "irep"
+    NODE_ADDRESS = "nodeAddress"
 
 
 fields_to_validate = (
@@ -48,7 +49,8 @@ fields_to_validate = (
             ConstantKeys.EMAIL,
             ConstantKeys.WEBSITE,
             ConstantKeys.DETAILS,
-            ConstantKeys.P2P_ENDPOINT
+            ConstantKeys.P2P_ENDPOINT,
+            ConstantKeys.NODE_ADDRESS
         )
 
 
