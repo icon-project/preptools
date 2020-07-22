@@ -10,7 +10,7 @@ $ python -m venv venv             # Create a virtual environment.
 $ source venv/bin/activate        # Enter the virtual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
-preptools-1.0.0-py3-none-any.whl
+preptools-1.0.3-py3-none-any.whl
 ```
 
 ## Installation
@@ -43,7 +43,7 @@ $ sudo apt-get install -y python3.7-dev libsecp256k1-dev python3-pip
 Install the preptools with the .whl file as below.
 
 ```bash
-(venv) $ pip install dist/preptools-1.0.0-py3-none-any.whl
+(venv) $ pip install dist/preptools-1.0.3-py3-none-any.whl
 ```
 
 Install the preptools with pypi
@@ -64,7 +64,7 @@ preptools provides several commands. Here is the list of the available commands.
 usage: preptools [-h]
                  ...
 
-P-Rep management command line interface v1.0.2
+P-Rep management command line interface v1.0.3
 
 optional arguments:
   -h, --help            show this help message and exit
