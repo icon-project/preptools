@@ -134,16 +134,13 @@ def validate_password(password) -> bool:
     return bool(PASSWORD_PATTERN.match(password))
 
 
-def validate_node_address(address: str) -> bool:
-    try:
-        if isinstance(address, str) and len(address) == 42:
-            prefix, body = _split_icon_address(address)
-            if prefix == 'hx':
-                return _is_lowercase_hex_string(body)
-    finally:
-        pass
-
-    return False
+def validate_node_address(address: str):
+    if isinstance(address, str) and len(address) == 42:
+        prefix, body = _split_icon_address(address)
+        if prefix != 'hx' or not _is_lowercase_hex_string(body):
+            raise InvalidFormatException("Invalid hx Address")
+    else:
+        raise InvalidFormatException("Invalid hx Address")
 
 
 def valid_proposal_text_param(args) -> bool:
