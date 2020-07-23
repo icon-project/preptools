@@ -83,12 +83,13 @@ class PRepToolsListener(object):
 
 
 class PRepToolsWriter(PRepToolsListener):
-    def __init__(self, service, nid: int, owner):
+    def __init__(self, service, nid: int, owner, step_limit):
         super().__init__()
 
         self._icon_service = service
         self._owner = owner
         self._nid = nid
+        self._step_limit = step_limit
 
     def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, step_limit: int = 0x10000000, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
@@ -212,7 +213,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
     if password is None:
         password = getpass.getpass("> Password: ")
 
-    writer = create_writer(url, nid, keystore_path, password)
+    writer = create_writer(url, nid, keystore_path, password, getattr(args, "step_limit", 0x50000000))
 
     callback = functools.partial(_confirm_callback, yes=args.yes, verbose=args.verbose)
     writer.set_on_send_request(callback)
@@ -220,7 +221,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
     return writer
 
 
-def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRepToolsWriter:
+def create_writer(url: str, nid: int, keystore_path: str, password: str, step_limit: int) -> PRepToolsWriter:
     url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
 
@@ -230,7 +231,7 @@ def create_writer(url: str, nid: int, keystore_path: str, password: str) -> PRep
     except KeyStoreException as e:
         raise InvalidKeyStoreException(f"{e}")
 
-    return PRepToolsWriter(icon_service, nid, owner_wallet)
+    return PRepToolsWriter(icon_service, nid, owner_wallet, step_limit)
 
 
 def create_icon_service(url: str) -> IconService:

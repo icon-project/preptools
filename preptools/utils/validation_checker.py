@@ -64,6 +64,8 @@ def validate_field_in_prep_data(key: str, value: str):
         validate_email(value)
     elif key == ConstantKeys.COUNTRY:
         validate_country(value)
+    elif key == ConstantKeys.NODE_ADDRESS:
+        validate_node_address(value)
 
 
 def validate_field_key(key):
@@ -132,6 +134,18 @@ def validate_password(password) -> bool:
     return bool(PASSWORD_PATTERN.match(password))
 
 
+def validate_node_address(address: str) -> bool:
+    try:
+        if isinstance(address, str) and len(address) == 42:
+            prefix, body = _split_icon_address(address)
+            if prefix == 'hx':
+                return _is_lowercase_hex_string(body)
+    finally:
+        pass
+
+    return False
+
+
 def valid_proposal_text_param(args) -> bool:
 
     if args.value_value is None:
@@ -184,3 +198,28 @@ valid_proposal_param_by_type = [
     valid_proposal_prep_disqualification_param,     # type 3
     valid_proposal_step_price                       # type 4
 ]
+
+
+def _split_icon_address(address: str) -> (str, str):
+    """Split icon address into 2-char prefix and 40-char address body
+
+    :param address: 42-char address string
+    :return: prefix, body
+    """
+    return address[:2], address[2:]
+
+
+def _is_lowercase_hex_string(value: str) -> bool:
+    """Check whether value is hexadecimal format or not
+
+    :param value: text
+    :return: True(lowercase hexadecimal) otherwise False
+    """
+
+    try:
+        result = re.match('[0-9a-f]+', value)
+        return len(result.group(0)) == len(value)
+    except:
+        pass
+
+    return False

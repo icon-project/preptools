@@ -19,6 +19,7 @@ import json
 from iconsdk.utils.convert_type import convert_int_to_hex_str
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidFormatException, InvalidFileReadException
+from preptools.utils import str_to_int
 from preptools.utils.constants import fields_to_validate
 from preptools.utils.validation_checker import (
     validate_prep_data,
@@ -357,6 +358,14 @@ def create_tx_parser() -> argparse.ArgumentParser:
         type=str,
         required=False,
         help="keystore file path"
+    )
+
+    parent_parser.add_argument(
+        "--step-limit" "-s",
+        type=str_to_int,
+        required=False,
+        dest="step_limit",
+        help="step limit to set"
     )
 
     return parent_parser
