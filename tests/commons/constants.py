@@ -35,7 +35,8 @@ REGISTER_SAMPLE = {
                 "email": "banana@example.com",
                 "website": "https://icon.banana.com",
                 "details": "https://icon.banana.com/json",
-                "p2pEndpoint": "node.example.com:7100"
+                "p2pEndpoint": "node.example.com:7100",
+                "nodeAddress": "hx1234567890123456789012345678901234567890"
             }
         },
         "signature": "nJpIQckwQFsoOjlGtfLde1JyWtfho0bIucsa8yGbsyp3IxWcERCiNAah1Npjco0DH6htB/zFvBEi2ITMPvt3NwA="

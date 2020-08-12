@@ -74,6 +74,7 @@ class TestPRep(unittest.TestCase):
         self.args.website = "https://icon.banana.com"
         self.args.details = "https://icon.banana.com/json"
         self.args.p2pEndpoint = "node.example.com:7100"
+        self.args.nodeAddress = "hx1234567890123456789012345678901234567890"
 
         params = {}
         _get_prep_input(self.args, params)
