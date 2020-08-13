@@ -91,12 +91,12 @@ class PRepToolsWriter(PRepToolsListener):
         self._nid = nid
         self._step_limit = step_limit
 
-    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, value: int = 0) -> dict:
+    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, step_limit: int = 0x10000000, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
             to=to,
-            limit=self._step_limit,
+            limit=step_limit,
             method=method,
             params=params,
             value=value

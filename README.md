@@ -116,7 +116,6 @@ There are two ways of registering a P-Rep.
   - Using json file  
     Input P-Rep information with --prep-json JSON_PATH.  
     
-
 **Usage**
 
 ```bash
@@ -180,6 +179,7 @@ optional arguments:
 |                  |                         | ex) “123.45.67.89:7100” or “node.example.com:7100”           |
 | --node-address   |                         | PRep Node Key (default: Operator Key)                        |
 | --prep-json      |                         | json file having P-Rep information                           |
+
 
 
 **Examples**
@@ -377,7 +377,8 @@ usage: preptools setPRep [-h] [--url URL] [--nid NID] [--config CONFIG]
                          [-i] [--name NAME] [--country COUNTRY] [--city CITY]
                          [--email EMAIL] [--website WEBSITE]
                          [--details DETAILS] [--p2p-endpoint P2PENDPOINT]
-                         [--node-address NODEADDRESS] [--prep-json PREP_JSON]
+                         [--node-address NODEADDRESS]
+                         [--prep-json PREP_JSON]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -403,7 +404,7 @@ optional arguments:
   --p2p-endpoint P2PENDPOINT
                         Network info used for connecting among P-Rep nodes
   --node-address NODEADDRESS
-                        PRep Node Key
+                        PRep Node Key (Default: Own Address)
   --prep-json PREP_JSON
                         json file including P-Rep information
 
