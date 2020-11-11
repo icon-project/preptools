@@ -122,7 +122,7 @@ def _register_prep(args) -> str:
         params = _get_prep_json(args, blank_able=True)
 
     else:
-        params = dict()
+        params = {}
         _get_prep_input(args, params)
 
     _get_prep_dict_from_cli(params)
@@ -361,7 +361,7 @@ def create_tx_parser() -> argparse.ArgumentParser:
     )
 
     parent_parser.add_argument(
-        "--step-limit" "-s",
+        "--step-limit", "-s",
         type=str_to_int,
         required=False,
         dest="step_limit",
