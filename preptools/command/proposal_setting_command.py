@@ -235,7 +235,7 @@ def create_tx_parser() -> argparse.ArgumentParser:
     )
 
     parent_parser.add_argument(
-        "--step-limit" "-s",
+        "--step-limit", "-s",
         type=str_to_int,
         required=False,
         dest="step_limit",
