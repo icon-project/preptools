@@ -239,6 +239,7 @@ def create_tx_parser() -> argparse.ArgumentParser:
         "--step-limit", "-s",
         type=str_to_int,
         required=False,
+        default="0x50000000",
         dest="step_limit",
         help="step limit to set"
     )
