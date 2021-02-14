@@ -35,14 +35,22 @@ class TestFormatChecker(unittest.TestCase):
 
     def test_check_email_format(self):
         # with valid param
-        email = "iconproject@iconloop.com"
-        try:
-            validate_email(email)
-        except InvalidFormatException as e:
-            self.fail(e.args[0])
+        emails = ["iconproject@iconloop.com",
+                  "icon_project@iconloop.com",
+                  "icon-project@iconloop.com",
+                  "icon+project@iconloop.com"]
+        for email in emails:
+            try:
+                validate_email(email)
+            except InvalidFormatException as e:
+                self.fail(e.args[0])
 
         # with invalid param
         email = "icon-project'@iconloop.com"
+        self.assertRaises(InvalidFormatException, validate_email, email)
+
+        # with double hyphen
+        email = "icon--project@iconloop.com"
         self.assertRaises(InvalidFormatException, validate_email, email)
 
         email = "icon-project@iconloop."
