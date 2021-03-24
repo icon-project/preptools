@@ -115,6 +115,59 @@ SET_GOVERNANCE_VARIABLES_SAMPLE = {
 }
 
 
+SET_BONDER_LIST_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_sendTransaction",
+    "id": 1234,
+    "params": {
+        "version": "0x3",
+        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
+        "to": "cx0000000000000000000000000000000000000000",
+        "stepLimit": "0x10000000",
+        "timestamp": "0x58f966811dde2",
+        "nid": "0x3",
+        "value": "0x0",
+        "dataType": "call",
+        "data": {
+            "method": "setBonderList",
+            "params": {
+                "bonderList": [
+                    "hx0000000000000000000000000000000000000001",
+                    "hx0000000000000000000000000000000000000002",
+                    "hx0000000000000000000000000000000000000003",
+                    "hx0000000000000000000000000000000000000004",
+                    "hx0000000000000000000000000000000000000005",
+                    "hx0000000000000000000000000000000000000006",
+                    "hx0000000000000000000000000000000000000007",
+                    "hx0000000000000000000000000000000000000008",
+                    "hx0000000000000000000000000000000000000009",
+                    "hx000000000000000000000000000000000000000a",
+                ]
+            }
+        },
+        "signature": "eY1hw7cfTIDxb5EV5En+uL2MT2BOagHt527nzIoC20QxQo8nCquwUGLbsDBTNBwuoq4UZmf7EDcMwJxSULzbNQA="
+    }
+}
+
+
+GET_BONDER_LIST_SAMPLE = {
+    "jsonrpc": "2.0",
+    "method": "icx_call",
+    "id": 1234,
+    "params": {
+        "to": "cx0000000000000000000000000000000000000000",
+        "dataType": "call",
+        "data": {
+            "method": "getBonderList",
+            "params": {
+                "address": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
+            }
+        },
+        "from": "hx1234567890123456789012345678901234567890"
+    }
+}
+
+
 GET_PREP_SAMPLE = {
     "jsonrpc": "2.0",
     "method": "icx_call",

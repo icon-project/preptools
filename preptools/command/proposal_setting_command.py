@@ -17,7 +17,9 @@
 import json
 import argparse
 
-from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str, convert_params_value_to_hex_str
+from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
+from iconsdk.utils.typing.conversion import object_to_str
+
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidArgumentException
 from preptools.utils import str_to_int
@@ -139,7 +141,7 @@ def _make_dict_with_args(param_list, args) -> dict:
 
         value[key_str] = getattr(args, key)
 
-    return convert_params_value_to_hex_str(value)
+    return object_to_str(value)
 
 
 def _init_for_cancel_proposal(sub_parser, common_parent_parser, tx_parent_parser):
