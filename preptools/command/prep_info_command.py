@@ -19,6 +19,7 @@ from ..core.prep import create_reader_by_args
 
 def init(sub_parser, common_parent_parser):
     _init_for_get_prep(sub_parser, common_parent_parser)
+    _init_for_get_bonder_list(sub_parser, common_parent_parser)
     _init_for_get_preps(sub_parser, common_parent_parser)
 
 
@@ -87,6 +88,33 @@ def _get_preps(args):
 
     reader = create_reader_by_args(args)
     response = reader.get_preps(params)
+
+    return response
+
+
+def _init_for_get_bonder_list(sub_parser, common_parent_parser):
+    name = "getBonderList"
+    desc = f"Inquire allowed bonder list of P-Rep"
+
+    parser = sub_parser.add_parser(
+        name,
+        parents=[common_parent_parser],
+        help=desc)
+
+    parser.add_argument(
+        "address",
+        type=str,
+        help="Address of P-Rep you are looking for"
+    )
+
+    parser.set_defaults(func=_get_bonder_list)
+
+
+def _get_bonder_list(args):
+    address = args.address
+
+    reader = create_reader_by_args(args)
+    response = reader.get_bonder_list(address)
 
     return response
 

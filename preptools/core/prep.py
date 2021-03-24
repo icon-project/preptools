@@ -133,6 +133,10 @@ class PRepToolsWriter(PRepToolsListener):
         method = "setGovernanceVariables"
         return self._call(method, params)
 
+    def set_bonder_list(self, params) -> dict:
+        method = "setBonderList"
+        return self._call(method, params)
+
 
 class PRepToolsReader(PRepToolsListener):
     def __init__(self, service, nid: int, address: str = EOA_ADDRESS):
@@ -169,6 +173,10 @@ class PRepToolsReader(PRepToolsListener):
     def get_prep(self, address: str) -> dict:
         params = {"address": address}
         return self._call("getPRep", params)
+
+    def get_bonder_list(self, address: str) -> dict:
+        params = {"address": address}
+        return self._call("getBonderList", params)
 
     def get_preps(self, params) -> dict:
         return self._call("getPReps", params)

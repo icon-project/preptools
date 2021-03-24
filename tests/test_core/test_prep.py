@@ -16,7 +16,7 @@
 
 import json
 import unittest
-import subprocess
+from typing import Union
 
 from preptools.command.prep_setting_command import _get_prep_input
 from preptools.core.prep import _get_common_args
@@ -31,6 +31,8 @@ from tests.commons.constants import (
     UNREGISTER_SAMPLE,
     SET_SAMPLE,
     SET_GOVERNANCE_VARIABLES_SAMPLE,
+    SET_BONDER_LIST_SAMPLE,
+    GET_BONDER_LIST_SAMPLE,
     GET_PREP_SAMPLE,
     GET_PREPS_SAMPLE,
     GET_TRANSACTION_RESULT_SAMPLE,
@@ -114,6 +116,19 @@ class TestPRep(unittest.TestCase):
         response = writer.set_governance_variables(params)
         self.assertTrue(is_request_equal(response, SET_GOVERNANCE_VARIABLES_SAMPLE))
 
+    def test_set_bonder_list(self):
+        bonder_list = [f"hx{'0' * 39}{(i + 1):x}" for i in range(10)]
+        params = {'bonderList': bonder_list}
+        writer = create_writer(self.args.keystore, self.args.password)
+        response = writer.set_bonder_list(params)
+        self.assertTrue(is_request_equal(response, SET_BONDER_LIST_SAMPLE))
+
+    def test_get_bonder_list(self):
+        address = "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
+        reader = create_reader()
+        response = reader.get_bonder_list(address)
+        self.assertTrue(is_request_equal(response, GET_BONDER_LIST_SAMPLE))
+
     def test_get_prep(self):
         address = "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6"
         reader = create_reader()
@@ -173,10 +188,14 @@ class TestPRep(unittest.TestCase):
         pass
 
 
-def is_request_equal(first_dict: dict, second_dict: dict) -> bool:
-
-    if list(first_dict.keys()) != list(second_dict.keys()):
+def is_request_equal(first_dict: Union[list, dict], second_dict: Union[list, dict]) -> bool:
+    if type(first_dict) != type(second_dict):
         return False
+    if isinstance(first_dict, dict):
+        if list(first_dict.keys()) != list(second_dict.keys()):
+            return False
+    else:
+        return first_dict == second_dict
 
     for k, v in first_dict.items():
 

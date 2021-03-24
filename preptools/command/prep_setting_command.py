@@ -34,6 +34,7 @@ def init(sub_parser, common_parent_parser):
     _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser)
+    _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser)
 
 
 def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -333,6 +334,40 @@ def _set_governance_variables(args) -> str:
 
     writer = create_writer_by_args(args)
     response = writer.set_governance_variables(params)
+
+    if response:
+        return f'txHash : {response}'
+
+
+def _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser):
+    name = "setBonderList"
+    desc = f"Set allowed bonder list of P-Rep"
+
+    parser = sub_parser.add_parser(
+        name,
+        parents=[common_parent_parser, tx_parent_parser],
+        help=desc)
+
+    parser.add_argument(
+        "--bonder-list",
+        type=str,
+        required=True,
+        dest="bonderList",
+        help="list of address. separator is ','"
+    )
+
+    parser.set_defaults(func=_set_bonder_list)
+
+
+def _set_bonder_list(args) -> str:
+    bonder_str: str = args.bonderList
+    bonder_list = bonder_str.split(',')
+    params = {
+        'bonderList': bonder_list
+    }
+
+    writer = create_writer_by_args(args)
+    response = writer.set_bonder_list(params)
 
     if response:
         return f'txHash : {response}'
