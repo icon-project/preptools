@@ -1,2 +1,2 @@
-iconsdk >= 1.0.6
+iconsdk >= 1.3.3
 iso3166 >= 1.0
