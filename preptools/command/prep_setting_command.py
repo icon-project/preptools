@@ -184,7 +184,7 @@ def _get_prep_input(args, params: dict):
 
 def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser):
     name = "unregisterPRep"
-    desc = f"Unregister P-Rep"
+    desc = f"Unregister P-Rep\nWARNING!! Unregistering P-Rep does not return the registration fee"
 
     parser = sub_parser.add_parser(
         name,
@@ -308,7 +308,8 @@ def _set_prep(args) -> str:
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
     name = "setGovernanceVariables"
-    desc = f"Change Governance variables used in network operation "
+    desc = f"Change Governance variables used in network operation" \
+           f"\ndeprecated.since revision9, set i-rep with network proposal"
 
     parser = sub_parser.add_parser(
         name,
