@@ -17,7 +17,7 @@ import argparse
 import json
 
 from iconsdk.utils.convert_type import convert_int_to_hex_str
-from preptools.core.prep import create_writer_by_args
+from preptools.core.prep import create_writer_by_args, confirm_callback_for_registerPRep
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils import str_to_int
 from preptools.utils.constants import fields_to_validate
@@ -116,7 +116,7 @@ def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
 
 
 def _register_prep(args) -> str:
-    writer = create_writer_by_args(args)
+    writer = create_writer_by_args(args, confirm_callback=confirm_callback_for_registerPRep)
 
     if args.prep_json:
         params = _get_prep_json(args, blank_able=True)

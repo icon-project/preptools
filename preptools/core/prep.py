@@ -203,7 +203,19 @@ def create_reader(url: str, nid: int) -> PRepToolsReader:
     return PRepToolsReader(icon_service, nid)
 
 
-def create_writer_by_args(args) -> PRepToolsWriter:
+def _confirm_callback(content: dict, yes: bool, verbose: bool) -> bool:
+    if not yes or verbose:
+        _print_request("Request", content)
+
+    if not yes:
+        ret: str = input("> Continue? [Y/n]")
+        if ret == "n":
+            return False
+
+    return True
+
+
+def create_writer_by_args(args, confirm_callback=_confirm_callback) -> PRepToolsWriter:
     url, nid, keystore_path = _get_common_args(args)
     password: str = args.password
 
@@ -215,7 +227,7 @@ def create_writer_by_args(args) -> PRepToolsWriter:
 
     writer = create_writer(url, nid, keystore_path, password, getattr(args, "step_limit", 0x50000000))
 
-    callback = functools.partial(_confirm_callback, yes=args.yes, verbose=args.verbose)
+    callback = functools.partial(confirm_callback, yes=args.yes, verbose=args.verbose)
     writer.set_on_send_request(callback)
 
     return writer
@@ -239,12 +251,12 @@ def create_icon_service(url: str) -> IconService:
     return IconService(HTTPProvider(url))
 
 
-def _confirm_callback(content: dict, yes: bool, verbose: bool) -> bool:
+def confirm_callback_for_registerPRep(content: dict, yes: bool, verbose: bool) -> bool:
     if not yes or verbose:
         _print_request("Request", content)
 
     if not yes:
-        ret: str = input("> Continue? [Y/n]")
+        ret: str = input("> Once you have registered PRep, you can not get the fee back, Continue? [Y/n]")
         if ret == "n":
             return False
 

@@ -192,17 +192,3 @@ def is_request_equal(first_dict: dict, second_dict: dict) -> bool:
 
     return True
 
-
-class TestPRepCmd(unittest.TestCase):
-
-    def test_setprep_command(self):
-        self.command = 'preptools setPRep --yes --node-address %s --prep-json %s -k %s -p %s -u %s -n %s' % (
-            'hx1234567890123456789012345678901234567890',
-            TEST_REGISTER_JSON_PATH,
-            TEST_KEYSTORE_PATH,
-            TEST_KEYSTORE_PASSWORD,
-            'https://zicon.net.solidwallet.io/api/v3',
-            '80')
-        p = subprocess.Popen(self.command.split(' '), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        (self.output, self.err) = p.communicate()
-        assert b'error' not in self.output
