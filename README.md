@@ -872,7 +872,7 @@ optional arguments:
 | -s, --step-limit | 0x50000000                   | step limit to set                          |
 | --title  |         | title of network-proposal                 |
 | --desc  |         | description of network-proposal              |
-| --type  |         | type of network-proposal(0,1,2,3,4)                 |
+| --type  |         | [type](https://github.com/icon-project/governance#available-values-for-the-type) of network-proposal |
 | --value-value  |         | value of value field                 |
 | --value-code  |         | value of code field                 |
 | --value-address  |         | value of address field                 |
@@ -1228,8 +1228,8 @@ optional arguments:
 | -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
 | -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
 | -v, --verbose      |         | verbose mode flag          |
-| --type | | Type of network proposal to filter |
-| --status | | Status of network proposal to filter |
+| --type | | [Type](https://github.com/icon-project/governance#available-values-for-the-type) of network proposal to filter |
+| --status | | [Status](https://github.com/icon-project/governance/blob/master/governance/network_proposal.py#L15) of network proposal to filter |
 
 **examples**
 ```bash
@@ -1610,8 +1610,8 @@ Create a JSON file and upload it to your domain server. When you call the `regis
 ## References
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
 - [ICON SDK PYTHON](https://github.com/icon-project/icon-sdk-python)
+- [Governance SCORE](https://github.com/icon-project/governance)
 
 ## License
 
 This project follows the Apache 2.0 License. Please refer to [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) for details.
-
