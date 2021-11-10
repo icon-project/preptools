@@ -63,24 +63,30 @@ preptools provides several commands. Here is the list of the available commands.
 
 ```
 usage: preptools [-h]
+                 {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
                  ...
 
-P-Rep management command line interface v1.0.10
+P-Rep management command line interface v1.1.0
 
 optional arguments:
   -h, --help            show this help message and exit
 
 subcommands:
-  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,registerProposal,cancelProposal,voteProposal,getPRep,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
+  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
     registerPRep        Register P-Rep
-    unregisterPRep      Unregister P-Rep
+    unregisterPRep      Unregister P-Rep WARNING!! Unregistering P-Rep does
+                        not return the registration fee
     setPRep             Change enrolled P-Rep information
     setGovernanceVariables
                         Change Governance variables used in network operation
+                        deprecated.since revision9, set i-rep with network
+                        proposal
+    setBonderList       Set allowed bonder list of P-Rep
     registerProposal    Register Proposal
     cancelProposal      Cancel Proposal
     voteProposal        Vote Proposal
     getPRep             Inquire P-Rep information
+    getBonderList       Inquire allowed bonder list of P-Rep
     getPReps            Get live status of all registered P-Rep candidates
     getProposal         Inquire Proposal information using transaction hash
     getProposals        Inquire all of network proposal list.
@@ -600,12 +606,88 @@ request success.
 }
 ```
 
+#### setBonderList
+
+**Description**
+
+P-Rep whitelist up to 10 addresses which can post the bond
+
+
+
+**Usage**
+```bash
+usage: preptools setBonderList [-h] [--url URL] [--nid NID] [--config CONFIG]
+                               [--yes] [--verbose] [--password PASSWORD]
+                               [--keystore KEYSTORE] [--step-limit STEP_LIMIT]
+                               --bonder-list BONDERLIST
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --step-limit STEP_LIMIT, -s STEP_LIMIT
+                        step limit to set
+  --bonder-list BONDERLIST
+                        list of address. separator is ','
+```
+
+**Options**
+
+| shorthand, Name  | default                 | Description                     |
+| :--------------- | :---------------------- | :------------------------------ |
+| -h, --help       |                         | show this help message and exit |
+| -u, --url        | http://127.0.0.1/api/v3 | node url                        |
+| -n, --nid        | 3                       | network id                      |
+| -c, --config     | ./preptools_config.json | preptools config file path      |
+| -p, --password   |                         | keystore password               |
+| -k, --keystore   |                         | keystore file path              |
+| -s, --step-limit | 0x50000000              | step limit to set               |
+| --bonder-list    |                         | list of whiltelisted address    |
+
+**Examples**
+
+```bash
+(venv) $ preptools setBonderList --bonder-list hxf1ba1be02ff3a15c5b5c63f2bdba810fefb6f0b5,hx7101544346685b37c7bbb56c2c9b8ed56f2895e2,hxa101544346685b37c7bbb56c2c9b8ed56f2895e1
+[Request] ======================================================================
+{
+    "from_": "hx7101544346685b37c7bbb56c2c9b8ed56f2895e2",
+    "to": "cx0000000000000000000000000000000000000000",
+    "value": 0,
+    "step_limit": 1342177280,
+    "nid": 3,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "setBonderList",
+    "data_type": "call",
+    "params": {
+        "bonderList": [
+            "hxf1ba1be02ff3a15c5b5c63f2bdba810fefb6f0b5",
+            "hx7101544346685b37c7bbb56c2c9b8ed56f2895e2",
+            "hxa101544346685b37c7bbb56c2c9b8ed56f2895e1"
+        ]
+    }
+}
+
+> Continue? [Y/n]
+[Response] =====================================================================
+txHash : {'jsonrpc': '2.0', 'result': '0x3825c983b50e42477ba17382d18ddf6e82de59b0b9d2c4813a392d0d758193b7', 'id': 1636530159}
+```
+
 ### Preptools information commands
 
-Commands that show the P-Rep information. There are two commands `preptools getPRep` and `preptools getPReps`.
+Commands that show the P-Rep information.
 
 #### getPRep
-**Description**  
+**Description**
 
 Inquire P-Rep information
 
@@ -673,6 +755,67 @@ request success.
     },
     "id": 1234
 }
+```
+
+#### getBonderList
+**Description**  
+
+Get the list of addresses which can post the bond
+
+**Usage**
+```bash
+usage: preptools getBonderList [-h] [--url URL] [--nid NID] [--config CONFIG]
+                               [--yes] [--verbose]
+                               address
+
+positional arguments:
+  address               Address of P-Rep you are looking for
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+```
+
+**Options**
+
+| shorthand, Name | default                     | Description                                          |
+| :-------------- | :-------------------------- | :--------------------------------------------------- |
+| -h, --help      |                             | show this help message and exit                      |
+| -u, --url       | http://127.0.0.1/api/v3     | node url                                             |
+| -n, --nid       | 3                           | network id                                           |
+| -c, --config    | ./preptools_config.json     | preptools config file path                           |
+| address         |                             | Address of P-Rep you are looking for                 |
+
+**Examples**
+```bash
+(venv) $ preptools getBonderList hx7101544346685b37c7bbb56c2c9b8ed56f2895e2
+[Request] ======================================================================
+{
+    "from_": "hx1234567890123456789012345678901234567890",
+    "to": "cx0000000000000000000000000000000000000000",
+    "method": "getBonderList",
+    "params": {
+        "address": "hx7101544346685b37c7bbb56c2c9b8ed56f2895e2"
+    }
+}
+
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "bonderList": [
+            "hxf1ba1be02ff3a15c5b5c63f2bdba810fefb6f0b5",
+            "hx7101544346685b37c7bbb56c2c9b8ed56f2895e2",
+            "hxa101544346685b37c7bbb56c2c9b8ed56f2895e1"
+        ]
+    },
+    "id": 1636530914
+} 
 ```
 
 #### getPReps
