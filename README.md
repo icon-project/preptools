@@ -66,7 +66,7 @@ usage: preptools [-h]
                  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
                  ...
 
-P-Rep management command line interface v1.1.0
+P-Rep management command line interface v1.2.0
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -90,6 +90,10 @@ subcommands:
     getPReps            Get live status of all registered P-Rep candidates
     getProposal         Inquire Proposal information using transaction hash
     getProposals        Inquire all of network proposal list.
+    setStake            Set stake value
+    getStake            Get stake value
+    setBond             Set bond configuration
+    getBond             Get bond configuration
     txresult            Get transaction result by hash
     txbyhash            Get transaction by hash
     keystore            Create keystore file in the specified path.
@@ -1456,6 +1460,293 @@ request success.
     "id": 1234
 }
 ```
+
+### Bond commands
+
+There are 2 commands to bond: `setStake` and `setBond`.
+Whenever the commands are called, they load the configuration from `preptools_config.json`.
+In order to use other configuration file, please specify the file location with the `-c` option.
+
+#### setStake
+
+**Description**
+
+Set stake value of the account
+
+**Usage**
+```bash
+usage: preptools setStake [-h] [--url URL] [--nid NID] [--config CONFIG]
+                          [--yes] [--verbose] [--password PASSWORD]
+                          [--keystore KEYSTORE] [--step-limit STEP_LIMIT]
+                          value
+
+positional arguments:
+  value                 Stake value
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --step-limit STEP_LIMIT, -s STEP_LIMIT
+                        step limit to set
+```
+
+**Options**
+
+| shorthand, Name  | default                 | Description                     |
+| :--------------- | :---------------------- | :------------------------------ |
+| -h, --help       |                         | show this help message and exit |
+| -u, --url        | http://127.0.0.1/api/v3 | node url                        |
+| -n, --nid        | 3                       | network id                      |
+| -c, --config     | ./preptools_config.json | preptools config file path      |
+| -p, --password   |                         | keystore password               |
+| -k, --keystore   |                         | keystore file path              |
+| -s, --step-limit | 0x50000000              | step limit to set               |
+| --bonder-list    |                         | list of whiltelisted address    |
+
+**Examples**
+
+```bash
+(venv) $ preptools setStake 10000
+[Request] ======================================================================
+{
+    "from_": "hxcad9055c936192554141a0f5f4bb554a97f4d8e1",
+    "to": "cx0000000000000000000000000000000000000000",
+    "value": 0,
+    "step_limit": 1342177280,
+    "nid": 7,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "setStake",
+    "data_type": "call",
+    "params": {
+        "value": 10000
+    }
+}
+
+> Continue? [Y/n]y
+[Response] =====================================================================
+txHash : {'jsonrpc': '2.0', 'result': '0xfab066b43f06596fd1bea3ab6effb154fdab3abcff21e4d75a70a62dbbc86053', 'id': 1637130230}
+```
+
+#### setBond
+
+**Description**
+
+Set bond configuration of the account
+
+**Usage**
+```bash
+usage: preptools setBond [-h] [--url URL] [--nid NID] [--config CONFIG]
+                         [--yes] [--verbose] [--password PASSWORD]
+                         [--keystore KEYSTORE] [--step-limit STEP_LIMIT]
+                         bond [bond ...]
+
+positional arguments:
+  bond                  Bond configurations. PREP_ADDRESS,VALUE (Max: 100)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --step-limit STEP_LIMIT, -s STEP_LIMIT
+                        step limit to set
+```
+
+**Options**
+
+| shorthand, Name  | default                 | Description                     |
+| :--------------- | :---------------------- | :------------------------------ |
+| -h, --help       |                         | show this help message and exit |
+| -u, --url        | http://127.0.0.1/api/v3 | node url                        |
+| -n, --nid        | 3                       | network id                      |
+| -c, --config     | ./preptools_config.json | preptools config file path      |
+| -p, --password   |                         | keystore password               |
+| -k, --keystore   |                         | keystore file path              |
+| -s, --step-limit | 0x50000000              | step limit to set               |
+| --bonder-list    |                         | list of whiltelisted address    |
+
+**Examples**
+
+```bash
+(venv) $ preptools setBond hx4ffe89ff27a21276a3c7e23eef2ced3d3072d7c9,500 hx7ded18f4c3d1740137684d8109cf8444f89053e5,500
+[Request] ======================================================================
+{
+    "from_": "hxcad9055c936192554141a0f5f4bb554a97f4d8e1",
+    "to": "cx0000000000000000000000000000000000000000",
+    "value": 0,
+    "step_limit": 1342177280,
+    "nid": 7,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "setBond",
+    "data_type": "call",
+    "params": {
+        "bonds": [
+            {
+                "address": "hx4ffe89ff27a21276a3c7e23eef2ced3d3072d7c9",
+                "value": "0x1f4"
+            },
+            {
+                "address": "hx7ded18f4c3d1740137684d8109cf8444f89053e5",
+                "value": "0x1f4"
+            }
+        ]
+    }
+}
+
+> Continue? [Y/n]
+[Response] =====================================================================
+txHash : {'jsonrpc': '2.0', 'result': '0xd2bb1dfbf03a68adaa36a35a8544e90035b93e293fa60611aa0f815420895e9b', 'id': 1637130338}
+```
+
+### Querying bond commands
+
+#### getStake
+**Description**
+
+Get stake value of the account
+
+**Usage**
+
+```bash
+usage: preptools getStake [-h] [--url URL] [--nid NID] [--config CONFIG]
+                          [--yes] [--verbose]
+                          address
+
+positional arguments:
+  address               Address of you are looking for
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| -c, --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+
+
+**examples**
+```bash
+(venv) $ preptools getStake hxcad9055c936192554141a0f5f4bb554a97f4d8e1                                                         *[master]
+[Request] ======================================================================
+{
+    "from_": "hx1234567890123456789012345678901234567890",
+    "to": "cx0000000000000000000000000000000000000000",
+    "method": "getStake",
+    "params": {
+        "address": "hxcad9055c936192554141a0f5f4bb554a97f4d8e1"
+    }
+}
+
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "stake": "0x2710",
+        "unstakes": []
+    },
+    "id": 1637130254
+}
+```
+
+#### getBond
+**Description**
+
+Get bond configuration of the account
+
+**Usage**
+
+```bash
+usage: preptools getBond [-h] [--url URL] [--nid NID] [--config CONFIG]
+                         [--yes] [--verbose]
+                         address
+
+positional arguments:
+  address               Address of you are looking for
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+```
+**Options**
+
+| shorthand, Name | default | Description                              |
+| :-------------- | :------ | :--------------------------------------- |
+| -c, --config            |         | configuration file path. |
+| -h, --help      |         | show this help message and exit          |
+| -u, --url      |  http://127.0.0.1:9000/api/v3     | node url |
+| -n, --nid      |    3| networkId mainnet(1), testnet(2)          |
+| -v, --verbose      |         | verbose mode flag          |
+
+
+**examples**
+```bash
+(venv) $ preptools getBond hxcad9055c936192554141a0f5f4bb554a97f4d8e1                                                          *[master]
+[Request] ======================================================================
+{
+    "from_": "hx1234567890123456789012345678901234567890",
+    "to": "cx0000000000000000000000000000000000000000",
+    "method": "getBond",
+    "params": {
+        "address": "hxcad9055c936192554141a0f5f4bb554a97f4d8e1"
+    }
+}
+
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "bonds": [
+            {
+                "address": "hx4ffe89ff27a21276a3c7e23eef2ced3d3072d7c9",
+                "value": "0x1f4"
+            },
+            {
+                "address": "hx7ded18f4c3d1740137684d8109cf8444f89053e5",
+                "value": "0x1f4"
+            }
+        ],
+        "unbonds": []
+    },
+    "id": 1637131982
+}
+```
+
 ### Preptools Common commands
 
 Commands that generate configuration file and keystore file. There are two commands `keystore` and `genconf`.

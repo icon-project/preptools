@@ -22,6 +22,7 @@ from typing import Optional
 from iconsdk.exception import IconServiceBaseException
 
 from preptools.command import (
+    bond_command,
     prep_setting_command,
     proposal_setting_command,
     prep_info_command,
@@ -42,8 +43,9 @@ def main() -> Optional:
         proposal_setting_command.init,
         prep_info_command.init,
         proposal_info_command.init,
+        bond_command.init,
         tx_info_command.init,
-        common_command.init
+        common_command.init,
     ]
 
     version = get_preptools_version()

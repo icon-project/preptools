@@ -137,6 +137,14 @@ class PRepToolsWriter(PRepToolsListener):
         method = "setBonderList"
         return self._call(method, params)
 
+    def set_stake(self, params) -> dict:
+        method = "setStake"
+        return self._call(method, params)
+
+    def set_bond(self, params) -> dict:
+        method = "setBond"
+        return self._call(method, params)
+
 
 class PRepToolsReader(PRepToolsListener):
     def __init__(self, service, nid: int, address: str = EOA_ADDRESS):
@@ -193,6 +201,14 @@ class PRepToolsReader(PRepToolsListener):
 
     def get_tx_by_hash(self, tx_hash) -> dict:
         return self._tx_by_hash(tx_hash)
+
+    def get_stake(self, address: str) -> dict:
+        params = {"address": address}
+        return self._call("getStake", params)
+
+    def get_bond(self, address: str) -> dict:
+        params = {"address": address}
+        return self._call("getBond", params)
 
 
 def create_reader_by_args(args) -> PRepToolsReader:
