@@ -61,7 +61,7 @@ def create_writer(keystore_path, password):
     wallet = KeyWallet.load(keystore_path, password)
 
     writer = PRepToolsWriter(icon_service, 3, wallet, 0x10000000)
-    writer.set_on_send_request(lambda x: True)
+    writer.set_listeners([lambda x: True])
 
     return writer
 
@@ -70,6 +70,6 @@ def create_reader():
     icon_service = IconService()
 
     reader = PRepToolsReader(icon_service, 3)
-    reader.set_on_send_request(lambda x: True)
+    reader.set_listeners(lambda x: True)
 
     return reader

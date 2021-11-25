@@ -12,12 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 import re
 
 import iso3166
+import requests
 
-from preptools.exception import InvalidFormatException, InvalidDataTypeException, InvalidArgumentException
+from preptools.exception import InvalidFormatException, InvalidDataTypeException, \
+    JsonRpcException
 from preptools.utils.constants import fields_to_validate, ConstantKeys
 
 scheme_pattern = r'^(http:\/\/|https:\/\/)'
@@ -33,6 +35,7 @@ WEBSITE_DOMAIN_NAME_PATTERN = re.compile(f'{scheme_pattern}{host_name_regex}{por
 WEBSITE_IP_PATTERN = re.compile(f'{scheme_pattern}{ip_regex}{port_regex}{path_pattern}$')
 EMAIL_PATTERN = re.compile(email_regex)
 PASSWORD_PATTERN = re.compile(password_regex)
+CHAINSCORE_ADDRESS = f"cx{'0' * 40}"
 
 
 def validate_prep_data(data: dict, blank_able: bool = False):
@@ -52,7 +55,6 @@ def validate_prep_data(data: dict, blank_able: bool = False):
 
 
 def validate_field_in_prep_data(key: str, value: str):
-
     if not validate_field_key(key):
         raise InvalidFormatException(f"Invalid key : {key}")
 
@@ -69,7 +71,6 @@ def validate_field_in_prep_data(key: str, value: str):
 
 
 def validate_field_key(key):
-
     for ckey in fields_to_validate:
         if key == ckey:
             return True
@@ -144,7 +145,6 @@ def validate_node_address(address: str):
 
 
 def valid_proposal_text_param(args) -> bool:
-
     if args.value_value is None:
         raise InvalidArgumentException("Type 0 have to has 'value' value.")
 
@@ -152,7 +152,6 @@ def valid_proposal_text_param(args) -> bool:
 
 
 def valid_proposal_reivision_update_param(args) -> bool:
-
     if args.value_code is None or args.value_name is None:
         raise InvalidArgumentException("Type 1 have to has 'code' and 'name' value.")
 
@@ -160,7 +159,6 @@ def valid_proposal_reivision_update_param(args) -> bool:
 
 
 def valid_proposal_malicious_score_param(args) -> bool:
-
     if args.value_address is None or args.value_type is None:
         raise InvalidArgumentException("Type 2 have to has 'address' and 'type' value.")
 
@@ -168,7 +166,6 @@ def valid_proposal_malicious_score_param(args) -> bool:
 
 
 def valid_proposal_prep_disqualification_param(args) -> bool:
-
     if args.value_address is None:
         raise InvalidArgumentException("Type 3 have to has 'address' value.")
 
@@ -176,7 +173,6 @@ def valid_proposal_prep_disqualification_param(args) -> bool:
 
 
 def valid_proposal_step_price(args) -> bool:
-
     if args.value_value is None:
         raise InvalidArgumentException("Type 4 have to has 'value' value.")
 
@@ -189,11 +185,11 @@ def valid_proposal_step_price(args) -> bool:
 
 
 valid_proposal_param_by_type = [
-    valid_proposal_text_param,                      # type 0
-    valid_proposal_reivision_update_param,          # type 1
-    valid_proposal_malicious_score_param,           # type 2
-    valid_proposal_prep_disqualification_param,     # type 3
-    valid_proposal_step_price                       # type 4
+    valid_proposal_text_param,  # type 0
+    valid_proposal_reivision_update_param,  # type 1
+    valid_proposal_malicious_score_param,  # type 2
+    valid_proposal_prep_disqualification_param,  # type 3
+    valid_proposal_step_price  # type 4
 ]
 
 
@@ -220,3 +216,47 @@ def _is_lowercase_hex_string(value: str) -> bool:
         pass
 
     return False
+
+
+def check_enough_balance(url: str, data: dict) -> bool:
+    address = data["from_"]
+    value = data.get("value", 0)
+    step_limit = data["step_limit"]
+    balance_id, step_price_id = 1, 2
+    balance_request = {
+        'jsonrpc': '2.0',
+        'method': "icx_getBalance",
+        'id': balance_id,
+        "params": {"address": address}
+    }
+    step_price_request = {
+        'jsonrpc': '2.0',
+        'method': "icx_call",
+        'id': step_price_id,
+        "params": {
+            "to": CHAINSCORE_ADDRESS,
+            "dataType": "call",
+            "data": {
+                "method": "getStepPrice"
+            }
+        }
+    }
+    batch_request = [balance_request, step_price_request]
+    with requests.Session() as session:
+        response = session.post(url=url, data=json.dumps(batch_request))
+    if response.ok:
+        balance_res, step_res = None, None
+        res_list = response.json()
+        for res in res_list:
+            if res["id"] == balance_id:
+                balance_res = res
+            else:
+                step_res = res
+        balance = int(balance_res["result"], 0)
+        step_price = int(step_res["result"], 0)
+        if balance - (step_price * step_limit + value) > 0:
+            return True
+        else:
+            print(f"Your balance({balance}) < cost(stepPrice * stepLimit + value): ({step_price * step_limit + value})")
+            return False
+    raise JsonRpcException("Error while checking balance")

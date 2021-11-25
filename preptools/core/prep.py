@@ -15,25 +15,26 @@
 import functools
 import getpass
 import json
+from typing import List, Callable
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
-from iconsdk.exception import KeyStoreException, DataTypeException
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
+from preptools.exception import InvalidKeyStoreException, InvalidFileReadException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN, GOVERNANCE_ADDRESS
 from ..utils.preptools_config import get_default_config
-from ..utils.utils import print_title, print_dict, get_url
+from ..utils.utils import print_title, print_dict
+from ..utils.validation_checker import check_enough_balance
 
 
 def _print_request(title: str, content: dict):
     print_title(title, COLUMN)
     print_dict(content)
-    print("")
+    print()
 
 
 class TxHandler:
@@ -62,7 +63,11 @@ class TxHandler:
 
     def _call_on_send_request(self, content: dict) -> bool:
         if self._on_send_request:
-            return self._on_send_request(content)
+            listeners = self._on_send_request
+            ret = True
+            for listener in listeners:
+                ret = ret and listener(content)
+            return ret
 
         return False
 
@@ -72,14 +77,14 @@ class TxHandler:
 
 class PRepToolsListener(object):
     def __init__(self):
-        self._on_send_request = None
+        self._listeners = None
 
-    def set_on_send_request(self, func: callable(dict)):
-        self._on_send_request = func
+    def set_listeners(self, func: List[Callable[[dict], bool]]):
+        self._listeners = func
 
     @property
-    def on_send_request(self) -> callable(dict):
-        return self._on_send_request
+    def listeners(self) -> List[Callable[[dict], bool]]:
+        return self._listeners
 
 
 class PRepToolsWriter(PRepToolsListener):
@@ -103,7 +108,7 @@ class PRepToolsWriter(PRepToolsListener):
         )
 
     def _create_tx_handler(self) -> TxHandler:
-        return TxHandler(self._icon_service, self._nid, self.on_send_request)
+        return TxHandler(self._icon_service, self._nid, self.listeners)
 
     def register_prep(self, params) -> dict:
         method = "registerPRep"
@@ -162,21 +167,10 @@ class PRepToolsReader(PRepToolsListener):
             .params(params) \
             .build()
 
-        self.on_send_request(call.to_dict())
+        for listener in self.listeners:
+            listener(call.to_dict())
 
         return self._icon_service.call(call, True)
-
-    def _tx_result(self, tx_hash):
-        try:
-            return self._icon_service.get_transaction_result(tx_hash, True)
-        except DataTypeException:
-            raise InvalidDataTypeException("This hash value is unrecognized.")
-
-    def _tx_by_hash(self, tx_hash):
-        try:
-            return self._icon_service.get_transaction(tx_hash, True)
-        except DataTypeException:
-            raise InvalidDataTypeException("This hash value is unrecognized.")
 
     def get_prep(self, address: str) -> dict:
         params = {"address": address}
@@ -196,12 +190,6 @@ class PRepToolsReader(PRepToolsListener):
     def get_proposals(self, params) -> dict:
         return self._call("getProposals", params, to=GOVERNANCE_ADDRESS)
 
-    def get_tx_result(self, tx_hash) -> dict:
-        return self._tx_result(tx_hash)
-
-    def get_tx_by_hash(self, tx_hash) -> dict:
-        return self._tx_by_hash(tx_hash)
-
     def get_stake(self, address: str) -> dict:
         params = {"address": address}
         return self._call("getStake", params)
@@ -216,13 +204,12 @@ def create_reader_by_args(args) -> PRepToolsReader:
     reader = create_reader(url, nid)
 
     callback = functools.partial(_print_request, "Request")
-    reader.set_on_send_request(callback)
+    reader.set_listeners([callback])
 
     return reader
 
 
 def create_reader(url: str, nid: int) -> PRepToolsReader:
-    url: str = get_url(url)
     icon_service = IconService(HTTPProvider(url))
     return PRepToolsReader(icon_service, nid)
 
@@ -251,27 +238,19 @@ def create_writer_by_args(args, confirm_callback=_confirm_callback) -> PRepTools
 
     writer = create_writer(url, nid, keystore_path, password, getattr(args, "step_limit", 0x50000000))
 
-    callback = functools.partial(confirm_callback, yes=args.yes, verbose=args.verbose)
-    writer.set_on_send_request(callback)
+    callback1 = functools.partial(confirm_callback, yes=args.yes, verbose=args.verbose)
+    callback2 = functools.partial(check_enough_balance, url)
+    writer.set_listeners([callback1, callback2])
 
     return writer
 
 
 def create_writer(url: str, nid: int, keystore_path: str, password: str, step_limit: int) -> PRepToolsWriter:
-    url: str = get_url(url)
-    icon_service = IconService(HTTPProvider(url))
-
-    try:
-        owner_wallet = KeyWallet.load(keystore_path, password)
-
-    except KeyStoreException as e:
-        raise InvalidKeyStoreException(f"{e}")
-
-    return PRepToolsWriter(icon_service, nid, owner_wallet, step_limit)
+    owner_wallet = KeyWallet.load(keystore_path, password)
+    return PRepToolsWriter(url, nid, owner_wallet, step_limit)
 
 
 def create_icon_service(url: str) -> IconService:
-    url: str = get_url(url)
     return IconService(HTTPProvider(url))
 
 
@@ -303,7 +282,7 @@ def _get_common_args(args):
             if args.config != 'preptools_config.json':
                 raise InvalidFileReadException(f"Cannot read configure file, file path : {args.config}")
 
-    url: str = get_url(_replace_attribute('url', args, conf))
+    url: str = _replace_attribute('url', args, conf)
     nid: int = _replace_attribute('nid', args, conf)
     keystore_path = _replace_attribute('keystore', args, conf)
 

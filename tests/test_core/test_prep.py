@@ -20,7 +20,6 @@ from typing import Union
 
 from preptools.command.prep_setting_command import _get_prep_input
 from preptools.core.prep import _get_common_args
-from preptools.utils.utils import print_tx_result, print_tx_by_hash
 from tests.commons.constants import (
     TEST_KEYSTORE_PATH,
     TEST_KEYSTORE_PASSWORD,
@@ -35,8 +34,6 @@ from tests.commons.constants import (
     GET_BONDER_LIST_SAMPLE,
     GET_PREP_SAMPLE,
     GET_PREPS_SAMPLE,
-    GET_TRANSACTION_RESULT_SAMPLE,
-    GET_TRANSACTION_SAMPLE
 )
 from tests.commons.core_for_test import create_reader, create_writer
 
@@ -140,18 +137,6 @@ class TestPRep(unittest.TestCase):
         response = reader.get_preps({})
         self.assertTrue(is_request_equal(response, GET_PREPS_SAMPLE))
 
-    def test_tx_result(self):
-        reader = create_reader()
-        response = reader.get_tx_result('0x001d8d2b99c0169df7f7545168451a2fb0608cc218e74ecec15516bf836bcd39')
-        print_tx_result(response)
-        self.assertTrue(is_request_equal(response, GET_TRANSACTION_RESULT_SAMPLE))
-
-    def test_tx_by_hash(self):
-        reader = create_reader()
-        response = reader.get_tx_by_hash('0x1a4809d0a0446da469361e63a36265238f1dec6ff1afa10383231a64ed650692')
-        print_tx_by_hash(response)
-        self.assertTrue(is_request_equal(response, GET_TRANSACTION_SAMPLE))
-
     def test_get_common_args(self):
         # when args value exists, have to maintain args value.
         self.args.config = TEST_WRONG_CONFIG_PATH
@@ -171,21 +156,6 @@ class TestPRep(unittest.TestCase):
         self.assertFalse(url == self.args.url)
         self.assertFalse(nid == self.args.nid)
         self.assertFalse(keystore == self.args.keystore)
-
-    def test_register_proposal(self):
-        pass
-
-    def test_cancel_proposal(self):
-        pass
-
-    def test_vote_proposal(self):
-        pass
-
-    def test_get_proposal(self):
-        pass
-
-    def test_get_proposals(self):
-        pass
 
 
 def is_request_equal(first_dict: Union[list, dict], second_dict: Union[list, dict]) -> bool:

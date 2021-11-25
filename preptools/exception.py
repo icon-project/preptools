@@ -25,18 +25,19 @@ class PRepToolsExceptionCode(IntEnum):
     OK = 0
 
     # Exceptions in SDK
-    # KEY_STORE_ERROR = 1
-    # ADDRESS_ERROR = 2
-    # BALANCE_ERROR = 3
-    # DATA_TYPE_ERROR = 4
-    # JSON_RPC_ERROR = 5
-    # ZIP_MEMORY_ERROR = 6
-    # URL_ERROR = 7
+    KEY_STORE_ERROR = 1
+    ADDRESS_ERROR = 2
+    BALANCE_ERROR = 3
+    DATA_TYPE_ERROR = 4
+    JSON_RPC_ERROR = 5
+    ZIP_MEMORY_ERROR = 6
+    URL_ERROR = 7
 
     COMMAND_ERROR = 8
     STRING_FORMAT_ERROR = 9
     FILE_WRITE_ERROR = 10
     FILE_READ_ERROR = 11
+    LACK_OF_BALANCE = 12
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -89,7 +90,7 @@ class InvalidFileReadException(PRepToolsBaseException):
 class InvalidKeyStoreException(PRepToolsBaseException):
     """Invalid Keystore"""
     def __init__(self, message: Optional[str]):
-        super().__init__(message, PRepToolsExceptionCode.KEYSTORE_ERROR)
+        super().__init__(message, PRepToolsExceptionCode.KEY_STORE_ERROR)
 
 
 class InvalidDataTypeException(PRepToolsBaseException):
@@ -98,7 +99,13 @@ class InvalidDataTypeException(PRepToolsBaseException):
         super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
 
 
-class InvalidArgumentException(PRepToolsBaseException):
-    """INvalid Argument"""
+class JsonRpcException(PRepToolsBaseException):
+    """Error while json rpc request"""
     def __init__(self, message: Optional[str]):
-        super().__init__(message, PRepToolsExceptionCode.ARGUMENT_ERROR)
+        super().__init__(message, PRepToolsExceptionCode.JSON_RPC_ERROR)
+
+
+class LackOfBalanceException(PRepToolsBaseException):
+    """Lack of balance"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.LACK_OF_BALANCE)

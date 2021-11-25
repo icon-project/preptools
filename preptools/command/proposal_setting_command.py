@@ -21,7 +21,6 @@ from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_
 from iconsdk.utils.typing.conversion import object_to_str
 
 from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidArgumentException
 from preptools.utils import str_to_int
 from preptools.utils.constants import proposal_param_by_type
 from preptools.utils.utils import print_proposal_value

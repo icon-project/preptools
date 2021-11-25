@@ -16,7 +16,6 @@
 
 import argparse
 import sys
-import time
 from typing import Optional
 
 from iconsdk.exception import IconServiceBaseException
@@ -30,11 +29,10 @@ from preptools.command import (
     tx_info_command,
     common_command
 )
-from preptools.core.prep import create_icon_service
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
-from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL, PREDEFINED_URLS
+from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL
 from preptools.utils.utils import get_preptools_version
-from preptools.utils.utils import print_tx_result, print_response
+from preptools.utils.utils import print_response
 
 
 def main() -> Optional:
@@ -84,32 +82,6 @@ def main() -> Optional:
         sys.exit(PRepToolsExceptionCode.OK.value)
 
     sys.exit(response)
-
-
-def _print_tx_result(args, tx_hash: str) -> int:
-    if tx_hash.startswith("0x") and len(tx_hash) == 66:
-        time.sleep(2)
-        icon_service = create_icon_service(args.url)
-        tx_result: dict = icon_service.get_transaction_result(tx_hash)
-        print_tx_result(tx_result)
-        ret = tx_result["status"]
-    else:
-        # tx_hash is not tx hash format
-        print(tx_hash)
-        ret = 1
-
-    print("")
-
-    return ret
-
-
-def _get_epilog() -> str:
-    words = ["predefined urls:"]
-
-    for key, value in PREDEFINED_URLS.items():
-        words.append(f"    {key}: {value}")
-
-    return "\n".join(words)
 
 
 def create_common_parser() -> argparse.ArgumentParser:

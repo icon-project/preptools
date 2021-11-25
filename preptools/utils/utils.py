@@ -16,13 +16,13 @@
 
 import json
 import os
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING, Union
 from urllib.parse import urlparse
 
 import pkg_resources
-from preptools.exception import InvalidFileWriteException
 
-from .constants import COLUMN, PREDEFINED_URLS, PROJECT_ROOT_PATH
+from preptools.exception import InvalidFileWriteException
+from .constants import COLUMN, PROJECT_ROOT_PATH
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -78,23 +78,6 @@ def is_url_valid(url: str) -> bool:
     return ps.scheme in ("http", "https") \
         and len(ps.netloc) > 0 \
         and len(ps.path) > 0
-
-
-def get_predefined_url(name: str) -> Optional[str]:
-    return PREDEFINED_URLS.get(name)
-
-
-def get_url(url: str) -> str:
-    return url
-    # predefined_url: str = get_predefined_url(url)
-    #
-    # if isinstance(predefined_url, str):
-    #     return predefined_url
-    #
-    # if not is_url_valid(url):
-    #     raise ValueError(f"Invalid url: {url}")
-    #
-    # return url
 
 
 def get_preptools_version() -> str:
