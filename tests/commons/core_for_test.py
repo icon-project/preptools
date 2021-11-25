@@ -70,6 +70,6 @@ def create_reader():
     icon_service = IconService()
 
     reader = PRepToolsReader(icon_service, 3)
-    reader.set_listeners(lambda x: True)
+    reader.set_listeners([lambda x: True])
 
     return reader
