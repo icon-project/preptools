@@ -18,8 +18,7 @@ import re
 import iso3166
 import requests
 
-from preptools.exception import InvalidFormatException, InvalidDataTypeException, \
-    JsonRpcException
+from preptools.exception import InvalidFormatException, JsonRpcException, InvalidArgumentException
 from preptools.utils.constants import fields_to_validate, ConstantKeys
 
 scheme_pattern = r'^(http:\/\/|https:\/\/)'
@@ -179,7 +178,7 @@ def valid_proposal_step_price(args) -> bool:
     try:
         int(args.value_value)
     except Exception:
-        raise InvalidDataTypeException("value's type should be integer")
+        raise InvalidArgumentException("value's type should be integer")
 
     return True
 

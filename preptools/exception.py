@@ -29,15 +29,16 @@ class PRepToolsExceptionCode(IntEnum):
     ADDRESS_ERROR = 2
     BALANCE_ERROR = 3
     DATA_TYPE_ERROR = 4
-    JSON_RPC_ERROR = 5
-    ZIP_MEMORY_ERROR = 6
-    URL_ERROR = 7
+    ARGUMENT_ERROR = 5
+    JSON_RPC_ERROR = 6
+    ZIP_MEMORY_ERROR = 7
+    URL_ERROR = 8
 
-    COMMAND_ERROR = 8
-    STRING_FORMAT_ERROR = 9
-    FILE_WRITE_ERROR = 10
-    FILE_READ_ERROR = 11
-    LACK_OF_BALANCE = 12
+    COMMAND_ERROR = 9
+    STRING_FORMAT_ERROR = 10
+    FILE_WRITE_ERROR = 11
+    FILE_READ_ERROR = 12
+    LACK_OF_BALANCE = 13
 
     def __str__(self) -> str:
         return str(self.name).capitalize().replace('_', ' ')
@@ -94,7 +95,13 @@ class InvalidKeyStoreException(PRepToolsBaseException):
 
 
 class InvalidDataTypeException(PRepToolsBaseException):
-    """Invalid Keystore"""
+    """Invalid data type"""
+    def __init__(self, message: Optional[str]):
+        super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
+
+
+class InvalidArgumentException(PRepToolsBaseException):
+    """Invalid data type"""
     def __init__(self, message: Optional[str]):
         super().__init__(message, PRepToolsExceptionCode.DATA_TYPE_ERROR)
 

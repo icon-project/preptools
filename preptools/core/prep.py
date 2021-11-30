@@ -43,18 +43,7 @@ class TxHandler:
         self._nid = nid
         self._on_send_request = on_send_request
 
-    def _call_tx(self, owner, to, method, params, limit, value: int = 0):
-        transaction = CallTransactionBuilder() \
-            .from_(owner.get_address()) \
-            .to(to) \
-            .step_limit(limit) \
-            .version(3) \
-            .nid(self._nid) \
-            .method(method) \
-            .params(params) \
-            .value(value) \
-            .build()
-
+    def _call_tx(self, transaction, owner):
         ret = self._call_on_send_request(transaction.to_dict())
         if not ret:
             return
@@ -71,8 +60,22 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, limit=0x50000000, value: int = 0) -> dict:
-        return self._call_tx(owner, to, method, params, limit, value)
+    def call(self, owner, to, method, params=None, limit=None, value: int = 0, margin: int = 0) -> dict:
+        transaction = CallTransactionBuilder() \
+            .from_(owner.get_address()) \
+            .to(to) \
+            .version(3) \
+            .nid(self._nid) \
+            .method(method) \
+            .params(params) \
+            .value(value)
+        if limit is None:
+            step_omit_tx = transaction.build()
+            ret = self._icon_service.estimate_step(step_omit_tx)
+            transaction.step_limit(ret + margin)
+        else:
+            transaction.step_limit(limit)
+        return self._call_tx(transaction.build(), owner)
 
 
 class PRepToolsListener(object):
@@ -88,13 +91,14 @@ class PRepToolsListener(object):
 
 
 class PRepToolsWriter(PRepToolsListener):
-    def __init__(self, service, nid: int, owner, step_limit):
+    def __init__(self, service, nid: int, owner, step_limit, step_margin):
         super().__init__()
 
         self._icon_service = service
         self._owner = owner
         self._nid = nid
         self._step_limit = step_limit
+        self._step_margin = step_margin
 
     def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, value: int = 0) -> dict:
         tx_handler = self._create_tx_handler()
@@ -104,7 +108,8 @@ class PRepToolsWriter(PRepToolsListener):
             limit=self._step_limit,
             method=method,
             params=params,
-            value=value
+            value=value,
+            margin=self._step_margin
         )
 
     def _create_tx_handler(self) -> TxHandler:
@@ -235,8 +240,8 @@ def create_writer_by_args(args, confirm_callback=_confirm_callback) -> PRepTools
 
     if password is None:
         password = getpass.getpass("> Password: ")
-
-    writer = create_writer(url, nid, keystore_path, password, getattr(args, "step_limit", 0x50000000))
+    writer = create_writer(
+        url, nid, keystore_path, password, getattr(args, "step_limit"), getattr(args, "step_margin", 0))
 
     callback1 = functools.partial(confirm_callback, yes=args.yes, verbose=args.verbose)
     callback2 = functools.partial(check_enough_balance, url)
@@ -245,9 +250,11 @@ def create_writer_by_args(args, confirm_callback=_confirm_callback) -> PRepTools
     return writer
 
 
-def create_writer(url: str, nid: int, keystore_path: str, password: str, step_limit: int) -> PRepToolsWriter:
+def create_writer(
+        url: str, nid: int, keystore_path: str, password: str, step_limit: int, step_margin: int) -> PRepToolsWriter:
     owner_wallet = KeyWallet.load(keystore_path, password)
-    return PRepToolsWriter(url, nid, owner_wallet, step_limit)
+    service = IconService(HTTPProvider(url))
+    return PRepToolsWriter(service, nid, owner_wallet, step_limit, step_margin)
 
 
 def create_icon_service(url: str) -> IconService:

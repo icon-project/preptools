@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import argparse
+import json
 
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from iconsdk.utils.typing.conversion import object_to_str
 
 from preptools.core.prep import create_writer_by_args
+from preptools.exception import InvalidArgumentException
 from preptools.utils import str_to_int
 from preptools.utils.constants import proposal_param_by_type
 from preptools.utils.utils import print_proposal_value
@@ -242,6 +243,16 @@ def create_tx_parser() -> argparse.ArgumentParser:
         default="0x50000000",
         dest="step_limit",
         help="step limit to set"
+    )
+
+    parent_parser.add_argument(
+        "--step-margin", "-m",
+        type=str_to_int,
+        required=False,
+        default="0",
+        dest="step_margin",
+        help="Can be used when step-limit option is not given.\n"
+             "Set step-limit value to estimated Step + this value(step-margin)"
     )
 
     return parent_parser
