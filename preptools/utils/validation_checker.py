@@ -145,35 +145,35 @@ def validate_node_address(address: str):
 
 def valid_proposal_text_param(args) -> bool:
     if args.value_value is None:
-        raise InvalidArgumentException("Type 0 have to has 'value' value.")
+        raise InvalidArgumentException("Type 0 must have 'value' value.")
 
     return True
 
 
-def valid_proposal_reivision_update_param(args) -> bool:
+def valid_revision_update_params(args) -> bool:
     if args.value_code is None or args.value_name is None:
-        raise InvalidArgumentException("Type 1 have to has 'code' and 'name' value.")
+        raise InvalidArgumentException("Type 1 must have 'code' and 'name' value.")
 
     return True
 
 
-def valid_proposal_malicious_score_param(args) -> bool:
+def validate_malicious_score_params(args) -> bool:
     if args.value_address is None or args.value_type is None:
-        raise InvalidArgumentException("Type 2 have to has 'address' and 'type' value.")
+        raise InvalidArgumentException("Type 2 must have 'address' and 'type' value.")
 
     return True
 
 
-def valid_proposal_prep_disqualification_param(args) -> bool:
+def validate_disqualification_param(args) -> bool:
     if args.value_address is None:
-        raise InvalidArgumentException("Type 3 have to has 'address' value.")
+        raise InvalidArgumentException("Type 3 must have 'address' value.")
 
     return True
 
 
-def valid_proposal_step_price(args) -> bool:
+def is_value_integer(args) -> bool:
     if args.value_value is None:
-        raise InvalidArgumentException("Type 4 have to has 'value' value.")
+        raise InvalidArgumentException("Type 4 and 5 must have 'value' value.")
 
     try:
         int(args.value_value)
@@ -183,12 +183,81 @@ def valid_proposal_step_price(args) -> bool:
     return True
 
 
+def is_iglobal_integer(args) -> bool:
+    if args.value_iglobal is None:
+        raise InvalidArgumentException("Type 7 must have 'iglobal' value.")
+
+    try:
+        int(args.value_iglobal)
+    except Exception:
+        raise InvalidArgumentException("iglobals's type should be integer")
+
+    return True
+
+
+def validate_step_costs_param(args) -> bool:
+    if args.value_costs is None:
+        raise InvalidArgumentException("Type 6 must have 'costs' value.")
+
+    try:
+        costs = args.value_costs
+        value = {}
+        for cost in costs:
+            token = cost.split(",")
+            value[token[0]] = hex(int(token[1], 0))
+        args.value_costs = value
+    except Exception:
+        raise InvalidArgumentException("costs input is invalid. example) default,1234 get,10000")
+
+    return True
+
+
+def validate_reward_funds_allocation_params(args) -> bool:
+    if args.value_rewardFunds is None:
+        raise InvalidArgumentException("Type 8 must have 'rewardFunds' value.")
+
+    try:
+        reward_types = {"iprep", "icps", "irelay", "ivoter"}
+        reward_funds = args.value_rewardFunds
+        value = {}
+        if len(reward_funds) != len(reward_types):
+            print("rewardFunds must have 4 items. iprep, icps, irelay, ivoter")
+            return False
+
+        total = 0
+        for reward_info in reward_funds:
+            token = reward_info.split(",")
+            key = token[0]
+            ratio = int(token[1], 0)
+            if key not in reward_types:
+                print(f"{key} is invalid reward fund type")
+                return False
+            if ratio < 0:
+                print("reward fund value must >= 0")
+                return False
+            value[key] = ratio
+            total += ratio
+            reward_types.remove(key)
+        if total != 100:
+            print("Sum of rewardFunds must be 100")
+            return False
+        args.value_rewardFunds = value
+    except Exception:
+        raise InvalidArgumentException("rewardFunds input is invalid. example) iprep,10 icps,20 irelay,30 ivoter,40")
+
+    return True
+
+
 valid_proposal_param_by_type = [
     valid_proposal_text_param,  # type 0
-    valid_proposal_reivision_update_param,  # type 1
-    valid_proposal_malicious_score_param,  # type 2
-    valid_proposal_prep_disqualification_param,  # type 3
-    valid_proposal_step_price  # type 4
+    valid_revision_update_params,  # type 1
+    validate_malicious_score_params,  # type 2
+    validate_disqualification_param,  # type 3
+    is_value_integer,  # type 4
+    is_value_integer,  # type 5
+    validate_step_costs_param,  # type 6
+    is_iglobal_integer,  # type 7
+    validate_reward_funds_allocation_params,  # type 8
 ]
 
 

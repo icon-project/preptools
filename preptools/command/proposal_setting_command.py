@@ -70,7 +70,8 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--value-value",
         type=str,
         help="type 0:text message, "
-             "type 4:step price in loop (required when type 0 or 4)"
+             "type 4:step price in loop"
+             "type 5:irep in loop (required when type 0, 4 or 5)"
     )
 
     parser.add_argument(
@@ -96,6 +97,27 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--value-type",
         type=int,
         help="0 : freeze, 1 : unfreeze (required when type 2)"
+    )
+
+    parser.add_argument(
+        "--value-costs",
+        type=str,
+        nargs="+",
+        help="step cost configuration. COST_TYPE,VALUE"
+    )
+
+    parser.add_argument(
+        "--value-iglobal",
+        type=int,
+        help="iglobal value"
+    )
+
+    parser.add_argument(
+        "--value-rewardFunds",
+        type=str,
+        nargs="+",
+        help="reward fund allocation configuration. REWARD_TYPE,VALUE."
+             "All REWARD_TYPE must be specified."
     )
 
     parser.set_defaults(func=_register_proposal)
@@ -126,7 +148,7 @@ def _get_value_by_type(args) -> dict:
     if valid_proposal_param_by_type[args.type](args):
         return _make_dict_with_args(proposal_param_by_type[args.type], args)
 
-    raise InvalidArgumentException("Type should be between 0 ~ 4")
+    raise InvalidArgumentException("Type should be between 0 ~ 8")
 
 
 def _make_dict_with_args(param_list, args) -> dict:
@@ -134,11 +156,7 @@ def _make_dict_with_args(param_list, args) -> dict:
     prefix = 'value_'
 
     for key in param_list:
-        if key.startswith(prefix):
-            key_str = key[len(prefix):]
-        else:
-            return None
-
+        key_str = key[len(prefix):]
         value[key_str] = getattr(args, key)
 
     return object_to_str(value)

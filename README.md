@@ -10,7 +10,7 @@ $ python -m venv venv             # Create a virtual environment.
 $ source venv/bin/activate        # Enter the virtual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
-preptools-1.0.10-py3-none-any.whl
+preptools-1.2.3-py3-none-any.whl
 ```
 
 ## Installation

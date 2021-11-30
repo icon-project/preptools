@@ -27,8 +27,6 @@ DEFAULT_NID = 3
 
 COLUMN = 80
 
-PREDEFINED_URLS = {}
-
 
 class ConstantKeys:
     NAME = "name"
@@ -43,15 +41,15 @@ class ConstantKeys:
 
 
 fields_to_validate = (
-            ConstantKeys.NAME,
-            ConstantKeys.COUNTRY,
-            ConstantKeys.CITY,
-            ConstantKeys.EMAIL,
-            ConstantKeys.WEBSITE,
-            ConstantKeys.DETAILS,
-            ConstantKeys.P2P_ENDPOINT,
-            ConstantKeys.NODE_ADDRESS
-        )
+    ConstantKeys.NAME,
+    ConstantKeys.COUNTRY,
+    ConstantKeys.CITY,
+    ConstantKeys.EMAIL,
+    ConstantKeys.WEBSITE,
+    ConstantKeys.DETAILS,
+    ConstantKeys.P2P_ENDPOINT,
+    ConstantKeys.NODE_ADDRESS
+)
 
 
 proposal_param_by_type = [
@@ -59,5 +57,9 @@ proposal_param_by_type = [
     ["value_code", "value_name"],       # type 1
     ["value_address", "value_type"],    # type 2
     ["value_address"],                  # type 3
-    ["value_value"]                     # type 4
+    ["value_value"],                    # type 4
+    ["value_value"],                    # type 5
+    ["value_costs"],                    # type 6
+    ["value_iglobal"],                  # type 7
+    ["value_rewardFunds"],              # type 8
 ]
