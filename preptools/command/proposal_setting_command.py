@@ -63,7 +63,19 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         "--type",
         type=int,
         required=True,
-        help="type of Proposal"
+        help=(
+            "type of Proposal ["
+            "0(Text)"
+            ", 1(Revision)"
+            ", 2(Malicious SCORE)"
+            ", 3(P-Rep disqualification)"
+            ", 4(Step_price)"
+            ", 5(I-Rep)"
+            ", 6(Step costs)"
+            ", 7(Reward fund setting)"
+            ", 8(Reward fund allocation)"
+            "]"
+        )
     )
 
     parser.add_argument(

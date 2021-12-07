@@ -177,6 +177,18 @@ class PRepToolsReader(PRepToolsListener):
 
         return self._icon_service.call(call, True)
 
+    def _tx_result(self, tx_hash: str):
+        try:
+            return self._icon_service.get_transaction_result(tx_hash, False)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
+
+    def _tx_by_hash(self, tx_hash):
+        try:
+            return self._icon_service.get_transaction(tx_hash, False)
+        except DataTypeException:
+            raise InvalidDataTypeException("This hash value is unrecognized.")
+
     def get_prep(self, address: str) -> dict:
         params = {"address": address}
         return self._call("getPRep", params)
@@ -194,6 +206,12 @@ class PRepToolsReader(PRepToolsListener):
 
     def get_proposals(self, params) -> dict:
         return self._call("getProposals", params, to=GOVERNANCE_ADDRESS)
+
+    def get_tx_result(self, tx_hash: str) -> dict:
+        return self._tx_result(tx_hash)
+
+    def get_tx_by_hash(self, tx_hash: str) -> dict:
+        return self._tx_by_hash(tx_hash)
 
     def get_stake(self, address: str) -> dict:
         params = {"address": address}
