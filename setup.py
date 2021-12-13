@@ -12,6 +12,10 @@ if version is None:
 with open('requirements.txt') as requirements:
     requires = list(requirements)
 
+extras_requires = {
+    'tests': ['pytest~=6.2.5']
+}
+
 setup_options = {
     'name': 'preptools',
     'version': version,
@@ -26,6 +30,7 @@ setup_options = {
     'py_modules': ['preptools'],
     'license': "Apache License 2.0",
     'install_requires': requires,
+    'extras_require':extras_requires,
     'test_suite': 'tests',
     'entry_points': {
         'console_scripts': [
