@@ -61,6 +61,8 @@ jobs:
           TEST_VERSION=${{ github.event.inputs.version }}
           echo "::notice:: update version from $(cat VERSION) to ${TEST_VERSION}"
           echo ${TEST_VERSION} > VERSION
+          echo "::notice:: rename to preptool due to confliction package name preptools"
+          sed -i -- 's/\(name.*\)preptools/\1preptool/' setup.py
       - name: Cache dist
         id: dist_cache
         uses: actions/cache@v2
