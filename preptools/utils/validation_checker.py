@@ -26,7 +26,7 @@ path_pattern = r'(\/\S*)?$'
 port_regex = r'(:[0-9]{1,5})?'
 ip_regex = r'(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'
 host_name_regex = r'(localhost|(?:[\w\d](?:[\w\d-]{0,61}[\w\d])\.)+[\w\d][\w\d-]{0,61}[\w\d])'
-email_regex = r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@' + host_name_regex + '$'
+email_regex = r'^[a-z0-9]+[\._|\-|\+]?[a-z0-9]+[@]\w+' + host_name_regex + '$'
 password_regex = r'^(?=.*\d)(?=.*[a-zA-Z])(?=.*[?!:\.,%+-/*<>{}\(\)\[\]`"\'~_^\\|@#$&]).{8,}$'
 ENDPOINT_DOMAIN_NAME_PATTERN = re.compile(f'^{host_name_regex}{port_regex}$')
 ENDPOINT_IP_PATTERN = re.compile(f'^{ip_regex}{port_regex}$')
