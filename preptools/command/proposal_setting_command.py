@@ -16,6 +16,7 @@
 
 import argparse
 import json
+from enum import IntEnum
 
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from iconsdk.utils.typing.conversion import object_to_str
@@ -26,6 +27,20 @@ from preptools.utils import str_to_int
 from preptools.utils.constants import proposal_param_by_type
 from preptools.utils.utils import print_proposal_value
 from preptools.utils.validation_checker import valid_proposal_param_by_type
+
+
+class ProposalType(IntEnum):
+    Text = 0
+    Revision = 1
+    MaliciousScore = 2
+    PRepDisqualification = 3
+    StepPrice = 4
+    IRep = 5
+    StepCosts = 6
+    RewardFundSetting = 7
+    RewardFundAllocation = 8
+
+    Last = 8
 
 
 def init(sub_parser, common_parent_parser):
@@ -59,24 +74,7 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
         help="Proposal description"
     )
 
-    parser.add_argument(
-        "--type",
-        type=int,
-        required=True,
-        help=(
-            "type of Proposal ["
-            "0(Text)"
-            ", 1(Revision)"
-            ", 2(Malicious SCORE)"
-            ", 3(P-Rep disqualification)"
-            ", 4(Step_price)"
-            ", 5(I-Rep)"
-            ", 6(Step costs)"
-            ", 7(Reward fund setting)"
-            ", 8(Reward fund allocation)"
-            "]"
-        )
-    )
+    _add_type_argument(parser)
 
     parser.add_argument(
         "--value-value",
@@ -135,8 +133,17 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
     parser.set_defaults(func=_register_proposal)
 
 
-def _register_proposal(args) -> dict:
+def _add_type_argument(parser: argparse.ArgumentParser):
+    types = (f"{p_type}-{p_type.name}" for p_type in ProposalType)
+    parser.add_argument(
+        "--type",
+        type=int,
+        required=True,
+        help=f"Proposal type [{', '.join(types)}]"
+    )
 
+
+def _register_proposal(args) -> dict:
     params = {
         "title": args.title,
         "description": args.desc,
@@ -156,11 +163,10 @@ def _register_proposal(args) -> dict:
 
 
 def _get_value_by_type(args) -> dict:
-
     if valid_proposal_param_by_type[args.type](args):
         return _make_dict_with_args(proposal_param_by_type[args.type], args)
 
-    raise InvalidArgumentException("Type should be between 0 ~ 8")
+    raise InvalidArgumentException(f"Type should be between {ProposalType.Text} ~ {ProposalType.Last}")
 
 
 def _make_dict_with_args(param_list, args) -> dict:
