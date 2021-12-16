@@ -17,6 +17,7 @@
 import argparse
 import json
 from enum import IntEnum
+from typing import Any, Dict
 
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from iconsdk.utils.typing.conversion import object_to_str
@@ -27,6 +28,7 @@ from preptools.utils import str_to_int
 from preptools.utils.constants import proposal_param_by_type
 from preptools.utils.utils import print_proposal_value
 from preptools.utils.validation_checker import valid_proposal_param_by_type
+from ..core.network_proposal import validate_network_proposal
 
 
 class ProposalType(IntEnum):
@@ -130,6 +132,20 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
              "All REWARD_TYPE must be specified."
     )
 
+    parser.add_argument(
+        "--raw",
+        type=str,
+        metavar="JSON string",
+        nargs="?",
+        required=False,
+        default=None,
+        help=(
+            'raw data for network proposal in json format. '
+            'int and bool types can be changed to hexa strings automatically '
+            'ex) \'{"code":10,"name":"1.9.1"}\''
+        )
+    )
+
     parser.set_defaults(func=_register_proposal)
 
 
@@ -144,15 +160,13 @@ def _add_type_argument(parser: argparse.ArgumentParser):
 
 
 def _register_proposal(args) -> dict:
+    value: Dict[str, Any] = _get_proposal_value(args)
     params = {
         "title": args.title,
         "description": args.desc,
-        "type": convert_int_to_hex_str(int(args.type)),
-        "value": None
+        "type": convert_int_to_hex_str(args.type),
+        "value": _convert_value_to_hex_str(value),
     }
-
-    value = _get_value_by_type(args)
-    params['value'] = _convert_value_to_hex_str(value)
 
     writer = create_writer_by_args(args)
     if not args.yes or args.verbose:
@@ -162,15 +176,31 @@ def _register_proposal(args) -> dict:
     return response
 
 
-def _get_value_by_type(args) -> dict:
+def _get_proposal_value(args: argparse.Namespace) -> Dict[str, Any]:
+    if args.raw is None:
+        return _get_value_by_type(args)
+    else:
+        return _get_value_from_raw(args.raw)
+
+
+def _get_value_by_type(args) -> Dict[str, Any]:
     if valid_proposal_param_by_type[args.type](args):
         return _make_dict_with_args(proposal_param_by_type[args.type], args)
 
     raise InvalidArgumentException(f"Type should be between {ProposalType.Text} ~ {ProposalType.Last}")
 
 
+def _get_value_from_raw(proposal_type: ProposalType, raw: str) -> Dict[str, Any]:
+    try:
+        o = json.loads(raw)
+        validate_network_proposal(proposal_type, o)
+        return object_to_str(o)
+    except:
+        raise InvalidArgumentException(f"Invalid json format: {raw}")
+
+
 def _make_dict_with_args(param_list, args) -> dict:
-    value = dict()
+    value = {}
     prefix = 'value_'
 
     for key in param_list:
@@ -294,5 +324,5 @@ def create_tx_parser() -> argparse.ArgumentParser:
     return parent_parser
 
 
-def _convert_value_to_hex_str(value: dict) -> str:
-    return convert_bytes_to_hex_str(json.dumps(value).encode())
+def _convert_value_to_hex_str(value: Dict[str, Any]) -> str:
+    return convert_bytes_to_hex_str(json.dumps(value, separators=(",", ":")).encode())
