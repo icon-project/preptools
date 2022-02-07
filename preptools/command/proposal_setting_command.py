@@ -62,9 +62,9 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
     parser.add_argument(
         "--type",
         type=int,
-        required=True,
+        required=False,
         help=(
-            "type of Proposal ["
+            "type of Proposal(optional)["
             "0(Text)"
             ", 1(Revision)"
             ", 2(Malicious SCORE)"
@@ -132,6 +132,12 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
              "All REWARD_TYPE must be specified."
     )
 
+    parser.add_argument(
+        "--value-raw",
+        type=str,
+        help="register proposal raw data json path"
+    )
+
     parser.set_defaults(func=_register_proposal)
 
 
@@ -140,17 +146,25 @@ def _register_proposal(args) -> dict:
     params = {
         "title": args.title,
         "description": args.desc,
-        "type": convert_int_to_hex_str(int(args.type)),
-        "value": None
     }
-
-    value = _get_value_by_type(args)
-    params['value'] = _convert_value_to_hex_str(value)
+    if args.type:
+        params['type'] = convert_int_to_hex_str(args.type)
+        value = _get_value_by_type(args)
+        params['value'] = _convert_value_to_hex_str(value)
+        fee = 0
+    else:
+        if not args.value_raw:
+            print("Must pass option(type or jsonPath)")
+            return
+        with open(args.value_raw) as j:
+            value = json.load(j)
+        params['value'] = _convert_value_to_hex_str(value)
+        fee = 100 * 10 ** 18
 
     writer = create_writer_by_args(args)
     if not args.yes or args.verbose:
         print_proposal_value(value)
-    response = writer.register_proposal(params)
+    response = writer.register_proposal(params, value=fee)
 
     return response
 

@@ -19,12 +19,13 @@ from typing import List, Callable
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
+from iconsdk.exception import DataTypeException
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
 
-from preptools.exception import InvalidKeyStoreException, InvalidFileReadException
+from ..exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN, GOVERNANCE_ADDRESS
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict
@@ -123,9 +124,9 @@ class PRepToolsWriter(PRepToolsListener):
         method = "unregisterPRep"
         return self._call(method, {})
 
-    def register_proposal(self, params) -> dict:
+    def register_proposal(self, params, value) -> dict:
         method = "registerProposal"
-        return self._call(method, params, to=GOVERNANCE_ADDRESS)
+        return self._call(method, params, to=GOVERNANCE_ADDRESS, value=value)
 
     def cancel_proposal(self, params) -> dict:
         method = "cancelProposal"

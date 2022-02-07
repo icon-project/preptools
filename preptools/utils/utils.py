@@ -35,7 +35,6 @@ def print_title(title: str, column: int = COLUMN, sep: str = "="):
 
 def print_dict(data: dict):
     converted = {}
-
     for key in data:
         value = data[key]
         if isinstance(value, bytes):
@@ -59,7 +58,10 @@ def print_response(content: Union[str, dict]):
 
 def print_proposal_value(params: dict):
     print_title("Value")
-    print_dict(params)
+    if isinstance(params, dict):
+        print_dict(params)
+    else:
+        print(params)
 
 
 def print_tx_result(tx_result: dict):
