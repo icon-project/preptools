@@ -72,8 +72,10 @@ class TxHandler:
             .value(value)
         if limit is None:
             step_omit_tx = transaction.build()
-            ret = self._icon_service.estimate_step(step_omit_tx)
-            transaction.step_limit(ret + margin)
+            estimated_step: int = self._icon_service.estimate_step(step_omit_tx)
+            if margin == 0:
+                margin = estimated_step // 10
+            transaction.step_limit(estimated_step + margin)
         else:
             transaction.step_limit(limit)
         return self._call_tx(transaction.build(), owner)
@@ -134,6 +136,10 @@ class PRepToolsWriter(PRepToolsListener):
 
     def vote_proposal(self, params) -> dict:
         method = "voteProposal"
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
+
+    def apply_proposal(self, params) -> dict:
+        method = "applyProposal"
         return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
     def set_prep(self, params) -> dict:

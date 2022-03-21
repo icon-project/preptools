@@ -16,10 +16,14 @@
 
 import argparse
 import json
+from typing import (
+    Any,
+    Dict,
+    Optional,
+)
 
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from iconsdk.utils.typing.conversion import object_to_str
-
 from preptools.core.prep import create_writer_by_args
 from preptools.exception import InvalidArgumentException
 from preptools.utils import str_to_int
@@ -34,6 +38,7 @@ def init(sub_parser, common_parent_parser):
     _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_cancel_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_vote_proposal(sub_parser, common_parent_parser, tx_parent_parser)
+    _init_for_apply_proposal(sub_parser, common_parent_parser, tx_parent_parser)
 
 
 def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_parser):
@@ -255,6 +260,32 @@ def _vote_proposal(args) -> dict:
     response = writer.vote_proposal(params)
 
     return response
+
+
+def _init_for_apply_proposal(sub_parser, common_parent_parser, tx_parent_parser):
+    name = "applyProposal"
+    desc = f"Apply the approved network proposal indicated by id to ICON"
+
+    parser = sub_parser.add_parser(
+        name,
+        parents=[common_parent_parser, tx_parent_parser],
+        help=desc
+    )
+
+    parser.add_argument(
+        "--id",
+        type=str,
+        required=True,
+        help="hash of registerProposal TX"
+    )
+
+    parser.set_defaults(func=_apply_proposal)
+
+
+def _apply_proposal(args) -> Optional[Dict[str, Any]]:
+    params = {"id": args.id}
+    writer = create_writer_by_args(args)
+    return writer.apply_proposal(params)
 
 
 def create_tx_parser() -> argparse.ArgumentParser:
