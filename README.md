@@ -15,7 +15,7 @@ $ python -m venv venv             # Create a virtual environment.
 $ source venv/bin/activate        # Enter the virtual environment.
 (venv)$ ./build.sh                # run build script.
 (venv)$ ls dist                   # check result wheel file.
-preptools-1.2.3-py3-none-any.whl
+preptools-x.y.z-py3-none-any.whl
 ```
 
 ## Installation
@@ -66,18 +66,18 @@ preptools provides several commands. Here is the list of the available commands.
 
 #### Usage
 
-```
+```bash
 usage: preptools [-h]
-                 {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
+                 {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,applyProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
                  ...
 
-P-Rep management command line interface v1.2.0
+P-Rep management command line interface v1.2.4
 
 optional arguments:
   -h, --help            show this help message and exit
 
 subcommands:
-  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,txresult,txbyhash,keystore,genconf}
+  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,registerProposal,cancelProposal,voteProposal,applyProposal,getPRep,getBonderList,getPReps,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
     registerPRep        Register P-Rep
     unregisterPRep      Unregister P-Rep WARNING!! Unregistering P-Rep does
                         not return the registration fee
@@ -90,6 +90,8 @@ subcommands:
     registerProposal    Register Proposal
     cancelProposal      Cancel Proposal
     voteProposal        Vote Proposal
+    applyProposal       Apply the approved network proposal indicated by id to
+                        the network
     getPRep             Inquire P-Rep information
     getBonderList       Inquire allowed bonder list of P-Rep
     getPReps            Get live status of all registered P-Rep candidates
@@ -114,10 +116,11 @@ subcommands:
 
 ### Setting PRep commands
 
-There are four commands to set up the P-Rep information: `preptools registerPRep`, `preptools unregisterPRep`, 
-`preptools setPRep`, and `preptools setGovernanceVariables`. 
+There are 4 commands to set up the P-Rep information:
+`registerPRep`, `unregisterPRep`, `setPRep`, and `setGovernanceVariables`. 
 Whenever the commands are called, they load the configuration from `preptools_config.json`.
 In order to use other configuration file, please specify the file location with the `-c` option.
+
 #### registerPRep
 
 **Description**
@@ -174,26 +177,26 @@ optional arguments:
 
 **Options**
 
-| shorthand, Name  | default                 | Description                                                  |
-| :--------------- | :---------------------- | :----------------------------------------------------------- |
-| -h, --help       |                         | show this help message and exit                              |
-| -u, --url        | http://127.0.0.1/api/v3 | node url                                                     |
-| -n, --nid        | 3                       | network id                                                   |
-| -c, --config     | ./preptools_config.json | preptools config file path                                   |
-| -p, --password   |                         | keystore password                                            |
-| -k, --keystore   |                         | keystore file path                                           |
-| -s, --step-limit | 0x50000000              | step limit to set                                            |
-| --name           |                         | P-Rep name                                                   |
-| --country        |                         | P-Rep's country. This require [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) standard. |
-| --city           |                         | P-Rep's city.                                                |
-| --email          |                         | P-Rep's email.                ex) "example@iconloop.com"     |
-| --website        |                         | P-Rep's homepage url.         ex) "https://node.example.com/" |
-| --details        |                         | json url including P-Rep detailed information                |
-|                  |                         | ex) "https://node.example.com/json"                          |
-| --p2p-endpoint   |                         | Network info used for connection among P-Rep nodes.          |
-|                  |                         | ex) “123.45.67.89:7100” or “node.example.com:7100”           |
-| --node-address   |                         | PRep Node Key (default: Operator Key)                        |
-| --prep-json      |                         | json file having P-Rep information                           |
+| shorthand, Name  | default                 | Description                                                                                           |
+| :--------------- |:------------------------|:------------------------------------------------------------------------------------------------------|
+| -h, --help       |                         | show this help message and exit                                                                       |
+| -u, --url        | http://127.0.0.1/api/v3 | node url                                                                                              |
+| -n, --nid        | 3                       | network id                                                                                            |
+| -c, --config     | ./preptools_config.json | preptools config file path                                                                            |
+| -p, --password   |                         | keystore password                                                                                     |
+| -k, --keystore   |                         | keystore file path                                                                                    |
+| -s, --step-limit | estimated step          | step limit to set                                                                                     |
+| --name           |                         | P-Rep name                                                                                            |
+| --country        |                         | P-Rep's country. See [ISO 3166-1 alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) standard. |
+| --city           |                         | P-Rep's city.                                                                                         |
+| --email          |                         | P-Rep's email.                ex) "example@iconloop.com"                                              |
+| --website        |                         | P-Rep's homepage url.         ex) "https://node.example.com/"                                         |
+| --details        |                         | json url including P-Rep detailed information                                                         |
+|                  |                         | ex) "https://node.example.com/json"                                                                   |
+| --p2p-endpoint   |                         | Network info used for connection among P-Rep nodes.                                                   |
+|                  |                         | ex) “123.45.67.89:7100” or “node.example.com:7100”                                                    |
+| --node-address   |                         | PRep Node Key (default: Operator Key)                                                                 |
+| --prep-json      |                         | json file having P-Rep information                                                                    |
 
 
 
@@ -953,12 +956,12 @@ request success.
 
 ### Network Proposal commands
 
-There are 3 commands to network-proposal: `registerProposal`, `cancelProposal` and `voteProposal`
-Whenever the commands are called, they load the configuration from `preptools_config.json`.
+There are 4 commands to network-proposal: `registerProposal`, `cancelProposal`, `voteProposal` and `applyProposal`.
+Whenever the commands are called, they load the configuration from `preptools_config.json` by default.
 In order to use other configuration file, please specify the file location with the `-c` option.
 
 #### registerProposal
-refer [registerProposal request format](https://github.com/icon-project/governance#registerproposal)
+refer [registerProposal request format](https://github.com/icon-project/governance2#registerproposal)
 
 **Description**
 
@@ -1007,30 +1010,31 @@ optional arguments:
                         P-Rep (required when type 2 or 3)
   --value-type VALUE_TYPE
                         0 : freeze, 1 : unfreeze (required when type 2)
-
 ```
+
 **Options**
 
-| shorthand, Name | default | Description                              |
-| :-------------- | :------ | :--------------------------------------- |
-| -h, --help       |                              | show this help message and exit            |
-| -u, --url        | http://127.0.0.1:9000/api/v3 | node url                                   |
-| -n, --nid        | 3                            | networkId mainnet(1), testnet(2)           |
-| --config         |                              | configuration file path.                   |
-| -y, --yes        |                              | Do not confirm if you want to send request |
-| -v, --verbose    |                              | verbose mode flag                          |
-| -p, --password   |                              | Keystore file's password                   |
-| -k, --keystore   |                              | keystore file path                         |
-| -s, --step-limit | 0x50000000                   | step limit to set                          |
-| --title  |         | title of network-proposal                 |
-| --desc  |         | description of network-proposal              |
-| --type  |         | [type](https://github.com/icon-project/governance#available-values-for-the-type) of network-proposal |
-| --value-value  |         | value of value field                 |
-| --value-code  |         | value of code field                 |
-| --value-address  |         | value of address field                 |
-| --value-type  |         | value of type field                 |
+| shorthand, Name  | default                      | Description                                                                                           |
+|:-----------------|:-----------------------------|:------------------------------------------------------------------------------------------------------|
+| -h, --help       |                              | show this help message and exit                                                                       |
+| -u, --url        | http://127.0.0.1:9000/api/v3 | node url                                                                                              |
+| -n, --nid        | 3                            | networkId mainnet(1), testnet(2)                                                                      |
+| --config         |                              | configuration file path.                                                                              |
+| -y, --yes        |                              | Do not confirm if you want to send request                                                            |
+| -v, --verbose    |                              | verbose mode flag                                                                                     |
+| -p, --password   |                              | Keystore file's password                                                                              |
+| -k, --keystore   |                              | keystore file path                                                                                    |
+| -s, --step-limit | 0x50000000                   | step limit to set                                                                                     |
+| --title          |                              | title of network-proposal                                                                             |
+| --desc           |                              | description of network-proposal                                                                       |
+| --type           |                              | [type](https://github.com/icon-project/governance2#available-values-for-the-type) of network-proposal |
+| --value-value    |                              | value of value field                                                                                  |
+| --value-code     |                              | value of code field                                                                                   |
+| --value-address  |                              | value of address field                                                                                |
+| --value-type     |                              | value of type field                                                                                   |
 
 **Examples**
+
 ```bash
 (venv)$ preptools registerProposal -c preptools_config.json -k prep_keys0 -p qwer1234% --title pro0 --desc "first proposal" --type 4 --value-value 1234
 [Value] ========================================================================
@@ -1067,8 +1071,35 @@ request success.
 }
 ```
 
+```bash
+(venv)$ cat proposal.json
+[
+    {
+        "name": "text",
+        "value": {
+            "text": "text proposal for gov2 score"
+        }
+    },
+    {
+        "name": "revision",
+        "value": {
+          "revision": "0x11"
+        }
+    },
+    {
+        "name": "stepPrice",
+        "value": {
+            "stepPrice": "0x2e90edd00"
+        }
+    }
+]
+
+(venv)$ preptools registerProposal -c preptools_config.json -k prep_key0 -p passw0rd --value-raw ./proposal.json
+
+```
+
 #### voteProposal
-refer [voteProposal request format](https://github.com/icon-project/governance#voteproposal)
+refer [voteProposal request format](https://github.com/icon-project/governance2#voteproposal)
 
 **Description**
 
@@ -1102,19 +1133,19 @@ optional arguments:
 ```
 **Options**
 
-| shorthand, Name | default | Description                              |
-| :-------------- | :------ | :--------------------------------------- |
-| -h, --help       |                              | show this help message and exit            |
-| -u, --url        | http://127.0.0.1:9000/api/v3 | node url                                   |
-| -n, --nid        | 3                            | networkId mainnet(1), testnet(2)           |
-| --config         |                              | configuration file path.                   |
-| -v, --verbose      |         | verbose mode flag          |
-| -y, --yes | | Do not confirm if you want to send request |
-| -p, --password   |                              | password of keystore file                  |
-| -k, --keystore   |                              | path of keystore file                      |
-| -s, --step-limit | 0x50000000                   | step limit to set                          |
-| --id             |                              | id of network-proposal to vote             |
-| --vote | | voting value(0: disagree, 1: agree) |
+| shorthand, Name  | default                      | Description                                 |
+|:-----------------|:-----------------------------|:--------------------------------------------|
+| -h, --help       |                              | show this help message and exit             |
+| -u, --url        | http://127.0.0.1:9000/api/v3 | node url                                    |
+| -n, --nid        | 3                            | networkId mainnet(1), testnet(2)            |
+| --config         |                              | configuration file path.                    |
+| -v, --verbose    |                              | verbose mode flag                           |
+| -y, --yes        |                              | Do not confirm if you want to send request  |
+| -p, --password   |                              | password of keystore file                   |
+| -k, --keystore   |                              | path of keystore file                       |
+| -s, --step-limit | automatically estimated step | step limit to set                           |
+| --id             |                              | id of network-proposal to vote              |
+| --vote           |                              | voting value(0: disagree, 1: agree)         |
 
 
 **Examples**
@@ -1152,7 +1183,7 @@ request success.
 
 #### cancelProposal
 
-refer [cancelProposal request format](https://github.com/icon-project/governance#cancelproposal)
+refer [cancelProposal request format](https://github.com/icon-project/governance2#cancelproposal)
 
 **Description**
 
@@ -1229,6 +1260,84 @@ request success.
 }
 ```
 
+#### applyProposal
+
+Refer to [applyProposal request format](https://github.com/icon-project/governance2#applyproposal)
+
+**Description**
+
+This call is needed to apply an approved network proposal to the network and should be executed in the voting period.
+Otherwise, the proposal will be expired and cannot be applied anymore.
+
+**Usage**
+
+```bash
+usage: preptools applyProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
+                               [--yes] [--verbose] [--password PASSWORD]
+                               [--keystore KEYSTORE] [--step-limit STEP_LIMIT]
+                               [--step-margin STEP_MARGIN] --id ID
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
+  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
+  --config CONFIG, -c CONFIG
+                        preptools config file path
+  --yes, -y             Don't want to ask send transaction.
+  --verbose, -v         Verbose mode
+  --password PASSWORD, -p PASSWORD
+                        keystore password
+  --keystore KEYSTORE, -k KEYSTORE
+                        keystore file path
+  --step-limit STEP_LIMIT, -s STEP_LIMIT
+                        step limit to set
+  --step-margin STEP_MARGIN, -m STEP_MARGIN
+                        Can be used when step-limit option is not given. Set
+                        step-limit value to estimated Step + this value(step-
+                        margin)
+  --id ID               hash of registerProposal TX
+```
+
+**Options**
+
+Most options are the same as [those of cancelProposal](#cancelproposal)
+
+| shorthand, Name  | default    | Description                             |
+|:-----------------|:-----------|:----------------------------------------|
+| --id             |            | id(txHash) of network-proposal to apply |
+
+**Examples**
+
+```bash
+(venv)$ preptools applyProposal -k prep_keys0 --id 0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4
+> Password:
+[Request] ======================================================================
+{
+    "from_": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
+    "to": "cx0000000000000000000000000000000000000001",
+    "value": 0,
+    "step_limit": 268435456,
+    "nid": 3,
+    "nonce": null,
+    "version": 3,
+    "timestamp": null,
+    "method": "applyProposal",
+    "data_type": "call",
+    "params": {
+        "id": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4"
+    }
+}
+
+> Continue? [Y/n]Y
+request success.
+[Response] =====================================================================
+{
+    "jsonrpc": "2.0",
+    "result": "0x344887e8b9b30e523991e44602eee51857fd7a55e5437b34a7e8d0f2ede8c019",
+    "id": 1234
+}
+```
+
 ### Querying Network Proposal commands
 
 There are 2 commands to network-proposal: `getProposal` and `getProposals`.
@@ -1236,7 +1345,7 @@ Whenever the commands are called, they load the configuration from `preptools_co
 In order to use other configuration file, please specify the file location with the `-c` option.
 
 #### getProposal
-refer [getProposal request format](https://github.com/icon-project/governance#getproposal)
+refer [getProposal request format](https://github.com/icon-project/governance2#getproposal)
 
 **Description**
 
@@ -1347,7 +1456,7 @@ request success.
 ```
 
 #### getProposals
-refer [getProposals request format](https://github.com/icon-project/governance#getproposals)
+refer [getProposals request format](https://github.com/icon-project/governance2#getproposals)
 
 **Description**
 
@@ -1980,11 +2089,11 @@ In this configuration file, you can define default options values for some CLI c
 }
 ```
 
-| Field              | Data  type | Description                                                  |
-| ------------------ | :--------- | :----------------------------------------------------------- |
-| uri                | string     | URI to send the request.                                     |
-| nid                | int        | Network ID. 3 is reserved for P-Rep tools.                     |
-| keyStore           | string     | Keystore file path.                                          |
+| Field              | Data  type | Description                                                   |
+| ------------------ | :--------- |:--------------------------------------------------------------|
+| uri                | string     | URI to send the request.                                      |
+| nid                | int        | Network ID. 3 is reserved for P-Rep tools.                    |
+| keyStore           | string     | Keystore file path.                                           |
 
 ## JSON Standard for Public Representative Detailed Information 
 
@@ -2038,17 +2147,18 @@ This is the JSON standard for detailed information about the P-Rep. P-Rep can su
     -  wechat: Username
 - server: Server information of Public Representative
   - location: Server location
-    -  name: Node location in human readable format [City, State]
+    -  name: Node location in human-readable format [City, State]
     -  country: Node country code [XX]
   - server_type: Type of server ‘cloud, on-premise, hybrid’
-  - api_endpoint: HTTP endpoint http://host:port
+  - api_endpoint: HTTP endpoint `http://host:port`
 
 ### How to use
-Create a JSON file and upload it to your domain server. When you call the `registerPRep` or `setPRep`function, input the url of this file into the `details` field.
+Create a JSON file and upload it to your domain server. When you call the `registerPRep` or `setPRep` function, input the url of this file into the `details` field.
 
 ## References
 - [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
 - [ICON SDK PYTHON](https://github.com/icon-project/icon-sdk-python)
+- [Governance2 SCORE](https://github.com/icon-project/governance2)
 - [Governance SCORE](https://github.com/icon-project/governance)
 
 ## License

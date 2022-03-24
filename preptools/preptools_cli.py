@@ -19,7 +19,6 @@ import sys
 from typing import Optional
 
 from iconsdk.exception import IconServiceBaseException
-
 from preptools.command import (
     bond_command,
     prep_setting_command,
@@ -27,7 +26,8 @@ from preptools.command import (
     prep_info_command,
     proposal_info_command,
     tx_info_command,
-    common_command
+    common_command,
+    make_proposal_command,
 )
 from preptools.exception import PRepToolsExceptionCode, PRepToolsBaseException
 from preptools.utils.constants import DEFAULT_NID, DEFAULT_URL
@@ -36,7 +36,7 @@ from preptools.utils.utils import print_response
 
 
 def main() -> Optional:
-    handlers = [
+    handlers = (
         prep_setting_command.init,
         proposal_setting_command.init,
         prep_info_command.init,
@@ -44,7 +44,8 @@ def main() -> Optional:
         bond_command.init,
         tx_info_command.init,
         common_command.init,
-    ]
+        make_proposal_command.init,
+    )
 
     version = get_preptools_version()
     parser = argparse.ArgumentParser(
@@ -59,13 +60,12 @@ def main() -> Optional:
     for handler in handlers:
         handler(sub_parser, common_parent_parser)
 
-    if len(sys.argv) == 1:
-        parser.print_help(sys.stderr)
-        return 1
-
-    args = parser.parse_args()
 
     try:
+        args = parser.parse_args()
+        if not hasattr(args, "func"):
+            parser.print_help(sys.stderr)
+            sys.exit(1)
         response: Optional[dict, int] = args.func(args)
     except (PRepToolsBaseException, IconServiceBaseException) as e:
         print(e)
@@ -73,6 +73,7 @@ def main() -> Optional:
     except Exception as e:
         print(f"Exception : {e}")
         response = PRepToolsExceptionCode.COMMAND_ERROR.value
+        raise e
     except KeyboardInterrupt:
         print("\nexit")
         response = 0

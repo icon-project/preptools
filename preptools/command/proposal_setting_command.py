@@ -147,16 +147,17 @@ def _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_pars
 
 
 def _register_proposal(args) -> dict:
+    print(args)
 
     params = {
         "title": args.title,
         "description": args.desc,
     }
-    if args.type:
+    if isinstance(args.type, int):
         params['type'] = convert_int_to_hex_str(args.type)
         value = _get_value_by_type(args)
         params['value'] = _convert_value_to_hex_str(value)
-        fee = 0
+        fee = 100 * 10 ** 18
     else:
         if not args.value_raw:
             print("Must pass option(type or jsonPath)")
@@ -264,7 +265,7 @@ def _vote_proposal(args) -> dict:
 
 def _init_for_apply_proposal(sub_parser, common_parent_parser, tx_parent_parser):
     name = "applyProposal"
-    desc = f"Apply the approved network proposal indicated by id to ICON"
+    desc = f"Apply the approved network proposal indicated by id to the network"
 
     parser = sub_parser.add_parser(
         name,
