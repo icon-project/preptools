@@ -18,7 +18,6 @@ from argparse import (
 )
 
 from .command import Command
-from .utils import make_proposal
 
 
 class RewardFundCommand(Command):
@@ -41,5 +40,5 @@ class RewardFundCommand(Command):
 
     def _run(self, args: Namespace):
         value = {"iglobal": args.iglobal}
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)

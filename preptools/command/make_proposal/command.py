@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 from abc import (
     ABCMeta,
     abstractmethod,
@@ -19,9 +19,11 @@ from abc import (
 from argparse import (
     ArgumentParser,
 )
-from typing import Dict
+from typing import Any, Dict, Optional
 
-from .utils import make_proposal, Value
+from iconsdk.utils.typing.conversion import object_to_str
+
+Value = Dict[str, Any]
 
 
 class Command(metaclass=ABCMeta):
@@ -33,12 +35,22 @@ class Command(metaclass=ABCMeta):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        print(cls.__name__)
         cls._subclasses.append(cls)
 
     @classmethod
-    def _make_proposal(cls, name: str, value: Value) -> Dict[str, str]:
-        return make_proposal(name, value)
+    def _make_proposal(cls, name: str, value: Value) -> str:
+        return json.dumps(
+            object_to_str({"name": name, "value": value}),
+            separators=(",", ":")
+        )
+
+    @classmethod
+    def _write_proposal(cls, path: Optional[str], proposal: str):
+        if path is None:
+            print(proposal)
+        else:
+            with open(path, "wt") as f:
+                f.write(proposal)
 
     @classmethod
     def init_all(cls, sub_parsers, parent_parser: ArgumentParser):

@@ -18,7 +18,6 @@ from argparse import (
 )
 
 from .command import Command
-from .utils import make_proposal
 
 
 class StepPriceCommand(Command):
@@ -37,5 +36,5 @@ class StepPriceCommand(Command):
 
     def _run(self, args: Namespace):
         value = {"stepPrice": args.address}
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)

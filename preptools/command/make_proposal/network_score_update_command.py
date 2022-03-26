@@ -18,7 +18,6 @@ from argparse import (
 )
 
 from .command import Command
-from .utils import make_proposal
 
 
 class NetworkScoreUpdateCommand(Command):
@@ -57,8 +56,8 @@ class NetworkScoreUpdateCommand(Command):
             "address": args.address,
             "content": content,
         }
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)
 
 
 def _get_content_from_file(path: str) -> str:

@@ -19,7 +19,6 @@ from argparse import (
 from typing import Optional
 
 from .command import Command
-from .utils import make_proposal
 
 
 class StepCostsCommand(Command):
@@ -70,5 +69,5 @@ class StepCostsCommand(Command):
             if cost is not None:
                 value[option] = cost
 
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)

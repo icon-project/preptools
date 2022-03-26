@@ -31,7 +31,8 @@ def init(parent_sub_parsers, _: ArgumentParser):
 
     parent_parser = ArgumentParser(add_help=False)
     parent_parser.add_argument(
-        "--file",
+        "-o",
+        "--output",
         type=str,
         required=False,
         help="filepath to save proposal contents",

@@ -19,7 +19,6 @@ from argparse import (
 from typing import Optional
 
 from .command import Command
-from .utils import make_proposal
 
 
 class NetworkScoreDesignationCommand(Command):
@@ -53,5 +52,5 @@ class NetworkScoreDesignationCommand(Command):
                 network_scores.append({"role": role, "address": address})
 
         value = {"networkScores": network_scores}
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)

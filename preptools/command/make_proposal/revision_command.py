@@ -22,5 +22,5 @@ class RevisionCommand(Command):
 
     def _run(self, args: Namespace):
         value = {"revision": args.revision}
-        ret = self._make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)

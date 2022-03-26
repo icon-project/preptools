@@ -18,7 +18,6 @@ from argparse import (
 )
 
 from .command import Command
-from .utils import make_proposal
 
 
 class MaliciousScoreCommand(Command):
@@ -41,5 +40,5 @@ class MaliciousScoreCommand(Command):
             "address": args.address,
             "type": args.type,
         }
-        ret = make_proposal(self._name, value)
-        print(ret)
+        proposal: str = self._make_proposal(self._name, value)
+        self._write_proposal(args.output, proposal)
