@@ -27,6 +27,7 @@ DEFAULT_URL = "http://127.0.0.1:9000/api/v3"
 DEFAULT_NID = 3
 
 COLUMN = 80
+NETWORK_PROPOSAL_FEE = 100 * 10 ** 18  # 100 ICX
 
 
 class ConstantKeys:
