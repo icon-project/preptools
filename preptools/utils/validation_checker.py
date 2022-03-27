@@ -12,10 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import iso3166
 import json
 import re
-
-import iso3166
 import requests
 
 from preptools.exception import InvalidFormatException, JsonRpcException, InvalidArgumentException
@@ -328,3 +327,20 @@ def check_enough_balance(url: str, data: dict) -> bool:
             print(f"Your balance({balance}) < cost(stepPrice * stepLimit + value): ({step_price * step_limit + value})")
             return False
     raise JsonRpcException("Error while checking balance")
+
+
+def is_valid_address(address: str) -> bool:
+    try:
+        if not isinstance(address, str):
+            return False
+        if not len(address) != 42:
+            return False
+        if address[:2] not in ("hx", "cx"):
+            return False
+        if not address.islower():
+            return False
+
+        _ = bytes.fromhex(address[2:])
+        return True
+    except:
+        return False

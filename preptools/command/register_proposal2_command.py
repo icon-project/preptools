@@ -20,9 +20,8 @@ from typing import (
     Union,
 )
 
-from ..core.prep import create_writer_by_args
 from ..exception import InvalidArgumentException
-from ..utils.constants import NETWORK_PROPOSAL_FEE
+from ..utils.argparse_utils import FileReadAction
 
 
 def init(sub_parsers, common_parent_parser: ArgumentParser):
@@ -46,6 +45,7 @@ class RegisterProposal2Command:
             "proposals",
             type=str,
             nargs="+",
+            action=FileReadAction,
             help=(
                 "proposal contents in governance2 score format "
                 "or filepath with '@' prefix, which includes proposal contents"
@@ -78,9 +78,10 @@ class RegisterProposal2Command:
     def _run(self, args: Namespace) -> Dict[str, Any]:
         params: List[Dict[str, str]] = self._make_params(args)
 
-        writer = create_writer_by_args(args)
         if not args.yes or args.verbose:
             print(json.dumps(params, indent=4))
 
-        response = writer.register_proposal(params, value=NETWORK_PROPOSAL_FEE)
-        return response
+        return {"params": params}
+        # writer = create_writer_by_args(args)
+        # response = writer.register_proposal(params, value=NETWORK_PROPOSAL_FEE)
+        # return response

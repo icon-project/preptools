@@ -18,6 +18,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...exception import InvalidArgumentException
 
 
 class RewardFundsAllocationCommand(Command):
@@ -33,14 +34,37 @@ class RewardFundsAllocationCommand(Command):
             parents=(parent_parser,),
         )
         for option in self._options:
-            parser.add_argument(option, type=int, default=0)
+            parser.add_argument(
+                option,
+                type=int,
+                default=0,
+                help=f"{option} in percent",
+            )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
-        reward_funds = {
-            option: getattr(args, option)
-            for option in self._options
+        self._validate(args)
+
+        value = {
+            "rewardFunds": {
+                option: getattr(args, option)
+                for option in self._options
+            }
         }
-        value = {"rewardFunds": reward_funds}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+
+    def _validate(self, args: Namespace):
+        total = 0
+        for option in self._options:
+            percent = getattr(args, option)
+            if 0 <= percent < 100:
+                total += percent
+            else:
+                raise InvalidArgumentException(f"Invalid {option}: {percent}")
+
+        if total != 100:
+            values = (f"{option}={getattr(args, option)}" for option in self._options)
+            raise InvalidArgumentException(
+                f"Total rewardFundsAllocation is not 100: {' '.join(values)}"
+            )

@@ -18,6 +18,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...utils.argparse_utils import FileReadHexAction
 
 
 class NetworkScoreUpdateCommand(Command):
@@ -39,6 +40,7 @@ class NetworkScoreUpdateCommand(Command):
         parser.add_argument(
             "content",
             type=str,
+            action=FileReadHexAction,
             help=(
                 "jar file contents in hexadecimal or filepath with @ prefix. "
                 "python score is not supported. "
@@ -48,19 +50,9 @@ class NetworkScoreUpdateCommand(Command):
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
-        content: str = args.content
-        if content.startswith("@"):
-            content = _get_content_from_file(content[1:])
-
         value = {
             "address": args.address,
-            "content": content,
+            "content": args.content,
         }
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
-
-
-def _get_content_from_file(path: str) -> str:
-    with open(path, "rb") as f:
-        data: bytes = f.read()
-        return data.hex()

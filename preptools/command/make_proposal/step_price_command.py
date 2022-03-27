@@ -31,10 +31,14 @@ class StepPriceCommand(Command):
             help=self._help,
             parents=(parent_parser,),
         )
-        parser.add_argument("stepPrice", type=int, help="stepPrice in loop unit")
+        parser.add_argument(
+            "stepPrice",
+            type=int,
+            help="stepPrice in loop unit",
+        )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
-        value = {"stepPrice": args.address}
+        value = {"stepPrice": args.stepPrice}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)

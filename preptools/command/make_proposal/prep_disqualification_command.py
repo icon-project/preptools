@@ -18,6 +18,8 @@ from argparse import (
 )
 
 from .command import Command
+from ...exception import InvalidArgumentException
+from ...utils.validation_checker import is_valid_address
 
 
 class PRepDisqualificationCommand(Command):
@@ -31,10 +33,16 @@ class PRepDisqualificationCommand(Command):
             help=self._help,
             parents=(parent_parser,),
         )
-        parser.add_argument("address", type=str, help="prep address")
+        parser.add_argument("address", type=str, help="prep address to disqualify")
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
+        self._validate(args)
         value = {"address": args.address}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+
+    @staticmethod
+    def _validate(args: Namespace):
+        if not is_valid_address(args.address):
+            raise InvalidArgumentException(f"Invalid address: {args.address}")

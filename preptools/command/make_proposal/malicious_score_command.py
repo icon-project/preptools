@@ -18,6 +18,8 @@ from argparse import (
 )
 
 from .command import Command
+from ...exception import InvalidArgumentException
+from ...utils.validation_checker import is_valid_address
 
 
 class MaliciousScoreCommand(Command):
@@ -32,13 +34,20 @@ class MaliciousScoreCommand(Command):
             parents=(parent_parser,),
         )
         parser.add_argument("address", type=str, help="score address")
-        parser.add_argument("type", type=int, help="0(freeze), 1(thaw)")
+        parser.add_argument("type", type=int, choices=range(2), help="0(block), 1(release)")
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
+        self._validate(args)
+
         value = {
             "address": args.address,
             "type": args.type,
         }
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+
+    @staticmethod
+    def _validate(args: Namespace):
+        if not is_valid_address(args.address):
+            raise InvalidArgumentException(f"Invalid address: {args.address}")

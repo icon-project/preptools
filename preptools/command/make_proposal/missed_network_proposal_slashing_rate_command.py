@@ -18,6 +18,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...exception import InvalidArgumentException
 
 
 class MissedNetworkProposalSlashingRateCommand(Command):
@@ -39,6 +40,12 @@ class MissedNetworkProposalSlashingRateCommand(Command):
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
+        self._validate(args)
         value = {"slashingRate": args.slashingRate}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+
+    @staticmethod
+    def _validate(args: Namespace):
+        if not (0 <= args.slashingRate <= 100):
+            raise InvalidArgumentException(f"Invalid slashingRate: {args.slashingRate}")

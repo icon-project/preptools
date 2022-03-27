@@ -19,6 +19,8 @@ from argparse import (
 from typing import Optional
 
 from .command import Command
+from ...exception import InvalidArgumentException
+from ...utils.validation_checker import is_valid_address
 
 
 class NetworkScoreDesignationCommand(Command):
@@ -44,12 +46,16 @@ class NetworkScoreDesignationCommand(Command):
             parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
-        print(args)
         network_scores = []
         for role in self._roles:
             address: Optional[str] = getattr(args, role)
-            if isinstance(address, str):
+            if is_valid_address(address):
                 network_scores.append({"role": role, "address": address})
+            else:
+                raise InvalidArgumentException(f"Invalid address: {address}")
+
+        if len(network_scores) == 0:
+            raise InvalidArgumentException("No argument to designate")
 
         value = {"networkScores": network_scores}
         proposal: str = self._make_proposal(self._name, value)
