@@ -19,6 +19,7 @@ from argparse import (
 from typing import Optional
 
 from .command import Command
+from ...utils import str_to_int
 
 
 class StepCostsCommand(Command):
@@ -57,7 +58,7 @@ class StepCostsCommand(Command):
         for option in self._options:
             parser.add_argument(
                 f"--{option}",
-                type=int,
+                type=str_to_int,
                 required=False,
             )
         parser.set_defaults(func=self._run)

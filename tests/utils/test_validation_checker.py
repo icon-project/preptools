@@ -17,18 +17,21 @@
 import json
 import unittest
 
+import pytest
+
 from preptools.exception import InvalidFormatException
 from preptools.utils.validation_checker import (
     validate_country,
     validate_email,
     validate_p2p_endpoint,
     validate_uri,
-    validate_prep_data
+    validate_prep_data,
+    is_valid_address,
 )
 from tests.commons.constants import TEST_SET_JSON_PATH, TEST_REGISTER_JSON_PATH, TEST_KEYSTORE_PATH
 
 
-class TestFormatChecker(unittest.TestCase):
+class TestValidationChecker(unittest.TestCase):
 
     def setUp(self) -> None:
         pass
@@ -130,3 +133,29 @@ class TestFormatChecker(unittest.TestCase):
             param = json.load(keystore)
 
         self.assertRaises(InvalidFormatException, validate_prep_data, param)
+
+
+@pytest.mark.parametrize(
+    "address, expected",
+    [
+        ("", False),
+        (None, False),
+        ("hx1234", False),
+        ("cx1234", False),
+        (b"hx0123456789012345678901234567890123456789", False),
+        (1234, False),
+        (False, False),
+        ("hx0123456789012345678901234567890123456789", True),
+        ("cx0123456789012345678901234567890123456789", True),
+        ("Hx0123456789012345678901234567890123456789", False),
+        ("Cx0123456789012345678901234567890123456789", False),
+        ("hx012345678901234567890123456789012345678", False),
+        ("cx012345678901234567890123456789012345678", False),
+        ("hx012345678901234567890123456789012345678z", False),
+        ("cx012345678901234567890123456789012345678x", False),
+        ("hxA123456789012345678901234567890123456789", False),
+        ("cxB123456789012345678901234567890123456789", False),
+    ],
+)
+def test_is_valid_address(address: str, expected: bool):
+    assert is_valid_address(address) == expected

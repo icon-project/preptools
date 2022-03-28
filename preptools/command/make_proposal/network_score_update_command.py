@@ -41,10 +41,11 @@ class NetworkScoreUpdateCommand(Command):
             "content",
             type=str,
             action=FileReadHexAction,
+            nargs="?",
             help=(
                 "jar file contents in hexadecimal or filepath with @ prefix. "
                 "python score is not supported. "
-                "ex) [0xa23de..., or @score.jar]"
+                "[0xa23de..., or @./a/b/c/score.jar]"
             )
         )
         parser.set_defaults(func=self._run)

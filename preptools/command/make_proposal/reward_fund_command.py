@@ -18,6 +18,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...utils import str_to_int
 
 
 class RewardFundCommand(Command):
@@ -33,7 +34,7 @@ class RewardFundCommand(Command):
         )
         parser.add_argument(
             "iglobal",
-            type=int,
+            type=str_to_int,
             help="The total amount of monthly reward fund in loop"
         )
         parser.set_defaults(func=self._run)

@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
 import json
 from typing import (
     Any,
@@ -24,12 +23,12 @@ from typing import (
 
 from iconsdk.utils.convert_type import convert_bytes_to_hex_str, convert_int_to_hex_str
 from iconsdk.utils.typing.conversion import object_to_str
-from preptools.core.prep import create_writer_by_args
-from preptools.exception import InvalidArgumentException
-from preptools.utils import str_to_int
-from preptools.utils.constants import proposal_param_by_type
-from preptools.utils.utils import print_proposal_value
-from preptools.utils.validation_checker import valid_proposal_param_by_type
+from .utils import create_tx_parser
+from ..core.prep import create_writer_by_args
+from ..exception import InvalidArgumentException
+from ..utils.constants import proposal_param_by_type
+from ..utils.utils import print_proposal_value
+from ..utils.validation_checker import valid_proposal_param_by_type
 
 
 def init(sub_parser, common_parent_parser):
@@ -157,7 +156,7 @@ def _register_proposal(args) -> dict:
         params['type'] = convert_int_to_hex_str(args.type)
         value = _get_value_by_type(args)
         params['value'] = _convert_value_to_hex_str(value)
-        fee = 100 * 10 ** 18
+        fee = 0
     else:
         if not args.value_raw:
             print("Must pass option(type or jsonPath)")
@@ -287,51 +286,6 @@ def _apply_proposal(args) -> Optional[Dict[str, Any]]:
     params = {"id": args.id}
     writer = create_writer_by_args(args)
     return writer.apply_proposal(params)
-
-
-def create_tx_parser() -> argparse.ArgumentParser:
-    """Common options for invoke commands
-
-    :return:
-    """
-
-    parent_parser = argparse.ArgumentParser(add_help=False)
-
-    parent_parser.add_argument(
-        "--password", "-p",
-        type=str,
-        required=False,
-        default=None,
-        help="keystore password"
-    )
-
-    parent_parser.add_argument(
-        "--keystore", "-k",
-        type=str,
-        required=False,
-        help="keystore file path"
-    )
-
-    parent_parser.add_argument(
-        "--step-limit", "-s",
-        type=str_to_int,
-        required=False,
-        default=None,
-        dest="step_limit",
-        help="step limit to set"
-    )
-
-    parent_parser.add_argument(
-        "--step-margin", "-m",
-        type=str_to_int,
-        required=False,
-        default="0",
-        dest="step_margin",
-        help="Can be used when step-limit option is not given.\n"
-             "Set step-limit value to estimated Step + this value(step-margin)"
-    )
-
-    return parent_parser
 
 
 def _convert_value_to_hex_str(value: dict) -> str:

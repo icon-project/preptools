@@ -18,6 +18,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...utils import str_to_int
 
 
 class StepPriceCommand(Command):
@@ -33,7 +34,7 @@ class StepPriceCommand(Command):
         )
         parser.add_argument(
             "stepPrice",
-            type=int,
+            type=str_to_int,
             help="stepPrice in loop unit",
         )
         parser.set_defaults(func=self._run)

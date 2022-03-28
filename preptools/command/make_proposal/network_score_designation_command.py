@@ -55,7 +55,7 @@ class NetworkScoreDesignationCommand(Command):
                 raise InvalidArgumentException(f"Invalid address: {address}")
 
         if len(network_scores) == 0:
-            raise InvalidArgumentException("No argument to designate")
+            raise InvalidArgumentException("No network score to designate")
 
         value = {"networkScores": network_scores}
         proposal: str = self._make_proposal(self._name, value)

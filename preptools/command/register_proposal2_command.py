@@ -20,13 +20,18 @@ from typing import (
     Union,
 )
 
+from iconsdk.utils.typing.conversion import object_to_str
+from .utils import create_tx_parser
+from ..core.prep import create_writer_by_args
 from ..exception import InvalidArgumentException
 from ..utils.argparse_utils import FileReadAction
+from ..utils.constants import NETWORK_PROPOSAL_FEE
 
 
 def init(sub_parsers, common_parent_parser: ArgumentParser):
+    tx_parent_parser = create_tx_parser()
     cmd = RegisterProposal2Command()
-    cmd.init(sub_parsers, common_parent_parser)
+    cmd.init(sub_parsers, common_parent_parser, tx_parent_parser)
 
 
 class RegisterProposal2Command:
@@ -34,54 +39,68 @@ class RegisterProposal2Command:
         self._name = "registerProposal2"
         self._desc = "Register new formatted proposals supported by governance2 score"
 
-    def init(self, sub_parsers, common_parent_parser: ArgumentParser):
+    def init(self, sub_parsers, *parent_parsers):
         parser: ArgumentParser = sub_parsers.add_parser(
             self._name,
-            parents=(common_parent_parser,),
+            parents=parent_parsers,
             help=self._desc
         )
 
+        parser.add_argument(
+            "title",
+            type=str,
+            nargs="?",
+            help="Proposal title"
+        )
+        parser.add_argument(
+            "desc",
+            type=str,
+            nargs="?",
+            help="Proposal description"
+        )
         parser.add_argument(
             "proposals",
             type=str,
             nargs="+",
             action=FileReadAction,
             help=(
-                "proposal contents in governance2 score format "
+                "Proposal contents in governance2 score format "
                 "or filepath with '@' prefix, which includes proposal contents"
             ),
         )
         parser.set_defaults(func=self._run)
 
     @classmethod
-    def _make_params(cls, args: Namespace) -> List[Dict[str, str]]:
-        params: List[Dict[str, str]] = []
+    def _merge_proposals(cls, args: Namespace) -> List[Dict[str, str]]:
+        """Merge proposals from arguments
+        """
+        ret: List[Dict[str, Any]] = []
         proposals: List[str] = args.proposals
 
         for proposal in proposals:
-            if proposal.startswith("@"):
-                # filepath including a proposal content
-                path = proposal
-                with open(path, "rt") as f:
-                    proposal = f.read()
-
-            param: Union[Dict[str, str], List[Dict[str, str]]] = json.loads(proposal)
+            param: Union[Dict[str, Any], List[Dict[str, Any]]] = json.loads(proposal)
             if isinstance(param, list):
-                params += param
+                ret += param
             elif isinstance(param, dict):
-                params.append(param)
+                ret.append(param)
             else:
                 raise InvalidArgumentException(f"Unsupported proposal format: {param}")
 
-        return params
+        # convert all values in list to str recursively
+        return object_to_str(ret)
 
     def _run(self, args: Namespace) -> Dict[str, Any]:
-        params: List[Dict[str, str]] = self._make_params(args)
+        proposals: List[Dict[str, str]] = self._merge_proposals(args)
+        value: str = f"0x{json.dumps(proposals, separators=(',', ':')).encode('utf-8').hex()}"
 
         if not args.yes or args.verbose:
-            print(json.dumps(params, indent=4))
+            print(json.dumps(proposals, indent=4))
 
-        return {"params": params}
-        # writer = create_writer_by_args(args)
-        # response = writer.register_proposal(params, value=NETWORK_PROPOSAL_FEE)
-        # return response
+        params = {
+            "title": args.title,
+            "description": args.desc,
+            "value": value,
+        }
+        writer = create_writer_by_args(args)
+        response = writer.register_proposal(params, value=NETWORK_PROPOSAL_FEE)
+        return response
