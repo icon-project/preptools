@@ -4,6 +4,7 @@ from argparse import (
 )
 
 from .command import Command
+from ...utils import str_to_int
 
 
 class RevisionCommand(Command):
@@ -17,7 +18,7 @@ class RevisionCommand(Command):
             help=self._help,
             parents=(parent_parser,),
         )
-        parser.add_argument("revision", type=int)
+        parser.add_argument("revision", type=str_to_int)
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):

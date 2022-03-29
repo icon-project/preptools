@@ -44,5 +44,8 @@ class PRepDisqualificationCommand(Command):
 
     @staticmethod
     def _validate(args: Namespace):
-        if not is_valid_address(args.address):
+        address: str = args.address
+        if not is_valid_address(address):
             raise InvalidArgumentException(f"Invalid address: {args.address}")
+        if address.startswith("cx"):
+            raise InvalidArgumentException(f"Score address not allowed")

@@ -19,6 +19,7 @@ from argparse import (
 
 from .command import Command
 from ...exception import InvalidArgumentException
+from ...utils import str_to_int
 
 
 class AccumulatedValidationFailureSlashingRateCommand(Command):
@@ -34,7 +35,7 @@ class AccumulatedValidationFailureSlashingRateCommand(Command):
         )
         parser.add_argument(
             "slashingRate",
-            type=int,
+            type=str_to_int,
             help="slashing rate in percent [0 ~ 100]"
         )
         parser.set_defaults(func=self._run)

@@ -19,6 +19,7 @@ from argparse import (
 
 from .command import Command
 from ...exception import InvalidArgumentException
+from ...utils import str_to_int
 from ...utils.validation_checker import is_valid_address
 
 
@@ -34,7 +35,7 @@ class MaliciousScoreCommand(Command):
             parents=(parent_parser,),
         )
         parser.add_argument("address", type=str, help="score address")
-        parser.add_argument("type", type=int, choices=range(2), help="0(block), 1(release)")
+        parser.add_argument("type", type=str_to_int, choices=range(2), help="0(block), 1(release)")
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):

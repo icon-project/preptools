@@ -19,6 +19,7 @@ from argparse import (
 
 from .command import Command
 from ...exception import InvalidArgumentException
+from ...utils import str_to_int
 
 
 class RewardFundsAllocationCommand(Command):
@@ -36,9 +37,8 @@ class RewardFundsAllocationCommand(Command):
         for option in self._options:
             parser.add_argument(
                 option,
-                type=int,
-                default=0,
-                help=f"{option} in percent [0 ~ 100]",
+                type=str_to_int,
+                help=f"{option} in percent [0 ~ 100] positive integer only",
             )
         parser.set_defaults(func=self._run)
 
@@ -61,7 +61,7 @@ class RewardFundsAllocationCommand(Command):
             if 0 <= percent < 100:
                 total += percent
             else:
-                raise InvalidArgumentException(f"Invalid {option}: {percent}")
+                raise InvalidArgumentException(f"Out of range: {option}={percent}")
 
         if total != 100:
             values = (f"{option}={getattr(args, option)}" for option in self._options)
