@@ -36,8 +36,9 @@ class RewardFundsAllocationCommand(Command):
         )
         for option in self._options:
             parser.add_argument(
-                option,
+                f"--{option}",
                 type=str_to_int,
+                default=0,
                 help=f"{option} in percent [0 ~ 100] positive integer only",
             )
         parser.set_defaults(func=self._run)
