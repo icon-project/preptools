@@ -29,14 +29,16 @@ from .utils.utils import print_response
 def main() -> Optional:
     handlers = (
         prep_setting_command.init,
-        proposal_setting_command.init,
         prep_info_command.init,
+
+        proposal_setting_command.init,
+        make_proposal_command.init,
+        register_proposal2_command.init,
         proposal_info_command.init,
+
         bond_command.init,
         tx_info_command.init,
         common_command.init,
-        make_proposal_command.init,
-        register_proposal2_command.init,
     )
 
     version = get_preptools_version()

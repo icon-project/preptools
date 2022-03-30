@@ -979,7 +979,8 @@ optional arguments:
 ```
 
 #### makeProposal
-This command is used to make a variety of network proposals easily.
+This command is used to make a variety of network proposal contents easily.
+Note that there is no network cit does not communicate with blockchain but just creates the content of a specific network proposal.
 The proposal content created here is used as a parameters of [registerProposal2](#registerproposal2) command.
 
 **> Usage**
