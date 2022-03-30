@@ -28,6 +28,7 @@ class NetworkScoreDesignationCommand(Command):
         self._name = "networkScoreDesignation"
         self._help = f"{self._name} network proposal"
         self._roles = ("cps", "relay")
+        self._parser: Optional[ArgumentParser] = None
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -41,21 +42,28 @@ class NetworkScoreDesignationCommand(Command):
                 f"--{role}",
                 type=str,
                 required=False,
+                metavar="scoreAddress",
                 help=f"network score address for {role}",
             )
             parser.set_defaults(func=self._run)
 
+        self._parser = parser
+
     def _run(self, args: Namespace):
+        print(args)
         network_scores = []
         for role in self._roles:
             address: Optional[str] = getattr(args, role)
+            if address is None:
+                continue
             if is_valid_address(address):
                 network_scores.append({"role": role, "address": address})
             else:
                 raise InvalidArgumentException(f"Invalid address: {address}")
 
         if len(network_scores) == 0:
-            raise InvalidArgumentException("No network score to designate")
+            self._parser.print_help()
+            return
 
         value = {"networkScores": network_scores}
         proposal: str = self._make_proposal(self._name, value)
