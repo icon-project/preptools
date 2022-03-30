@@ -24,22 +24,21 @@ from ...utils import str_to_int
 
 class StepCostsCommand(Command):
     _options = (
-        "schema",
         "default",
-        "contractCall",
-        "contractCreate",
-        "contractUpdate",
-        "contractSet",
+        "contract-call",
+        "contract-create",
+        "contract-update",
+        "contract-set",
         "get",
-        "getBase",
+        "get-base",
         "set",
-        "setBase",
+        "set-base",
         "delete",
-        "deleteBase",
+        "delete-base",
         "input",
         "log",
-        "logBase",
-        "apiCall",
+        "log-base",
+        "api-call",
     )
 
     def __init__(self):
@@ -58,17 +57,28 @@ class StepCostsCommand(Command):
         for option in self._options:
             parser.add_argument(
                 f"--{option}",
+                dest=_to_lower_camel_case(option, "-"),
                 type=str_to_int,
                 required=False,
             )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace):
-        value = {}
+        costs = {}
+
         for option in self._options:
+            option = _to_lower_camel_case(option, "-")
             cost: Optional[int] = getattr(args, option)
             if cost is not None:
-                value[option] = cost
+                costs[option] = cost
 
-        proposal: str = self._make_proposal(self._name, value)
+        proposal: str = self._make_proposal(self._name, value={"costs": costs})
         self._write_proposal(args.output, proposal)
+
+
+def _to_lower_camel_case(value: str, sep: str = "-") -> str:
+    tokens = value.split(sep)
+    for i in range(1, len(tokens)):
+        tokens[i] = tokens[i].title()
+
+    return "".join(tokens)

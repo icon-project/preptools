@@ -273,9 +273,8 @@ def _init_for_apply_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     )
 
     parser.add_argument(
-        "--id",
+        "id",
         type=str,
-        required=True,
         help="hash of registerProposal TX"
     )
 
