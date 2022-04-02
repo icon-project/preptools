@@ -47,21 +47,22 @@ class RegisterProposal2Command:
         )
 
         parser.add_argument(
-            "title",
+            "--title",
             type=str,
-            nargs="?",
+            required=True,
             help="Proposal title"
         )
         parser.add_argument(
-            "desc",
+            "--desc",
             type=str,
-            nargs="?",
+            required=True,
             help="Proposal description"
         )
         parser.add_argument(
-            "proposals",
+            "--proposals",
             type=str,
             nargs="+",
+            required=True,
             action=FileReadAction,
             help=(
                 "Proposal contents in governance2 score format "

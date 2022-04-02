@@ -309,8 +309,10 @@ def _set_prep(args) -> str:
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
     name = "setGovernanceVariables"
-    desc = f"Change Governance variables used in network operation" \
-           f"\ndeprecated.since revision9, set i-rep with network proposal"
+    desc = (
+        "Change Governance variables used in network operation\n"
+        "deprecated.since revision9, set i-rep with network proposal"
+    )
 
     parser = sub_parser.add_parser(
         name,
