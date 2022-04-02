@@ -46,9 +46,7 @@ class Command(metaclass=ABCMeta):
 
     @classmethod
     def _write_proposal(cls, path: Optional[str], proposal: str):
-        if path is None:
-            print(proposal)
-        else:
+        if path is not None:
             with open(path, "wt") as f:
                 f.write(proposal)
 

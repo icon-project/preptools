@@ -24,8 +24,11 @@ from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.signed_transaction import SignedTransaction
 from iconsdk.wallet.wallet import KeyWallet
-
-from ..exception import InvalidKeyStoreException, InvalidFileReadException, InvalidDataTypeException
+from ..exception import (
+    InvalidKeyStoreException,
+    InvalidFileReadException,
+    InvalidDataTypeException,
+)
 from ..utils.constants import EOA_ADDRESS, ZERO_ADDRESS, COLUMN, GOVERNANCE_ADDRESS
 from ..utils.preptools_config import get_default_config
 from ..utils.utils import print_title, print_dict
@@ -49,7 +52,9 @@ class TxHandler:
         if not ret:
             return
 
-        return self._icon_service.send_transaction(SignedTransaction(transaction, owner), full_response=True)
+        return self._icon_service.send_transaction(
+            SignedTransaction(transaction, owner), full_response=False
+        )
 
     def _call_on_send_request(self, content: dict) -> bool:
         if self._on_send_request:

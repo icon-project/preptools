@@ -36,11 +36,12 @@ class PRepDisqualificationCommand(Command):
         parser.add_argument("address", type=str, help="prep address to disqualify")
         parser.set_defaults(func=self._run)
 
-    def _run(self, args: Namespace):
+    def _run(self, args: Namespace) -> str:
         self._validate(args)
         value = {"address": args.address}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+        return proposal
 
     @staticmethod
     def _validate(args: Namespace):

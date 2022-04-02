@@ -35,10 +35,16 @@ class MaliciousScoreCommand(Command):
             parents=(parent_parser,),
         )
         parser.add_argument("address", type=str, help="score address")
-        parser.add_argument("type", type=str_to_int, choices=range(2), help="0(block), 1(release)")
+        parser.add_argument(
+            "type",
+            type=str_to_int,
+            metavar="type",
+            choices=range(2),
+            help="0(block), 1(release)"
+        )
         parser.set_defaults(func=self._run)
 
-    def _run(self, args: Namespace):
+    def _run(self, args: Namespace) -> str:
         self._validate(args)
 
         value = {
@@ -47,6 +53,7 @@ class MaliciousScoreCommand(Command):
         }
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+        return proposal
 
     @staticmethod
     def _validate(args: Namespace):

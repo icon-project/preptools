@@ -345,3 +345,16 @@ def is_valid_address(address: str) -> bool:
         return True
     except:
         return False
+
+
+def is_tx_hash(tx_hash: str) -> bool:
+    try:
+        if not isinstance(tx_hash, str):
+            return False
+        if not tx_hash.startswith("0x"):
+            return False
+        if not tx_hash.islower():
+            return False
+        return len(bytes.fromhex(tx_hash[2:])) == 32
+    except:
+        return False

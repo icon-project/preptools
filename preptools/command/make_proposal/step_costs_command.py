@@ -63,7 +63,7 @@ class StepCostsCommand(Command):
             )
         parser.set_defaults(func=self._run)
 
-    def _run(self, args: Namespace):
+    def _run(self, args: Namespace) -> str:
         costs = {}
 
         for option in self._options:
@@ -74,6 +74,7 @@ class StepCostsCommand(Command):
 
         proposal: str = self._make_proposal(self._name, value={"costs": costs})
         self._write_proposal(args.output, proposal)
+        return proposal
 
 
 def _to_lower_camel_case(value: str, sep: str = "-") -> str:

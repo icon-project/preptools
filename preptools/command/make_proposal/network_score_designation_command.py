@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import sys
 from argparse import (
     ArgumentParser,
     Namespace,
@@ -49,8 +49,7 @@ class NetworkScoreDesignationCommand(Command):
 
         self._parser = parser
 
-    def _run(self, args: Namespace):
-        print(args)
+    def _run(self, args: Namespace) -> Optional[str]:
         network_scores = []
         for role in self._roles:
             address: Optional[str] = getattr(args, role)
@@ -62,9 +61,10 @@ class NetworkScoreDesignationCommand(Command):
                 raise InvalidArgumentException(f"Invalid address: {address}")
 
         if len(network_scores) == 0:
-            self._parser.print_help()
+            self._parser.print_help(sys.stderr)
             return
 
         value = {"networkScores": network_scores}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+        return proposal

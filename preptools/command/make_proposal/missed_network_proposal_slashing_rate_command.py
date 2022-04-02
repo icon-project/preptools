@@ -40,11 +40,12 @@ class MissedNetworkProposalSlashingRateCommand(Command):
         )
         parser.set_defaults(func=self._run)
 
-    def _run(self, args: Namespace):
+    def _run(self, args: Namespace) -> str:
         self._validate(args)
         value = {"slashingRate": args.slashingRate}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+        return proposal
 
     @staticmethod
     def _validate(args: Namespace):

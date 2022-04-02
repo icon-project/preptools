@@ -16,7 +16,7 @@
 
 import argparse
 import sys
-from typing import Optional
+from typing import Dict, Any, Optional
 
 from iconsdk.exception import IconServiceBaseException
 from .command import *
@@ -54,27 +54,26 @@ def main() -> Optional:
     for handler in handlers:
         handler(sub_parser, common_parent_parser)
 
+    exit_code: int = PRepToolsExceptionCode.OK.value
     try:
         args = parser.parse_args()
         if not hasattr(args, "func"):
             parser.print_help(sys.stderr)
-            sys.exit(1)
-        response: Optional[dict, int] = args.func(args)
+            sys.exit(exit_code)
+
+        response: Optional[dict, int, str] = args.func(args)
     except (PRepToolsBaseException, IconServiceBaseException) as e:
-        print(e)
-        response = e.code.value
+        response: Dict[str, Any] = e.message
+        exit_code = e.code.value
     except Exception as e:
-        print(f"Exception : {e}")
-        response = PRepToolsExceptionCode.COMMAND_ERROR.value
+        response = str(e)
+        exit_code = PRepToolsExceptionCode.COMMAND_ERROR.value
     except KeyboardInterrupt:
-        print("\nexit")
-        response = 0
+        response = "\nexit"
+        exit_code = PRepToolsExceptionCode.COMMAND_ERROR.value
 
-    if isinstance(response, int) is False and response:
-        print_response(response)
-        sys.exit(PRepToolsExceptionCode.OK.value)
-
-    sys.exit(response)
+    print_response(response)
+    sys.exit(exit_code)
 
 
 def create_common_parser() -> argparse.ArgumentParser:

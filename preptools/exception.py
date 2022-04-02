@@ -29,8 +29,8 @@ class PRepToolsExceptionCode(IntEnum):
     ADDRESS_ERROR = 2
     BALANCE_ERROR = 3
     DATA_TYPE_ERROR = 4
-    ARGUMENT_ERROR = 5
-    JSON_RPC_ERROR = 6
+    JSON_RPC_ERROR = 5
+    ARGUMENT_ERROR = 6
     ZIP_MEMORY_ERROR = 7
     URL_ERROR = 8
 
@@ -108,8 +108,12 @@ class InvalidArgumentException(PRepToolsBaseException):
 
 class JsonRpcException(PRepToolsBaseException):
     """Error while json rpc request"""
-    def __init__(self, message: Optional[str]):
+    def __init__(self, message: Optional[str], error_code: int = PRepToolsExceptionCode.JSON_RPC_ERROR.value):
         super().__init__(message, PRepToolsExceptionCode.JSON_RPC_ERROR)
+        self._error_code = error_code
+
+    def __str__(self):
+        return f"{self._error_code} {self.message}"
 
 
 class LackOfBalanceException(PRepToolsBaseException):

@@ -45,15 +45,11 @@ def print_dict(data: dict):
     print(json.dumps(converted, indent=4))
 
 
-def print_response(content: Union[str, dict]):
-    print_title("Response", COLUMN)
-
+def print_response(content: Union[int, str, dict]):
     if isinstance(content, dict):
         print_dict(content)
     else:
         print(content)
-
-    print("")
 
 
 def print_proposal_value(params: dict):
@@ -62,16 +58,6 @@ def print_proposal_value(params: dict):
         print_dict(params)
     else:
         print(params)
-
-
-def print_tx_result(tx_result: dict):
-    print_title("Transaction Result")
-    print_dict(tx_result)
-
-
-def print_tx_by_hash(tx: dict):
-    print_title("Transaction")
-    print_dict(tx)
 
 
 def is_url_valid(url: str) -> bool:

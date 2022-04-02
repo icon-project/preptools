@@ -21,7 +21,8 @@ class RevisionCommand(Command):
         parser.add_argument("revision", type=str_to_int)
         parser.set_defaults(func=self._run)
 
-    def _run(self, args: Namespace):
+    def _run(self, args: Namespace) -> str:
         value = {"revision": args.revision}
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
+        return proposal
