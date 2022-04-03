@@ -127,10 +127,7 @@ def _register_prep(args) -> str:
         _get_prep_input(args, params)
 
     _get_prep_dict_from_cli(params)
-    response = writer.register_prep(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.register_prep(params)
 
 
 def _get_prep_dict_from_cli(params, set_prep: bool = False):
@@ -198,10 +195,7 @@ def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser
 def _unregister_prep(args) -> str:
 
     writer = create_writer_by_args(args)
-    response = writer.unregister_prep()
-
-    if response:
-        return f'txHash : {response}'
+    return writer.unregister_prep()
 
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
@@ -301,10 +295,7 @@ def _set_prep(args) -> str:
     if args.interactive:
         _get_prep_dict_from_cli(params, set_prep=True)
 
-    response = writer.set_prep(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.set_prep(params)
 
 
 def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
@@ -335,10 +326,7 @@ def _set_governance_variables(args) -> str:
     }
 
     writer = create_writer_by_args(args)
-    response = writer.set_governance_variables(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.set_governance_variables(params)
 
 
 def _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser):
@@ -369,10 +357,7 @@ def _set_bonder_list(args) -> str:
     }
 
     writer = create_writer_by_args(args)
-    response = writer.set_bonder_list(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.set_bonder_list(params)
 
 
 def create_tx_parser() -> argparse.ArgumentParser:

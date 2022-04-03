@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from preptools.core.prep import create_writer_by_args, create_reader_by_args
 from preptools.command.prep_setting_command import create_tx_parser
+from preptools.core.prep import create_writer_by_args, create_reader_by_args
 
 
 def init(sub_parser, common_parent_parser):
@@ -52,10 +52,7 @@ def _set_stake(args) -> str:
     }
 
     writer = create_writer_by_args(args)
-    response = writer.set_stake(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.set_stake(params)
 
 
 def _init_for_get_stake(sub_parser, common_parent_parser):
@@ -114,10 +111,7 @@ def _set_bond(args) -> str:
     }
 
     writer = create_writer_by_args(args)
-    response = writer.set_bond(params)
-
-    if response:
-        return f'txHash : {response}'
+    return writer.set_bond(params)
 
 
 def _init_for_get_bond(sub_parser, common_parent_parser):

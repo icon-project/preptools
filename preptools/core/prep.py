@@ -15,7 +15,13 @@
 import functools
 import getpass
 import json
-from typing import List, Callable
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Union,
+)
 
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.builder.transaction_builder import CallTransactionBuilder
@@ -47,7 +53,7 @@ class TxHandler:
         self._nid = nid
         self._on_send_request = on_send_request
 
-    def _call_tx(self, transaction, owner):
+    def _call_tx(self, transaction, owner) -> Union[str, dict]:
         ret = self._call_on_send_request(transaction.to_dict())
         if not ret:
             return
@@ -66,7 +72,7 @@ class TxHandler:
 
         return False
 
-    def call(self, owner, to, method, params=None, limit=None, value: int = 0, margin: int = 0) -> dict:
+    def call(self, owner, to, method, params=None, limit=None, value: int = 0, margin: int = 0) -> str:
         transaction = CallTransactionBuilder() \
             .from_(owner.get_address()) \
             .to(to) \
@@ -108,7 +114,7 @@ class PRepToolsWriter(PRepToolsListener):
         self._step_limit = step_limit
         self._step_margin = step_margin
 
-    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, value: int = 0) -> dict:
+    def _call(self, method: str, params: dict, to: str = ZERO_ADDRESS, value: int = 0) -> str:
         tx_handler = self._create_tx_handler()
         return tx_handler.call(
             owner=self._owner,
@@ -123,47 +129,47 @@ class PRepToolsWriter(PRepToolsListener):
     def _create_tx_handler(self) -> TxHandler:
         return TxHandler(self._icon_service, self._nid, self.listeners)
 
-    def register_prep(self, params) -> dict:
+    def register_prep(self, params) -> Union[str, Dict[str, Any]]:
         method = "registerPRep"
         return self._call(method, params, value=2000*10**18)
 
-    def unregister_prep(self) -> dict:
+    def unregister_prep(self) -> Union[str, dict]:
         method = "unregisterPRep"
         return self._call(method, {})
 
-    def register_proposal(self, params, value) -> dict:
+    def register_proposal(self, params, value) -> Union[str, dict]:
         method = "registerProposal"
         return self._call(method, params, to=GOVERNANCE_ADDRESS, value=value)
 
-    def cancel_proposal(self, params) -> dict:
+    def cancel_proposal(self, params) -> Union[str, dict]:
         method = "cancelProposal"
-        return self._call(method,params, to=GOVERNANCE_ADDRESS)
+        return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
-    def vote_proposal(self, params) -> dict:
+    def vote_proposal(self, params) -> Union[str, dict]:
         method = "voteProposal"
         return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
-    def apply_proposal(self, params) -> dict:
+    def apply_proposal(self, params) -> Union[str, dict]:
         method = "applyProposal"
         return self._call(method, params, to=GOVERNANCE_ADDRESS)
 
-    def set_prep(self, params) -> dict:
+    def set_prep(self, params) -> Union[str, dict]:
         method = "setPRep"
         return self._call(method, params)
 
-    def set_governance_variables(self, params) -> dict:
+    def set_governance_variables(self, params) -> Union[str, dict]:
         method = "setGovernanceVariables"
         return self._call(method, params)
 
-    def set_bonder_list(self, params) -> dict:
+    def set_bonder_list(self, params) -> Union[str, dict]:
         method = "setBonderList"
         return self._call(method, params)
 
-    def set_stake(self, params) -> dict:
+    def set_stake(self, params) -> Union[str, dict]:
         method = "setStake"
         return self._call(method, params)
 
-    def set_bond(self, params) -> dict:
+    def set_bond(self, params) -> Union[str, dict]:
         method = "setBond"
         return self._call(method, params)
 
