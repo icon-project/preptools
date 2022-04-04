@@ -24,5 +24,5 @@ from . import (
     network_score_designation_command,
     network_score_update_command,
     accumulated_validation_failure_slashing_rate_command,
-    missed_network_proposal_slashing_rate_command,
+    missed_network_proposal_vote_slashing_rate_command,
 )

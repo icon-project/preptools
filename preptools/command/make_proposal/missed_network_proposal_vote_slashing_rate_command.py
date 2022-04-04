@@ -24,7 +24,7 @@ from ...utils import str_to_int
 
 class MissedNetworkProposalSlashingRateCommand(Command):
     def __init__(self):
-        self._name = "missedNetworkProposalSlashingRate"
+        self._name = "missedNetworkProposalVoteSlashingRate"
         self._help = f"{self._name} network proposal"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
