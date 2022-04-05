@@ -6,10 +6,10 @@ import subprocess
 import time
 from enum import IntEnum
 from typing import Any, Dict, List, Tuple, Union
-from iconsdk.utils.convert_type import convert_bytes_to_hex_str
 
 import pytest
 
+from iconsdk.utils.convert_type import convert_bytes_to_hex_str
 from preptools.utils.validation_checker import is_tx_hash
 
 SYS_ADDRESS = "cx0000000000000000000000000000000000000000"
@@ -19,6 +19,7 @@ GOV_ADDRESS = "cx0000000000000000000000000000000000000001"
 SIG_NETWORK_PROPOSAL_REGISTERED = "NetworkProposalRegistered(str,str,int,bytes,Address)"
 SIG_NETWORK_PROPOSAL_VOTED = "NetworkProposalVoted(bytes,int,Address)"
 SIG_NETWORK_PROPOSAL_APPLIED = "NetworkProposalApplied(bytes)"
+SIG_SLASHING_RATE_CHANGED = "SlashingRateChanged(str,int)"
 
 
 class ReturnType(IntEnum):
@@ -111,18 +112,22 @@ def check_if_tx_succeeded(ptools: PRepTools, tx_hashes: Union[str, List[str]]) -
     return tx_results
 
 
-def vote_and_apply_proposal(ptools: PRepTools, _from: Account, proposal_id: str):
+def vote_and_apply_proposal(
+        ptools: PRepTools, _from: Account, proposal_id: str
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     # voteProposal with agree
     tx_hash = ptools.voteProposal(_from, proposal_id, vote=True)
     assert is_tx_hash(tx_hash)
     time.sleep(2)
-    check_if_vote_proposal_tx_succeeded(ptools, tx_hash, proposal_id, _from)
+    vote_tx_result = check_if_vote_proposal_tx_succeeded(ptools, tx_hash, proposal_id, _from)
 
     # applyProposal
     tx_hash = ptools.apply_proposal(_from, proposal_id)
     assert is_tx_hash(tx_hash)
     time.sleep(2)
-    check_if_apply_proposal_tx_succeeded(ptools, tx_hash, proposal_id, _from)
+    apply_tx_result = check_if_apply_proposal_tx_succeeded(ptools, tx_hash, proposal_id, _from)
+
+    return vote_tx_result, apply_tx_result
 
 
 def check_if_register_proposal_tx_succeeded(
@@ -152,9 +157,10 @@ def check_register_proposal(
 
 
 def check_if_vote_proposal_tx_succeeded(
-        ptools: PRepTools, tx_hash: str, proposal_id: str, _from: Account):
+        ptools: PRepTools, tx_hash: str, proposal_id: str, _from: Account) -> Dict[str, Any]:
     result: Dict[str, Any] = get_tx_result(ptools, tx_hash, retry=5)
     check_vote_proposal(result, _from, proposal_id)
+    return result
 
 
 def check_vote_proposal(tx_result: Dict[str, Any], _from: Account, proposal_id: str):
@@ -172,9 +178,10 @@ def check_vote_proposal(tx_result: Dict[str, Any], _from: Account, proposal_id: 
 
 
 def check_if_apply_proposal_tx_succeeded(
-        ptools: PRepTools, tx_hash: str, proposal_id: str, _from: Account):
+        ptools: PRepTools, tx_hash: str, proposal_id: str, _from: Account) -> Dict[str, Any]:
     result: Dict[str, Any] = get_tx_result(ptools, tx_hash, retry=5)
     check_apply_proposal(result, _from, proposal_id)
+    return result
 
 
 def check_apply_proposal(tx_result: Dict[str, Any], _from: Account, proposal_id: str):
@@ -220,6 +227,30 @@ def check_network_proposal_applied_event_log(event_log: Dict[str, Any], proposal
     data: List[str] = event_log["data"]
     assert indexed[0] == SIG_NETWORK_PROPOSAL_APPLIED
     assert data[0] == proposal_id
+
+
+def check_if_slashing_rate_changed_event_log_exists(
+        tx_result: Dict[str, Any], name: str, slashing_rate: int
+):
+    count = 0
+    event_logs = tx_result["eventLogs"]
+    for event_log in event_logs:
+        indexed: List[str] = event_log["indexed"]
+        signature: str = indexed[0]
+
+        if signature == SIG_SLASHING_RATE_CHANGED:
+            check_slashing_rate_changed_event_log(event_log, name, slashing_rate)
+            count += 1
+
+    assert count == 1
+
+
+def check_slashing_rate_changed_event_log(event_log: Dict[str, Any], name: str, rate: int):
+    indexed: List[str] = event_log["indexed"]
+    data: List[str] = event_log["data"]
+    assert indexed[0] == SIG_SLASHING_RATE_CHANGED
+    assert indexed[1] == name
+    assert data[0] == hex(rate)
 
 
 class PRepTools:
@@ -476,7 +507,7 @@ class Env:
         self._ptools = PRepTools(self._uri, self._nid, self._god)
         self._goloop = Goloop(self._uri, self._nid)
         self._cps_score_path = \
-            "/Users/goldworm/work/icon/java-score-examples/hello-world/build/libs/hello-world-0.1.0-optimized.jar"
+            "/Users/goldworm/work/icon/java-score-examples/hello-world/build/libs/hello-world-1.0.0-optimized.jar"
         self._cache = {}
         self._name_to_score = {
             "sys": SYS_ADDRESS,
@@ -521,7 +552,8 @@ class Env:
 
     @property
     def cps_address(self) -> str:
-        return self._name_to_score["cps"]
+        # SYS_ADDRESS is used just for test
+        return self._name_to_score.get("cps", SYS_ADDRESS)
 
     def put_score_address(self, name: str, address: str):
         self._name_to_score[name] = address
@@ -540,7 +572,7 @@ def ptools(env: Env) -> PRepTools:
     return env.ptools
 
 
-@pytest.mark.skip(reason="Need to prepare for gochain-local environment")
+# @pytest.mark.skip(reason="Need to prepare for gochain-local environment")
 class TestPRepTools:
 
     def test_init(self, env: Env):
@@ -609,6 +641,7 @@ class TestPRepTools:
         # Wait until this term is over.
         time.sleep(100)
 
+    @pytest.mark.skip(reason="revision")
     def test_revision_proposal(self, env: Env):
         ptools = env.ptools
         goloop = env.goloop
@@ -661,46 +694,6 @@ class TestPRepTools:
 
         # voteProposal with agree and applyProposal
         vote_and_apply_proposal(ptools, _from, proposal_id)
-
-    def test_network_score_designation_proposal(self, env: Env):
-        _from = env.god
-        goloop = env.goloop
-        ptools = env.ptools
-        name = "networkScoreDesignation"
-        cps_address: str = env.cache.get("cps", env.cps_address)
-        title, desc = "title", "desc"
-
-        # Change cps ownership to gov
-        tx_hash: str = goloop.set_score_owner(_from, cps_address, GOV_ADDRESS)
-        time.sleep(2)
-        check_if_tx_succeeded(ptools, tx_hash)
-
-        ret: str = goloop.query_call(SYS_ADDRESS, "getScoreOwner", [f"score={cps_address}"])
-        assert ret == GOV_ADDRESS
-
-        # makeProposal
-        proposal: str = ptools.make_proposal(name, f"--cps {cps_address}")
-        print(proposal)
-        obj = json.loads(proposal)
-        assert obj["name"] == name
-        network_scores: List[Dict[str, str]] = obj["value"]["networkScores"]
-        assert len(network_scores) == 1
-        assert network_scores[0]["role"] == "cps"
-        assert network_scores[0]["address"] == cps_address
-
-        # registerProposal2
-        proposal_id: str = ptools.register_proposal2(_from, title, desc, [proposal])
-        time.sleep(2)
-        check_if_register_proposal_tx_succeeded(
-            ptools, proposal_id, title, desc, _from, proposal,
-        )
-
-        # voteProposal with agree and applyProposal
-        vote_and_apply_proposal(ptools, _from, proposal_id)
-
-        ret: Dict[str, Any] = goloop.get_network_scores()
-        assert ret["cps"] == cps_address
-        assert ret["governance"] == GOV_ADDRESS
 
     def test_malicious_score_proposal(self, env: Env):
         ptools = env.ptools
@@ -783,14 +776,19 @@ class TestPRepTools:
         )
 
         # voteProposal and applyProposal
-        vote_and_apply_proposal(ptools, _from, proposal_id)
+        _, apply_tx_result = vote_and_apply_proposal(ptools, _from, proposal_id)
 
-    def test_missed_network_proposal_slashing_rate_proposal(self, env: Env):
+        # TODO: Need to check if "SlashingRateChanged" eventlog is emitted
+        check_if_slashing_rate_changed_event_log_exists(
+            apply_tx_result, "ConsistentValidationPenalty", slashing_rate
+        )
+
+    def test_missed_network_proposal_vote_slashing_rate_proposal(self, env: Env):
         ptools = env.ptools
         _from = env.god
 
-        name = "missedNetworkProposalSlashingRate"
-        slashing_rate = 1
+        name = "missedNetworkProposalVoteSlashingRate"
+        slashing_rate = 20
         proposal: str = ptools.make_proposal(name, options=f"{slashing_rate}")
         obj = json.loads(proposal)
         assert obj["name"] == name
@@ -806,9 +804,12 @@ class TestPRepTools:
         )
 
         # voteProposal and applyProposal
-        vote_and_apply_proposal(ptools, _from, proposal_id)
+        _, apply_tx_result = vote_and_apply_proposal(ptools, _from, proposal_id)
 
         # TODO: Need to check if "SlashingRateChanged" eventlog si recorded
+        check_if_slashing_rate_changed_event_log_exists(
+            apply_tx_result, "NonVotePenalty", slashing_rate
+        )
 
     def test_step_price_proposal(self, env: Env):
         ptools = env.ptools
@@ -943,3 +944,89 @@ class TestPRepTools:
 
         # voteProposal and applyProposal
         vote_and_apply_proposal(ptools, _from, proposal_id)
+
+    def test_network_score_designation_proposal(self, env: Env):
+        _from = env.god
+        goloop = env.goloop
+        ptools = env.ptools
+        name = "networkScoreDesignation"
+        cps_address: str = env.cache.get("cps", env.cps_address)
+        title, desc = "title", "desc"
+
+        # Change cps ownership to gov
+        tx_hash: str = goloop.set_score_owner(_from, cps_address, GOV_ADDRESS)
+        time.sleep(2)
+        check_if_tx_succeeded(ptools, tx_hash)
+
+        ret: str = goloop.query_call(SYS_ADDRESS, "getScoreOwner", [f"score={cps_address}"])
+        assert ret == GOV_ADDRESS
+
+        # makeProposal
+        proposal: str = ptools.make_proposal(name, f"--cps {cps_address}")
+        print(proposal)
+        obj = json.loads(proposal)
+        assert obj["name"] == name
+        network_scores: List[Dict[str, str]] = obj["value"]["networkScores"]
+        assert len(network_scores) == 1
+        assert network_scores[0]["role"] == "cps"
+        assert network_scores[0]["address"] == cps_address
+
+        # registerProposal2
+        proposal_id: str = ptools.register_proposal2(_from, title, desc, [proposal])
+        time.sleep(2)
+        check_if_register_proposal_tx_succeeded(
+            ptools, proposal_id, title, desc, _from, proposal,
+        )
+
+        # voteProposal with agree and applyProposal
+        vote_and_apply_proposal(ptools, _from, proposal_id)
+
+        ret: Dict[str, Any] = goloop.get_network_scores()
+        assert ret["cps"] == cps_address
+        assert ret["governance"] == GOV_ADDRESS
+
+    def test_network_score_update_proposal(self, env: Env):
+        ptools = env.ptools
+        goloop = env.goloop
+        _from: Account = env.god
+        cps_address: str = env.cps_address
+        cps_score_path: str = \
+            "/Users/goldworm/work/icon/java-score-examples/hello-world/build/libs/hello-world-1.1.0-optimized.jar"
+
+        # Check an old version
+        version: str = goloop.query_call(cps_address, "getGreeting")
+        assert version == "Hello Alice!"
+
+        # makeProposal
+        name = "networkScoreUpdate"
+        options = (
+            f"{cps_address} "
+            f"@{cps_score_path} "
+            "--params John"
+        )
+
+        proposal: str = ptools.make_proposal(name, options)
+        print(proposal)
+        obj = json.loads(proposal)
+        assert obj["name"] == name
+        assert obj["value"]["address"] == cps_address
+
+        with open(cps_score_path, "rb") as fp:
+            content: bytes = fp.read()
+            assert obj["value"]["content"] == convert_bytes_to_hex_str(content)
+
+        # registerProposal2
+        title, desc = "title", "desc"
+        proposal_id: str = ptools.register_proposal2(_from, title, desc, [proposal])
+        assert is_tx_hash(proposal_id)
+        time.sleep(2)
+        check_if_register_proposal_tx_succeeded(
+            ptools, proposal_id, title, desc, _from, proposal,
+        )
+
+        # voteProposal and applyProposal
+        vote_and_apply_proposal(ptools, _from, proposal_id)
+
+        # Check a new version
+        version: str = goloop.query_call(cps_address, "getGreeting")
+        assert version == "Hello John!"
