@@ -22,7 +22,7 @@ from ...exception import InvalidArgumentException
 from ...utils import str_to_int
 
 
-class MissedNetworkProposalSlashingRateCommand(Command):
+class MissedNetworkProposalVoteSlashingRateCommand(Command):
     def __init__(self):
         self._name = "missedNetworkProposalVoteSlashingRate"
         self._help = f"{self._name} network proposal"

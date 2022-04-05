@@ -48,6 +48,13 @@ class NetworkScoreUpdateCommand(Command):
                 "[0xa23de..., or @./a/b/c/score.jar]"
             )
         )
+        parser.add_argument(
+            "--params",
+            type=str,
+            nargs="+",
+            required=False,
+            help="Arguments used to update a networkScore\nex) hello 100 hx1234....",
+        )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
@@ -55,6 +62,9 @@ class NetworkScoreUpdateCommand(Command):
             "address": args.address,
             "content": args.content,
         }
+        if isinstance(args.params, list) and len(args.params) > 0:
+            value["params"] = args.params
+
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
         return proposal
