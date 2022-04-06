@@ -37,7 +37,10 @@ def init(sub_parsers, common_parent_parser: ArgumentParser):
 class RegisterProposal2Command:
     def __init__(self):
         self._name = "registerProposal2"
-        self._desc = "Register network proposals in a new format supported by governance2 score"
+        self._desc = (
+            "Register network proposals in a new format supported by governance2 score\n"
+            "CAUTION: a proposer will be charged a fee of 100 ICX to submit proposals every transaction"
+        )
 
     def init(self, sub_parsers, *parent_parsers):
         parser: ArgumentParser = sub_parsers.add_parser(
