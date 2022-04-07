@@ -917,7 +917,7 @@ request success.
 #### registerProposal2
 
 * The command is used to register network protocols in a new format supported by governance-2.x.x score.
-* CAUTION: Each time a proposer run this command, he/or she will be charged a fee of `100 ICX`.
+* CAUTION: a proposer must pay a fee of `100 ICX` to submit a proposal to blockchain.
 * For more detail on the new protocol specification, refer to [governance2 score registerProposal format](https://github.com/icon-project/governance2#registerproposal).
 * The new proposal format will make main P-Reps possible handle multiple proposals with a transaction. 
 
@@ -972,11 +972,11 @@ optional arguments:
 
 #### makeProposal
 
-This command is used to make a variety of network proposal contents easily.
-Note that there is no network cit does not communicate with blockchain but just creates the content of a specific network proposal.
-The proposal content created here is used as a parameters of [registerProposal2](#registerproposal2) command.
+* This command is used to make a variety of network proposal contents easily.
+* Note that it does not have any connection to blockchain while making the content of a specific network proposal.
+* The created proposal content is used as a parameter of [registerProposal2](#registerproposal2) command.
 
-**> Usage**
+*Usage*
 
 ```bash
 (venv) $ preptools makeProposal -h
@@ -1011,7 +1011,7 @@ optional arguments:
   -h, --help            show this help message and exit
 ```  
   
-**> Example**
+*Example*
 
 ```bash
 (venv) $ preptools makeProposal rewardFund -h                                                                                                                  [15:08:12]
@@ -1034,8 +1034,8 @@ optional arguments:
 
 *Description*
 
-Vote Network-proposal  
-Refer to [voteProposal request format](https://github.com/icon-project/governance2#voteproposal) for details.
+* Votes for Network-proposal.
+* Refer to [voteProposal request format](https://github.com/icon-project/governance2#voteproposal) for details.
 
 *Usage*
 
@@ -1172,11 +1172,15 @@ request success.
 *Usage*
 
 ```bash
-(venv) $ preptools applyProposal -h
+(venv) $ preptools applyProposal -h                                                                                                                                                                                                                                           [12:07:48]
 usage: preptools applyProposal [-h] [--url URL] [--nid NID] [--config CONFIG]
                                [--yes] [--verbose] [--password PASSWORD]
                                [--keystore KEYSTORE] [--step-limit STEP_LIMIT]
-                               [--step-margin STEP_MARGIN] --id ID
+                               [--step-margin STEP_MARGIN]
+                               id
+
+positional arguments:
+  id                    hash of registerProposal TX
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -1196,15 +1200,12 @@ optional arguments:
                         Can be used when step-limit option is not given. Set
                         step-limit value to estimated Step + this value(step-
                         margin)
-  --id ID               hash of registerProposal TX
-  
-(venv) $ preptools applyProposal  
 ```
 
 *Example*
 
 ```bash
-(venv) $ preptools applyProposal -k prep_keys0 --id 0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4
+(venv) $ preptools applyProposal -k prep_keys0 0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4
 > Password:
 [Request] ======================================================================
 {
