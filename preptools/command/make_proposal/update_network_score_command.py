@@ -19,12 +19,13 @@ from argparse import (
 
 from .command import Command
 from ...utils.argparse_utils import FileReadHexAction
+from ...utils.constants import ZERO_ADDRESS
 
 
-class NetworkScoreUpdateCommand(Command):
+class UpdateNetworkScoreCommand(Command):
     def __init__(self):
-        self._name = "networkScoreUpdate"
-        self._help = f"{self._name} network proposal"
+        self._name = "updateNetworkScore"
+        self._help = f"network proposal call {self._name}"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -58,13 +59,12 @@ class NetworkScoreUpdateCommand(Command):
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
-        value = {
-            "address": args.address,
-            "content": args.content,
-        }
+        params = [
+            {"type": "Address", "value": args.address}, {"type": "bytes", "value": args.content}
+        ]
         if isinstance(args.params, list) and len(args.params) > 0:
-            value["params"] = args.params
+            params[0]["params"] = [p for p in args.params]
 
-        proposal: str = self._make_proposal(self._name, value)
+        proposal: str = self._make_proposal(ZERO_ADDRESS, self._name, params)
         self._write_proposal(args.output, proposal)
         return proposal

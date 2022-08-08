@@ -19,11 +19,12 @@ from abc import (
 from argparse import (
     ArgumentParser,
 )
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union, List
 
 from iconsdk.utils.typing.conversion import object_to_str
 
 Value = Dict[str, Any]
+Params = List[Dict[str, Any]]
 
 
 class Command(metaclass=ABCMeta):
@@ -38,9 +39,11 @@ class Command(metaclass=ABCMeta):
         cls._subclasses.append(cls)
 
     @classmethod
-    def _make_proposal(cls, name: str, value: Value) -> str:
+    def _make_proposal(cls, to: str, method: str, params: Params, raw_json: bool = False) -> Union[str, Union[Any]]:
+        if raw_json:
+            return object_to_str({"to": to, "method": method, "params": params}),
         return json.dumps(
-            object_to_str({"name": name, "value": value}),
+            object_to_str({"to": to, "method": method, "params": params}),
             separators=(",", ":")
         )
 

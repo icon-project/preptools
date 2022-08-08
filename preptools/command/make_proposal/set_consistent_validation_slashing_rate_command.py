@@ -18,13 +18,15 @@ from argparse import (
 )
 
 from .command import Command
+from ...exception import InvalidArgumentException
 from ...utils import str_to_int
+from ...utils.constants import ZERO_ADDRESS
 
 
-class StepPriceCommand(Command):
+class SetConsistentValidationSlashingRateCommand(Command):
     def __init__(self):
-        self._name = "stepPrice"
-        self._help = f"{self._name} network proposal"
+        self._name = "setConsistentValidationSlashingRate"
+        self._help = f"network proposal that call {self._name}"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -33,14 +35,22 @@ class StepPriceCommand(Command):
             parents=(parent_parser,),
         )
         parser.add_argument(
-            "stepPrice",
+            "slashingRate",
             type=str_to_int,
-            help="stepPrice in loop unit",
+            help="slashing rate in percent [0 ~ 100]"
         )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
-        value = {"stepPrice": args.stepPrice}
-        proposal: str = self._make_proposal(self._name, value)
+        self._validate(args)
+        params = [
+            {"type": "int", "value": args.slashingRate}
+        ]
+        proposal: str = self._make_proposal(ZERO_ADDRESS, self._name, params)
         self._write_proposal(args.output, proposal)
         return proposal
+
+    @staticmethod
+    def _validate(args: Namespace):
+        if not (0 <= args.slashingRate <= 100):
+            raise InvalidArgumentException(f"Out of range: slashingRate={args.slashingRate}")

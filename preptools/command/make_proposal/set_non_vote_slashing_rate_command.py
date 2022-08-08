@@ -20,12 +20,13 @@ from argparse import (
 from .command import Command
 from ...exception import InvalidArgumentException
 from ...utils import str_to_int
+from ...utils.constants import ZERO_ADDRESS
 
 
-class AccumulatedValidationFailureSlashingRateCommand(Command):
+class SetNonVoteSlashingRateCommand(Command):
     def __init__(self):
-        self._name = "accumulatedValidationFailureSlashingRate"
-        self._help = f"{self._name} network proposal"
+        self._name = "setNonVoteSlashingRateCommand"
+        self._help = f"network proposal that call {self._name}"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -42,12 +43,14 @@ class AccumulatedValidationFailureSlashingRateCommand(Command):
 
     def _run(self, args: Namespace) -> str:
         self._validate(args)
-        value = {"slashingRate": args.slashingRate}
-        proposal: str = self._make_proposal(self._name, value)
+        params = [
+            {"type": "int", "value": args.slashingRate}
+        ]
+        proposal: str = self._make_proposal(ZERO_ADDRESS, self._name, params)
         self._write_proposal(args.output, proposal)
         return proposal
 
     @staticmethod
     def _validate(args: Namespace):
         if not (0 <= args.slashingRate <= 100):
-            raise InvalidArgumentException(f"Out of range: slashingRate={args.slashingRate}")
+            raise InvalidArgumentException(f"Invalid slashingRate: {args.slashingRate}")

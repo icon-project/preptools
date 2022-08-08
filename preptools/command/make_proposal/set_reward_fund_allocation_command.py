@@ -16,34 +16,18 @@ from argparse import (
     ArgumentParser,
     Namespace,
 )
-from typing import Optional
 
 from .command import Command
+from ...exception import InvalidArgumentException
 from ...utils import str_to_int
+from ...utils.constants import ZERO_ADDRESS
 
 
-class StepCostsCommand(Command):
-    _options = (
-        "default",
-        "contract-call",
-        "contract-create",
-        "contract-update",
-        "contract-set",
-        "get",
-        "get-base",
-        "set",
-        "set-base",
-        "delete",
-        "delete-base",
-        "input",
-        "log",
-        "log-base",
-        "api-call",
-    )
-
+class SetRewardFundsAllocationCommand(Command):
     def __init__(self):
-        self._name = "stepCosts"
-        self._help = f"{self._name} network proposal"
+        self._name = "setRewardFundAllocation"
+        self._help = f"network proposal that call {self._name}"
+        self._options = ("iprep", "icps", "irelay", "ivoter")
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -51,35 +35,36 @@ class StepCostsCommand(Command):
             help=self._help,
             parents=(parent_parser,),
         )
-        self._init_arguments(parser)
-
-    def _init_arguments(self, parser: ArgumentParser):
         for option in self._options:
             parser.add_argument(
                 f"--{option}",
-                dest=_to_lower_camel_case(option, "-"),
                 type=str_to_int,
-                required=False,
+                default=0,
+                help=f"{option} in percent [0 ~ 100] positive integer only",
             )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
-        costs = {}
+        self._validate(args)
 
-        for option in self._options:
-            option = _to_lower_camel_case(option, "-")
-            cost: Optional[int] = getattr(args, option)
-            if cost is not None:
-                costs[option] = cost
-
-        proposal: str = self._make_proposal(self._name, value={"costs": costs})
+        params = [
+            {"type": "int", "value": getattr(args, option)} for option in self._options
+        ]
+        proposal: str = self._make_proposal(ZERO_ADDRESS, self._name, params)
         self._write_proposal(args.output, proposal)
         return proposal
 
+    def _validate(self, args: Namespace):
+        total = 0
+        for option in self._options:
+            percent = getattr(args, option)
+            if 0 <= percent < 100:
+                total += percent
+            else:
+                raise InvalidArgumentException(f"Out of range: {option}={percent}")
 
-def _to_lower_camel_case(value: str, sep: str = "-") -> str:
-    tokens = value.split(sep)
-    for i in range(1, len(tokens)):
-        tokens[i] = tokens[i].title()
-
-    return "".join(tokens)
+        if total != 100:
+            values = (f"{option}={getattr(args, option)}" for option in self._options)
+            raise InvalidArgumentException(
+                f"Total rewardFundsAllocation is not 100: {' '.join(values)}"
+            )

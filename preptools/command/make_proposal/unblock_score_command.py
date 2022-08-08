@@ -19,14 +19,14 @@ from argparse import (
 
 from .command import Command
 from ...exception import InvalidArgumentException
-from ...utils import str_to_int
+from ...utils.constants import ZERO_ADDRESS
 from ...utils.validation_checker import is_valid_address
 
 
-class MaliciousScoreCommand(Command):
+class UnblockScoreCommand(Command):
     def __init__(self):
-        self._name = "maliciousScore"
-        self._help = "maliciousScore network proposal"
+        self._name = "unblockScore"
+        self._help = f"network proposal that call {self._name}"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -35,23 +35,15 @@ class MaliciousScoreCommand(Command):
             parents=(parent_parser,),
         )
         parser.add_argument("address", type=str, help="score address")
-        parser.add_argument(
-            "type",
-            type=str_to_int,
-            metavar="type",
-            choices=range(2),
-            help="0(block), 1(release)"
-        )
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
         self._validate(args)
 
-        value = {
-            "address": args.address,
-            "type": args.type,
-        }
-        proposal: str = self._make_proposal(self._name, value)
+        params = [
+            {"type": "Address", "value": args.address}
+        ]
+        proposal: str = self._make_proposal(ZERO_ADDRESS, self._name, params)
         self._write_proposal(args.output, proposal)
         return proposal
 

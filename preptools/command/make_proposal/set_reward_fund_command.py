@@ -19,12 +19,13 @@ from argparse import (
 
 from .command import Command
 from ...utils import str_to_int
+from ...utils.constants import ZERO_ADDRESS
 
 
-class RewardFundCommand(Command):
+class SetRewardFundCommand(Command):
     def __init__(self):
-        self._name = "rewardFund"
-        self._help = f"{self._name} network proposal for Monthly Reward Fund Setting"
+        self._name = "setRewardFund"
+        self._help = f"network proposal that call {self._name}"
 
     def init(self, sub_parsers, parent_parser: ArgumentParser):
         parser = sub_parsers.add_parser(
@@ -40,7 +41,7 @@ class RewardFundCommand(Command):
         parser.set_defaults(func=self._run)
 
     def _run(self, args: Namespace) -> str:
-        value = {"iglobal": args.iglobal}
-        proposal: str = self._make_proposal(self._name, value)
+        params = [{"type": "int", "value": args.iglobal}]
+        proposal: str = self._make_proposal(ZERO_ADDRESS, "setRewardFund", params)
         self._write_proposal(args.output, proposal)
         return proposal

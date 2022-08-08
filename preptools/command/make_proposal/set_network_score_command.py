@@ -23,10 +23,10 @@ from ...exception import InvalidArgumentException
 from ...utils.validation_checker import is_valid_address
 
 
-class NetworkScoreDesignationCommand(Command):
+class SetNetworkScoreCommand(Command):
     def __init__(self):
-        self._name = "networkScoreDesignation"
-        self._help = f"{self._name} network proposal"
+        self._name = "setNetworkScore"
+        self._help = f"network proposal that call {self._name} "
         self._roles = ("cps", "relay")
         self._parser: Optional[ArgumentParser] = None
 

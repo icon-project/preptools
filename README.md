@@ -958,16 +958,16 @@ optional arguments:
                         step-limit value to estimated Step + this value(step-
                         margin)
                         
-(venv) $ preptools registerProposal2 -c preptools_config.json -k prep_keys0 -p qwer1234% "proposal title" "proposal description" '{"name":"text","value":{"text":"text proposal sample"}' @step_price_proposal.json @reward_fund.json @step_costs.json
+(venv) $ preptools registerProposal2 -c preptools_config.json -k prep_keys0 -p qwer1234% --title "proposal title" --desc "proposal description" --proposals '{"to": "cx0000000000000000000000000000000000000000", "method": "setRevision", "params": [{"type": "int", "value": "0x13"}]}' @set_step_price.json @set_reward_fund.json
 
-(venv) $ cat step_price_proposal.json
-{"name":"stepPrice","value":{"stepPrice":"0x2e90edd00"}}
+(venv) $ cat set_step_price.json
+{"to":"cx0000000000000000000000000000000000000000","method":"setStepPrice","params":[{"type":"int","value":"0x2e90edd00"}]}
 
-(venv) $ cat reward_fund.json
-{"name":"rewardFund","value":{"iglobal":"0x1e8480"}}
+(venv) $ cat set_reward_fund.json
+{"to":"cx0000000000000000000000000000000000000000","method":"setRewardFund","params":[{"type":"int","value":"0x1e8480"}]}
 
-(venv) $ cat step_costs.json
-{"name":"stepCosts","value":{"get":"0x19","getBase":"0xc8","input":"0xc8"}}
+(venv) $ cat set_step_costs.json
+[[{"to": "cx0000000000000000000000000000000000000000", "method": "setStepCost", "params": [{"type": "int", "value": "0x19"}]}], [{"to": "cx0000000000000000000000000000000000000000", "method": "setStepCost", "params": [{"type": "int", "value": "0xc8"}]}], [{"to": "cx0000000000000000000000000000000000000000", "method": "setStepCost", "params": [{"type": "int", "value": "0xc8"}]}]]
 ```
 
 #### makeProposal
@@ -981,31 +981,28 @@ optional arguments:
 ```bash
 (venv) $ preptools makeProposal -h
 usage: preptools makeProposal [-h]
-                              {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate}
+                              {setRevision,blockScore,unblockScore,disqualifyPRep,setStepPrice,setStepCosts,setRewardFund,setRewardFundAllocation,setNetworkScore,updateNetworkScore,setConsistentValidationSlashingRate,setNonVoteSlashingRateCommand}
                               ...
 
 positional arguments:
-  {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate}
-    text                text network proposal
-    revision            revision network proposal
-    maliciousScore      maliciousScore network proposal
-    prepDisqualification
-                        prepDisqualification network proposal
-    stepPrice           stepPrice network proposal
-    stepCosts           stepCosts network proposal
-    rewardFund          rewardFund network proposal for Monthly Reward Fund
-                        Setting
-    rewardFundsAllocation
-                        rewardFundsAllocation network proposal to determine
-                        the allocation of the monthly reward fund
-    networkScoreDesignation
-                        networkScoreDesignation network proposal
-    networkScoreUpdate  networkScoreUpdate network proposal
-    accumulatedValidationFailureSlashingRate
-                        accumulatedValidationFailureSlashingRate network
-                        proposal
-    missedNetworkProposalVoteSlashingRate
-                        missedNetworkProposalVoteSlashingRate network proposal
+  {setRevision,blockScore,unblockScore,disqualifyPRep,setStepPrice,setStepCosts,setRewardFund,setRewardFundAllocation,setNetworkScore,updateNetworkScore,setConsistentValidationSlashingRate,setNonVoteSlashingRateCommand}
+    setRevision         network proposal that call setRevision
+    blockScore          network proposal that call blockScore
+    unblockScore        network proposal that call unblockScore
+    disqualifyPRep      network proposal that call disqualifyPRep
+    setStepPrice        network proposal that call setStepPrice
+    setStepCosts        network proposal that call setStepCosts
+    setRewardFund       network proposal that call setRewardFund
+    setRewardFundAllocation
+                        network proposal that call setRewardFundAllocation
+    setNetworkScore     network proposal that call setNetworkScore
+    updateNetworkScore  network proposal call updateNetworkScore
+    setConsistentValidationSlashingRate
+                        network proposal that call
+                        setConsistentValidationSlashingRate
+    setNonVoteSlashingRateCommand
+                        network proposal that call
+                        setNonVoteSlashingRateCommand
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -1015,19 +1012,18 @@ optional arguments:
 
 ```bash
 (venv) $ preptools makeProposal rewardFund -h                                                                                                                  [15:08:12]
-usage: preptools makeProposal rewardFund [-h] [-o OUTPUT] iglobal
+usage: preptools makeProposal setRevision [-h] [-o OUTPUT] revision
 
 positional arguments:
-  iglobal               The total amount of monthly reward fund in loop
+  revision
 
 optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT, --output OUTPUT
-                        filepath to save proposal contents
-                        
-(venv) $ preptools makeProposal rewardFund 3000000000000000000000000 -o reward_fund.json
-(venv) $ cat reward_fund.json
-{"name":"rewardFund","value":{"iglobal":"0x27b46536c66c8e3000000"}}
+                        filepath to save proposal contents                        
+(venv) $ preptools makeProposal setRevision 19 -o set_revision.json
+(venv) $ cat set_revision.json
+{"to":"cx0000000000000000000000000000000000000000","method":"setRevision","params":[{"type":"int","value":"0x13"}]}
 ```
 
 #### voteProposal

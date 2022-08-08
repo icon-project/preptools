@@ -13,16 +13,16 @@
 # limitations under the License.
 
 from . import (
-    text_command,
-    revision_command,
-    malicious_score_command,
-    prep_disqualification_command,
-    step_price_command,
-    step_costs_command,
-    reward_fund_command,
-    reward_funds_allocation_command,
-    network_score_designation_command,
-    network_score_update_command,
-    accumulated_validation_failure_slashing_rate_command,
-    missed_network_proposal_vote_slashing_rate_command,
+    set_revision_command,
+    block_score_command,
+    unblock_score_command,
+    disqualify_prep_command,
+    set_step_price_command,
+    set_step_costs_command,
+    set_reward_fund_command,
+    set_reward_fund_allocation_command,
+    set_network_score_command,
+    update_network_score_command,
+    set_consistent_validation_slashing_rate_command,
+    set_non_vote_slashing_rate_command,
 )
