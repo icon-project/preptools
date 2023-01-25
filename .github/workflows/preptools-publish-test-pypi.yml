@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: ["3.7", "3.8"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -39,15 +39,12 @@ jobs:
     needs: unittest
     if: github.event.inputs.test_deploy == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.7]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.7"
           cache: pip
       - name: Install dependency
         run: |
@@ -65,7 +62,7 @@ jobs:
           sed -i -- 's/\(name.*\)preptools/\1preptool/' setup.py
       - name: Cache dist
         id: dist_cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ./dist
           key: ${{ runner.os }}-dist-${{ github.sha }}

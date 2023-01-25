@@ -1,4 +1,4 @@
-[![unittest](https://img.shields.io/github/workflow/status/icon-project/preptools/unittest%20and%20publish%20to%20pypi/master?label=unittest&logo=github)](https://github.com/icon-project/preptools/actions/workflows/preptools-workflow.yml)
+[![unittest](https://img.shields.io/github/actions/workflow/status/icon-project/preptools/preptools-workflow.yml?branch=master&label=unittest&logo=github)](https://github.com/icon-project/preptools/actions/workflows/preptools-workflow.yml)
 [![PyPI - latest](https://img.shields.io/pypi/v/preptools?label=latest&logo=pypi)](https://pypi.org/project/preptools)
 [![PyPI - Python](https://img.shields.io/pypi/pyversions/preptools?logo=pypi)](https://pypi.org/project/preptools)
 

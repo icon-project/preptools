@@ -76,7 +76,7 @@ class TestValidationChecker(unittest.TestCase):
         details = "http://www.n,aver.co.kr:9231/api/v3"
         self.assertRaises(InvalidFormatException, validate_uri, details)
 
-        details = "http://www.naver.co.kr:923,1/a|p|i/v3?asdfe\_#"
+        details = r"http://www.naver.co.kr:923,1/a|p|i/v3?asdfe\_#"
         self.assertRaises(InvalidFormatException, validate_uri, details)
 
     def test_check_country(self):

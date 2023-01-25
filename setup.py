@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 
 from setuptools import setup, find_packages
@@ -44,6 +42,7 @@ setup_options = {
         'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3.8'
     ]
 }
 
