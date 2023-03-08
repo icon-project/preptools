@@ -75,8 +75,6 @@ class CallMethod(Command):
         value = {"to": args.to, "method": args.method}
         if args.params:
             value["params"] = self.convert_params(args.params, args.fields)
-        if args.fields:
-            value["fields"] = args.fields
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
         return proposal
@@ -113,7 +111,8 @@ class CallMethod(Command):
                 v = CallMethod._convert_list(t, v, fields)
             else:
                 raise InvalidArgumentException(f"invalid type : {t}")
-            new_params.append({"type": t, "value": v})
+            new_param = {"type": t, "value": v, "fields": fields}
+            new_params.append(new_param)
         return new_params
 
     @staticmethod
