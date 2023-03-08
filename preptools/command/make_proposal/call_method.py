@@ -145,6 +145,8 @@ class CallMethod(Command):
 
     @staticmethod
     def _validate_struct(v: dict, fields: dict):
+        if not fields:
+            raise InvalidArgumentException(f"optional argument '--fields' required")
         for f in fields:
             if fields[f] == INT_TYPE:
                 CallMethod._validate_int(v[f])
@@ -161,16 +163,12 @@ class CallMethod(Command):
 
     @staticmethod
     def _convert_struct(v: str, fields: dict) -> dict:
-        if not fields:
-            raise InvalidArgumentException(f"optional argument '--fields' required")
         value = json_from_input(v)
         CallMethod._validate_struct(value, fields)
         return value
 
     @staticmethod
     def _convert_list(t: str, v: str, f: dict) -> list:
-        if not f:
-            raise InvalidArgumentException(f"optional argument '--fields' required")
         value: list = json_from_input(v)
         if not isinstance(value, list):
             raise InvalidArgumentException(f"invalid list: {v}")
