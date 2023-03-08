@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
-import re
 from argparse import (
     ArgumentParser,
     Namespace,
 )
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 
 from .command import Command
 from ...exception import InvalidArgumentException
@@ -58,15 +57,10 @@ class CallMethod(Command):
             type=str,
             nargs="+",
             required=False,
-            help="Arguments information that pass to method(type and value. separate with comma)"
-                 "\nex) str,hello Address,hx1234.. ",
-        )
-        parser.add_argument(
-            "--fields",
-            type=json_from_input,
-            required=False,
-            help="fields information. json string."
-                 "\nex) {\"key1\":\"str\"} needed when params value is struct or []struct"
+            help="Arguments information that pass to method(type@value[@fields]. separate with at(@))"
+                 "\nargument examples) str@hello Address@hx1234.. struct@'{\"key\":\"value\"}'@'{\"key\":\"str\"}'"
+                 "\n[]int@'[\"0x12\",\"0x13\"]' "
+                 "[]struct@'[{\"key\":\"value\"},{\"key\":\"value2\"}]'@'{\"key\":\"str\"}'",
         )
         parser.set_defaults(func=self._run)
 
@@ -74,7 +68,7 @@ class CallMethod(Command):
         self._validate(args)
         value = {"to": args.to, "method": args.method}
         if args.params:
-            value["params"] = self.convert_params(args.params, args.fields)
+            value["params"] = self.convert_params(args.params)
         proposal: str = self._make_proposal(self._name, value)
         self._write_proposal(args.output, proposal)
         return proposal
@@ -87,33 +81,46 @@ class CallMethod(Command):
             raise InvalidArgumentException(f"Invalid address: {args.to}")
 
     @staticmethod
-    def convert_params(params: List[str], fields: dict = None) -> List[Dict[str, str]]:
+    def get_type_value_fields(param: str) -> (str, str, Optional[Dict[str, str]]):
+        first_at_index = param.index("@")
+        type_ = param[:first_at_index]
+        if type_ in (STRUCT_TYPE, f"[]{STRUCT_TYPE}"):
+            last_at_index = param.rindex("@")
+            fields = param[last_at_index+1:]
+            value = param[first_at_index+1:last_at_index]
+            return type_, value, json.loads(fields)
+        value = param[first_at_index+1:]
+        return type_, value, None
+
+    @staticmethod
+    def convert_params(params: List[str]) -> List[Dict[str, Union[str, Dict[str, str]]]]:
         new_params = []
-        for i, p in enumerate(params):
-            if "," not in p:
-                raise InvalidArgumentException("invalid arguments information format. comma required")
-            comma_index = p.index(',')
-            t, v = p[:comma_index], p[comma_index+1:]
-            if t == INT_TYPE:
-                CallMethod._validate_int(v)
-            elif t == STR_TYPE:
-                pass
-            elif t == ADDRESS_TYPE:
-                if not is_valid_address(v):
-                    raise InvalidArgumentException(f"invalid address: {v}")
-            elif t == BOOL_TYPE:
-                CallMethod._validate_bool(v)
-            elif t == BYTES_TYPE:
-                CallMethod._validate_bytes(v)
-            elif t == STRUCT_TYPE:
-                v = CallMethod._convert_struct(v, fields)
-            elif t.startswith("[]"):
-                v = CallMethod._convert_list(t, v, fields)
-            else:
-                raise InvalidArgumentException(f"invalid type : {t}")
-            new_param = {"type": t, "value": v}
+        for i, param in enumerate(params):
+            if "@" not in param:
+                raise InvalidArgumentException("invalid arguments information format. at(@) required")
+            type_, value, fields = CallMethod.get_type_value_fields(param)
+            new_param = {}
             if fields is not None:
                 new_param["fields"] = fields
+            if type_ == INT_TYPE:
+                CallMethod._validate_int(value)
+            elif type_ == STR_TYPE:
+                pass
+            elif type_ == ADDRESS_TYPE:
+                if not is_valid_address(value):
+                    raise InvalidArgumentException(f"invalid address: {value}")
+            elif type_ == BOOL_TYPE:
+                CallMethod._validate_bool(value)
+            elif type_ == BYTES_TYPE:
+                CallMethod._validate_bytes(value)
+            elif type_ == STRUCT_TYPE:
+                value = CallMethod._convert_struct(value, fields)
+            elif type_.startswith("[]"):
+                value = CallMethod._convert_list(type_, value, fields)
+            else:
+                raise InvalidArgumentException(f"invalid type : {type_}")
+            new_param["type"] = type_
+            new_param["value"] = value
             new_params.append(new_param)
         return new_params
 
@@ -163,13 +170,13 @@ class CallMethod(Command):
 
     @staticmethod
     def _convert_struct(v: str, fields: dict) -> dict:
-        value = json_from_input(v)
+        value = json.loads(v)
         CallMethod._validate_struct(value, fields)
         return value
 
     @staticmethod
     def _convert_list(t: str, v: str, f: dict) -> list:
-        value: list = json_from_input(v)
+        value: list = json.loads(v)
         if not isinstance(value, list):
             raise InvalidArgumentException(f"invalid list: {v}")
         elements_type = t[2:]
@@ -189,8 +196,3 @@ class CallMethod(Command):
             else:
                 raise InvalidArgumentException(f"invalid type : {elements_type}")
         return value
-
-
-def json_from_input(s: str) -> Union[List, Dict]:
-    quoted_str = re.sub(r'(\w+)', r'"\1"', s)
-    return json.loads(quoted_str)

@@ -1,4 +1,3 @@
-#
 # Copyright 2023 ICON Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,34 +11,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-from preptools.command.make_proposal.call_method import json_from_input
+import unittest
+
+from preptools.command.make_proposal.call_method import CallMethod
 
 
-class TestCallMethod:
-    def test_json_from_str(self):
-        fields = '{key1:str,key2:Address}'
-        expected = {"key1": "str", "key2": "Address"}
-        converted = json_from_input(fields)
-        assert expected == converted
+class TestCallMethod(unittest.TestCase):
 
-        struct_list1 = '[{key1:abcd,key2:cx1234123412341234123412341234123412341234}]'
-        expected = [{"key1": "abcd", "key2": f"cx{'1234'*10}"}]
-        converted = json_from_input(struct_list1)
-        assert expected == converted
+    def test_get_type_value_fields(self):
+        params1 = "str@value"
+        type1, value1, fields1 = CallMethod.get_type_value_fields(params1)
+        assert type1 == "str"
+        assert value1 == "value"
+        assert fields1 is None
 
-        struct_list2 = '[' \
-                       '{key1:abcd,key2:cx1234123412341234123412341234123412341234},' \
-                       '{key1:efgh,key2:cx3456345634563456345634563456345634563456}' \
-                       ']'
-        expected = [
-            {"key1": "abcd", "key2": "cx1234123412341234123412341234123412341234"},
-            {"key1": "efgh", "key2": "cx3456345634563456345634563456345634563456"}
-        ]
-        converted = json_from_input(struct_list2)
-        assert expected == converted
+        params2 = "int@0x12"
+        type2, value2, fields2 = CallMethod.get_type_value_fields(params2)
+        assert type2 == "int"
+        assert value2 == "0x12"
+        assert fields2 is None
 
-        address_list = '[cx1234123412341234123412341234123412341234,cx3456345634563456345634563456345634563456]'
-        expected = ["cx1234123412341234123412341234123412341234", "cx3456345634563456345634563456345634563456"]
-        converted = json_from_input(address_list)
-        assert expected == converted
+        params3 = "[]int@[\"0x12\",\"0x13\"]"
+        type3, value3, fields3 = CallMethod.get_type_value_fields(params3)
+        assert type3 == "[]int"
+        assert value3 == "[\"0x12\",\"0x13\"]"
+        assert fields3 is None
+
+        params4 = "struct@{\"key1\":\"value1\",\"key2\":\"value2\"}@{\"key1\":\"str\",\"key2\":\"str\"}"
+        type4, value4, fields4 = CallMethod.get_type_value_fields(params4)
+        assert type4 == "struct"
+        assert value4 == "{\"key1\":\"value1\",\"key2\":\"value2\"}"
+        assert fields4 == {"key1": "str", "key2": "str"}
+
+        params5 = "[]struct@[{\"key1\":\"value1\",\"key2\":\"value2\"},{\"key1\":\"value3\",\"key2\":\"value4\"}]" \
+                  "@{\"key1\":\"str\",\"key2\":\"str\"}"
+        type5, value5, fields5 = CallMethod.get_type_value_fields(params5)
+        assert type5 == "[]struct"
+        assert value5 == "[{\"key1\":\"value1\",\"key2\":\"value2\"},{\"key1\":\"value3\",\"key2\":\"value4\"}]"
+        assert fields5 == {"key1": "str", "key2": "str"}
