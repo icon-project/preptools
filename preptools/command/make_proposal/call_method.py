@@ -111,7 +111,9 @@ class CallMethod(Command):
                 v = CallMethod._convert_list(t, v, fields)
             else:
                 raise InvalidArgumentException(f"invalid type : {t}")
-            new_param = {"type": t, "value": v, "fields": fields}
+            new_param = {"type": t, "value": v}
+            if fields is not None:
+                new_param["fields"] = fields
             new_params.append(new_param)
         return new_params
 
@@ -159,12 +161,16 @@ class CallMethod(Command):
 
     @staticmethod
     def _convert_struct(v: str, fields: dict) -> dict:
+        if not fields:
+            raise InvalidArgumentException(f"optional argument '--fields' required")
         value = json_from_input(v)
         CallMethod._validate_struct(value, fields)
         return value
 
     @staticmethod
     def _convert_list(t: str, v: str, f: dict) -> list:
+        if not f:
+            raise InvalidArgumentException(f"optional argument '--fields' required")
         value: list = json_from_input(v)
         if not isinstance(value, list):
             raise InvalidArgumentException(f"invalid list: {v}")
