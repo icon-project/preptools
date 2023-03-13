@@ -57,7 +57,8 @@ class CallMethod(Command):
             type=str,
             nargs="+",
             required=False,
-            help="Arguments information that pass to method(type@value[@fields]. separate with at(@))"
+            help="Arguments information that pass to method(type@value[@fields]. separate with at(@)."
+                 "'fields' needed if parameter is struct or []struct type)"
                  "\nargument examples) str@hello Address@hx1234.. struct@'{\"key\":\"value\"}'@'{\"key\":\"str\"}'"
                  "\n[]int@'[\"0x12\",\"0x13\"]' "
                  "[]struct@'[{\"key\":\"value\"},{\"key\":\"value2\"}]'@'{\"key\":\"str\"}'",
