@@ -981,11 +981,11 @@ optional arguments:
 ```bash
 (venv) $ preptools makeProposal -h
 usage: preptools makeProposal [-h]
-                              {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate}
+                              {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate,call}
                               ...
 
 positional arguments:
-  {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate}
+  {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate,call}
     text                text network proposal
     revision            revision network proposal
     maliciousScore      maliciousScore network proposal
@@ -993,19 +993,17 @@ positional arguments:
                         prepDisqualification network proposal
     stepPrice           stepPrice network proposal
     stepCosts           stepCosts network proposal
-    rewardFund          rewardFund network proposal for Monthly Reward Fund
-                        Setting
+    rewardFund          rewardFund network proposal for Monthly Reward Fund Setting
     rewardFundsAllocation
-                        rewardFundsAllocation network proposal to determine
-                        the allocation of the monthly reward fund
+                        rewardFundsAllocation network proposal to determine the allocation of the monthly reward fund
     networkScoreDesignation
                         networkScoreDesignation network proposal
     networkScoreUpdate  networkScoreUpdate network proposal
     accumulatedValidationFailureSlashingRate
-                        accumulatedValidationFailureSlashingRate network
-                        proposal
+                        accumulatedValidationFailureSlashingRate network proposal
     missedNetworkProposalVoteSlashingRate
                         missedNetworkProposalVoteSlashingRate network proposal
+    call                call network proposal
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -1014,20 +1012,23 @@ optional arguments:
 *Example*
 
 ```bash
-(venv) $ preptools makeProposal rewardFund -h                                                                                                                  [15:08:12]
-usage: preptools makeProposal rewardFund [-h] [-o OUTPUT] iglobal
+(venv) $ preptools makeProposal call -h
+usage: preptools makeProposal call [-h] [-o OUTPUT] [--params PARAMS [PARAMS ...]] to method
 
 positional arguments:
-  iglobal               The total amount of monthly reward fund in loop
+  to                    SCORE address
+  method                method name to call
 
 optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT, --output OUTPUT
                         filepath to save proposal contents
-                        
-(venv) $ preptools makeProposal rewardFund 3000000000000000000000000 -o reward_fund.json
-(venv) $ cat reward_fund.json
-{"name":"rewardFund","value":{"iglobal":"0x27b46536c66c8e3000000"}}
+  --params PARAMS [PARAMS ...]
+                        Arguments information to be passed to method (TYPE@VALUE[@FIELDS], FIELDS required if parameter is struct or []struct)
+
+(venv) $ preptools makeProposal call cx0000000000000000000000000000000000000000 openBTPNetwork \
+    --params str@eth str@sepolia Address@cxf1b0808f09138fffdb890772315aeabb37072a8a
+{"name":"call","value":{"to":"cx0000000000000000000000000000000000000000","method":"openBTPNetwork","params":[{"type":"str","value":"eth"},{"type":"str","value":"sepolia"},{"type":"Address","value":"cxf1b0808f09138fffdb890772315aeabb37072a8a"}]}}
 ```
 
 #### voteProposal

@@ -57,11 +57,8 @@ class CallMethod(Command):
             type=str,
             nargs="+",
             required=False,
-            help="Arguments information that pass to method(type@value[@fields]. separate with at(@)."
-                 "'fields' needed if parameter is struct or []struct type)"
-                 "\nargument examples) str@hello Address@hx1234.. struct@'{\"key\":\"value\"}'@'{\"key\":\"str\"}'"
-                 "\n[]int@'[\"0x12\",\"0x13\"]' "
-                 "[]struct@'[{\"key\":\"value\"},{\"key\":\"value2\"}]'@'{\"key\":\"str\"}'",
+            help="Arguments information to be passed to method (TYPE@VALUE[@FIELDS], "
+                 "FIELDS required if parameter is struct or []struct)",
         )
         parser.set_defaults(func=self._run)
 
@@ -87,6 +84,8 @@ class CallMethod(Command):
         type_ = param[:first_at_index]
         if type_ in (STRUCT_TYPE, f"[]{STRUCT_TYPE}"):
             last_at_index = param.rindex("@")
+            if first_at_index == last_at_index:
+                raise InvalidArgumentException("FIELD information required")
             fields = param[last_at_index+1:]
             value = param[first_at_index+1:last_at_index]
             return type_, value, json.loads(fields)
@@ -154,7 +153,7 @@ class CallMethod(Command):
     @staticmethod
     def _validate_struct(v: dict, fields: dict):
         if not fields:
-            raise InvalidArgumentException(f"optional argument '--fields' required")
+            raise InvalidArgumentException("FIELD information required")
         for f in fields:
             if fields[f] == INT_TYPE:
                 CallMethod._validate_int(v[f])
