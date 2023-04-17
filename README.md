@@ -67,7 +67,7 @@ usage: preptools [-h]
                  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
                  ...
 
-P-Rep management command line interface v1.3.0
+P-Rep management command line interface v1.3.1
 
 optional arguments:
   -h, --help            show this help message and exit
