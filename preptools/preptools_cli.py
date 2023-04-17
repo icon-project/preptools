@@ -18,7 +18,6 @@ import argparse
 import sys
 from typing import Dict, Any, Optional
 
-from iconsdk.exception import IconServiceBaseException
 from .command import *
 from .exception import PRepToolsExceptionCode, PRepToolsBaseException
 from .utils.constants import DEFAULT_NID, DEFAULT_URL
@@ -62,7 +61,7 @@ def main() -> Optional:
             sys.exit(exit_code)
 
         response: Optional[dict, int, str] = args.func(args)
-    except (PRepToolsBaseException, IconServiceBaseException) as e:
+    except PRepToolsBaseException as e:
         response: Dict[str, Any] = e.message
         exit_code = e.code.value
     except Exception as e:
