@@ -20,9 +20,10 @@ setup_options = {
     'long_description': open('README.md').read(),
     'include_package_data': True,
     'py_modules': ['preptools'],
+    'python_requires': '>=3.7',
     'license': "Apache License 2.0",
     'install_requires': requires,
-    'extras_require':extras_requires,
+    'extras_require': extras_requires,
     'test_suite': 'tests',
     'entry_points': {
         'console_scripts': [
@@ -35,8 +36,13 @@ setup_options = {
         'Intended Audience :: System Administrators',
         'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 3.7'
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ]
 }
 
