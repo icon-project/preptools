@@ -1,13 +1,7 @@
-import os
-
 from setuptools import setup, find_packages
+from preptools.version import __version__
 
-version = os.environ.get('VERSION')
-if version is None:
-    with open(os.path.join('.', 'VERSION')) as version_file:
-        version = version_file.read().strip()
-
-with open('requirements.txt') as requirements:
+with open("requirements.txt") as requirements:
     requires = list(requirements)
 
 extras_requires = {
@@ -16,7 +10,7 @@ extras_requires = {
 
 setup_options = {
     'name': 'preptools',
-    'version': version,
+    'version': __version__,
     'description': 'P-Rep management command line interface',
     'author': 'ICON Foundation',
     'author_email': 'foo@icon.foundation',
