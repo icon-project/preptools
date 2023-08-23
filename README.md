@@ -65,7 +65,7 @@ Install the preptools with pypi
 (venv) $ preptools --help
 usage: preptools [-h] command ...
 
-P-Rep management command line interface v1.3.1
+P-Rep management command line interface v1.3.2
 
 optional arguments:
   -h, --help         show this help message and exit
