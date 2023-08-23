@@ -33,7 +33,6 @@ def init(sub_parser, common_parent_parser):
     _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser)
-    _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser)
 
 
@@ -296,37 +295,6 @@ def _set_prep(args) -> str:
         _get_prep_dict_from_cli(params, set_prep=True)
 
     return writer.set_prep(params)
-
-
-def _init_for_set_governance_variables(sub_parser, common_parent_parser, tx_parent_parser):
-    name = "setGovernanceVariables"
-    desc = (
-        "Change Governance variables used in network operation\n"
-        "deprecated.since revision9, set i-rep with network proposal"
-    )
-
-    parser = sub_parser.add_parser(
-        name,
-        parents=[common_parent_parser, tx_parent_parser],
-        help=desc)
-
-    parser.add_argument(
-        "--irep",
-        type=int,
-        required=True,
-        help="amounts of irep"
-    )
-
-    parser.set_defaults(func=_set_governance_variables)
-
-
-def _set_governance_variables(args) -> str:
-    params = {
-        'irep': convert_int_to_hex_str(args.irep)
-    }
-
-    writer = create_writer_by_args(args)
-    return writer.set_governance_variables(params)
 
 
 def _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser):

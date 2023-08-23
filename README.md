@@ -64,7 +64,7 @@ Install the preptools with pypi
 ```bash
 (venv) $ preptools                                                                                                                                                                                                                            [12:10:25]
 usage: preptools [-h]
-                 {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
+                 {registerPRep,unregisterPRep,setPRep,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
                  ...
 
 P-Rep management command line interface v1.3.1
@@ -73,15 +73,11 @@ optional arguments:
   -h, --help            show this help message and exit
 
 subcommands:
-  {registerPRep,unregisterPRep,setPRep,setGovernanceVariables,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
+  {registerPRep,unregisterPRep,setPRep,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
     registerPRep        Register P-Rep
     unregisterPRep      Unregister P-Rep WARNING!! Unregistering P-Rep does
                         not return the registration fee
     setPRep             Change enrolled P-Rep information
-    setGovernanceVariables
-                        Change Governance variables used in network operation
-                        deprecated.since revision9, set i-rep with network
-                        proposal
     setBonderList       Set allowed bonder list of P-Rep
     getPRep             Inquire P-Rep information
     getBonderList       Inquire allowed bonder list of P-Rep
@@ -125,8 +121,8 @@ This table explains common options used in most of the commands.
 
 ### P-Rep commands
 
-* There are 4 commands to set up the P-Rep information:
-`registerPRep`, `unregisterPRep`, `setPRep`, and `setGovernanceVariables`. 
+* There are 3 commands to set up the P-Rep information:
+`registerPRep`, `unregisterPRep`, and `setPRep`.
 * Whenever the commands are called, they load the configuration from `preptools_config.json`.
 * In order to use other configuration file, please specify the file location with the `-c` option.
 

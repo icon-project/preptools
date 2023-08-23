@@ -157,10 +157,6 @@ class PRepToolsWriter(PRepToolsListener):
         method = "setPRep"
         return self._call(method, params)
 
-    def set_governance_variables(self, params) -> Union[str, dict]:
-        method = "setGovernanceVariables"
-        return self._call(method, params)
-
     def set_bonder_list(self, params) -> Union[str, dict]:
         method = "setBonderList"
         return self._call(method, params)

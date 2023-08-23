@@ -29,7 +29,6 @@ from tests.commons.constants import (
     REGISTER_SAMPLE,
     UNREGISTER_SAMPLE,
     SET_SAMPLE,
-    SET_GOVERNANCE_VARIABLES_SAMPLE,
     SET_BONDER_LIST_SAMPLE,
     GET_BONDER_LIST_SAMPLE,
     GET_PREP_SAMPLE,
@@ -105,13 +104,6 @@ class TestPRep(unittest.TestCase):
 
         response = writer.set_prep(params)
         self.assertTrue(is_request_equal(response, SET_SAMPLE))
-
-    def test_governance_variables(self):
-        irep = "0x0x21e19e0c9bab2400000"
-        params = {'irep': irep}
-        writer = create_writer(self.args.keystore, self.args.password)
-        response = writer.set_governance_variables(params)
-        self.assertTrue(is_request_equal(response, SET_GOVERNANCE_VARIABLES_SAMPLE))
 
     def test_set_bonder_list(self):
         bonder_list = [f"hx{'0' * 39}{(i + 1):x}" for i in range(10)]

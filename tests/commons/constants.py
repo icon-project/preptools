@@ -91,30 +91,6 @@ UNREGISTER_SAMPLE = {
     }
 }
 
-SET_GOVERNANCE_VARIABLES_SAMPLE = {
-    "jsonrpc": "2.0",
-    "method": "icx_sendTransaction",
-    "id": 1234,
-    "params": {
-        "version": "0x3",
-        "from": "hxef73db5d0ad02eb1fadb37d0041be96bfa56d4e6",
-        "to": "cx0000000000000000000000000000000000000000",
-        "stepLimit": "0x10000000",
-        "timestamp": "0x58f966811dde2",
-        "nid": "0x3",
-        "value": "0x0",
-        "dataType": "call",
-        "data": {
-            "method": "setGovernanceVariables",
-            "params": {
-                "irep": "0x0x21e19e0c9bab2400000"
-            }
-        },
-        "signature": "eY1hw7cfTIDxb5EV5En+uL2MT2BOagHt527nzIoC20QxQo8nCquwUGLbsDBTNBwuoq4UZmf7EDcMwJxSULzbNQA="
-    }
-}
-
-
 SET_BONDER_LIST_SAMPLE = {
     "jsonrpc": "2.0",
     "method": "icx_sendTransaction",
