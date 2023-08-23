@@ -62,44 +62,39 @@ Install the preptools with pypi
 ### Usage
 
 ```bash
-(venv) $ preptools                                                                                                                                                                                                                            [12:10:25]
-usage: preptools [-h]
-                 {registerPRep,unregisterPRep,setPRep,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
-                 ...
+(venv) $ preptools --help
+usage: preptools [-h] command ...
 
 P-Rep management command line interface v1.3.1
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help         show this help message and exit
 
-subcommands:
-  {registerPRep,unregisterPRep,setPRep,setBonderList,getPRep,getBonderList,getPReps,registerProposal,cancelProposal,voteProposal,applyProposal,makeProposal,registerProposal2,getProposal,getProposals,setStake,getStake,setBond,getBond,txresult,txbyhash,keystore,genconf}
-    registerPRep        Register P-Rep
-    unregisterPRep      Unregister P-Rep WARNING!! Unregistering P-Rep does
-                        not return the registration fee
-    setPRep             Change enrolled P-Rep information
-    setBonderList       Set allowed bonder list of P-Rep
-    getPRep             Inquire P-Rep information
-    getBonderList       Inquire allowed bonder list of P-Rep
-    getPReps            Get live status of all registered P-Rep candidates
-    registerProposal    Register Proposal
-    cancelProposal      Cancel Proposal
-    voteProposal        Vote Proposal
-    applyProposal       Apply the approved network proposal indicated by id to
-                        the network
-    makeProposal        Make contents of a given network proposal
-    registerProposal2   Register network proposals in a new format supported
-                        by governance2 score
-    getProposal         Inquire Proposal information using transaction hash
-    getProposals        Inquire all of network proposal list.
-    setStake            Set stake value
-    getStake            Get stake value
-    setBond             Set bond configuration
-    getBond             Get bond configuration
-    txresult            Get transaction result by hash
-    txbyhash            Get transaction by hash
-    keystore            Create keystore file in the specified path.
-    genconf             Create config file in the specified path.
+Available commands:
+  command
+    registerPRep     Register P-Rep (WARNING: A registration fee of 2000 ICX is required)
+    unregisterPRep   Unregister P-Rep (WARNING: Unregistering P-Rep does not return the registration fee)
+    setPRep          Update the P-Rep information
+    getPRep          Get the P-Rep information
+    getPReps         Get status of all registered P-Rep candidates
+    cancelProposal   Cancel Proposal
+    voteProposal     Vote Proposal
+    applyProposal    Apply the approved network proposal indicated by id to the network
+    makeProposal     Make contents of a given network proposal
+    registerProposal2
+                     Register network proposals in a new format (WARNING: A submission fee of 100 ICX is required)
+    getProposal      Query a proposal information with transaction hash
+    getProposals     Query multiple network proposals.
+    setStake         Set stake value
+    getStake         Get stake value
+    setBond          Set bond configuration
+    getBond          Get bond configuration
+    setBonderList    Set allowed bonder list of P-Rep
+    getBonderList    Get allowed bonder list of P-Rep
+    txresult         Get transaction result by hash
+    txbyhash         Get transaction by hash
+    keystore         Create keystore file in the specified path.
+    genconf          Create config file in the specified path.
 ```
 
 ### Common options
@@ -806,109 +801,6 @@ request success.
 * Whenever the commands are called, they load the configuration from `preptools_config.json` by default.
 * In order to use other configuration file, please specify the file location with the `-c` option.
 
-#### registerProposal
-
-*Description*
-
-* Registers network proposals in governance-1.x format. 
-* Refer to [registerProposal request format](https://github.com/icon-project/governance#registerproposal) for more details.
-* This command is available only for governance-1.x.x score.
-* After governance-2.x.x score update, use [registerProposal2](#registerproposal2) instead.
-
-*Usage*
-
-```bash
-usage: preptools registerProposal [-h] [--url URL] [--nid NID]
-                                  [--config CONFIG] [--yes] [--verbose]
-                                  [--password PASSWORD] [--keystore KEYSTORE]
-                                  [--step-limit STEP_LIMIT, -s STEP_LIMIT] --title TITLE
-                                  --desc DESC --type TYPE
-                                  [--value-value VALUE_VALUE]
-                                  [--value-code VALUE_CODE]
-                                  [--value-name VALUE_NAME]
-                                  [--value-address VALUE_ADDRESS]
-                                  [--value-type VALUE_TYPE]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --url URL, -u URL     node url default(http://127.0.0.1:9000/api/v3)
-  --nid NID, -n NID     networkId default(3) ex) mainnet(1), testnet(2)
-  --config CONFIG, -c CONFIG
-                        preptools config file path
-  --yes, -y             Don't want to ask send transaction.
-  --verbose, -v         Verbose mode
-  --password PASSWORD, -p PASSWORD
-                        keystore password
-  --keystore KEYSTORE, -k KEYSTORE
-                        keystore file path
-  --step-limit STEP_LIMIT, -s STEP_LIMIT
-                        step limit to set
-  --title TITLE         Proposal title
-  --desc DESC           Proposal description
-  --type TYPE           type of Proposal
-  --value-value VALUE_VALUE
-                        type 0:text message, type 4:step price in loop
-                        (required when type 0 or 4)
-  --value-code VALUE_CODE
-                        revision code (required when type 1)
-  --value-name VALUE_NAME
-                        icon-service version (required when type 1)
-  --value-address VALUE_ADDRESS
-                        type 2: address of SCORE, type 3: address of main/sub
-                        P-Rep (required when type 2 or 3)
-  --value-type VALUE_TYPE
-                        0 : freeze, 1 : unfreeze (required when type 2)
-```
-
-*Options*
-
-| shorthand, Name | default | Description                                                                                           |
-|:----------------|:--------|:------------------------------------------------------------------------------------------------------|
-| --title         |         | title of network-proposal                                                                             |
-| --desc          |         | description of network-proposal                                                                       |
-| --type          |         | [type](https://github.com/icon-project/governance2#available-values-for-the-type) of network-proposal |
-| --value-value   |         | value of value field                                                                                  |
-| --value-code    |         | value of code field                                                                                   |
-| --value-address |         | value of address field                                                                                |
-| --value-type    |         | value of type field                                                                                   |
-
-*Example*
-
-```bash
-(venv) $ preptools registerProposal -c preptools_config.json -k prep_keys0 -p qwer1234% --title pro0 --desc "first proposal" --type 4 --value-value 1234
-[Value] ========================================================================
-{
-    "value": "1234"
-}
-[Request] ======================================================================
-{
-    "from_": "hxb74e29fba1809a105fdec433040a4e713bbe91fe",
-    "to": "cx0000000000000000000000000000000000000001",
-    "value": 0,
-    "step_limit": 268435456,
-    "nid": 3,
-    "nonce": null,
-    "version": 3,
-    "timestamp": null,
-    "method": "registerProposal",
-    "data_type": "call",
-    "params": {
-        "title": "pro0",
-        "description": "first proposal",
-        "type": "0x4",
-        "value": "0x7b2276616c7565223a202231323334227d"
-    }
-}
-
-> Continue? [Y/n]Y
-request success.
-[Response] =====================================================================
-{
-    "jsonrpc": "2.0",
-    "result": "0x02221f9346f9c9b3322ea33e67a1ca0fbe9491e0ea3aefb5154a43e2ea829fa4",
-    "id": 1234
-}
-```
 
 #### registerProposal2
 
@@ -976,12 +868,13 @@ optional arguments:
 
 ```bash
 (venv) $ preptools makeProposal -h
-usage: preptools makeProposal [-h]
-                              {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate,call}
-                              ...
+usage: preptools makeProposal [-h] proposal ...
 
-positional arguments:
-  {text,revision,maliciousScore,prepDisqualification,stepPrice,stepCosts,rewardFund,rewardFundsAllocation,networkScoreDesignation,networkScoreUpdate,accumulatedValidationFailureSlashingRate,missedNetworkProposalVoteSlashingRate,call}
+optional arguments:
+  -h, --help            show this help message and exit
+
+Available proposals:
+  proposal
     text                text network proposal
     revision            revision network proposal
     maliciousScore      maliciousScore network proposal
@@ -1000,9 +893,6 @@ positional arguments:
     missedNetworkProposalVoteSlashingRate
                         missedNetworkProposalVoteSlashingRate network proposal
     call                call network proposal
-
-optional arguments:
-  -h, --help            show this help message and exit
 ```  
   
 *Example*
@@ -1972,10 +1862,9 @@ Create a JSON file and upload it to your domain server. When you call the `regis
 
 ## References
 
-- [ICON JSON-RPC API v3](https://github.com/icon-project/icon-rpc-server/blob/master/docs/icon-json-rpc-v3.md)
-- [ICON SDK PYTHON](https://github.com/icon-project/icon-sdk-python)
+- [ICON Chain SCORE API](https://github.com/icon-project/goloop/blob/master/doc/icon_chainscore_api.md)
 - [Governance-2.x SCORE](https://github.com/icon-project/governance2)
-- [~~Governance-1.x SCORE~~](https://github.com/icon-project/governance)
+- [ICON SDK PYTHON](https://github.com/icon-project/icon-sdk-python)
 
 ## License
 
