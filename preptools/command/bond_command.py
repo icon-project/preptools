@@ -27,6 +27,9 @@ def init(sub_parser, common_parent_parser):
     _init_for_set_bond(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_get_bond(sub_parser, common_parent_parser)
 
+    _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser)
+    _init_for_get_bonder_list(sub_parser, common_parent_parser)
+
 
 def _init_for_set_stake(sub_parser, common_parent_parser, tx_parent_parse):
     name = "setStake"
@@ -139,3 +142,59 @@ def _get_bond(args):
     return response
 
 
+def _init_for_set_bonder_list(sub_parser, common_parent_parser, tx_parent_parser):
+    name = "setBonderList"
+    desc = f"Set allowed bonder list of P-Rep"
+
+    parser = sub_parser.add_parser(
+        name,
+        parents=[common_parent_parser, tx_parent_parser],
+        help=desc)
+
+    parser.add_argument(
+        "--bonder-list",
+        type=str,
+        required=True,
+        dest="bonderList",
+        help="list of address. separator is ','"
+    )
+
+    parser.set_defaults(func=_set_bonder_list)
+
+
+def _set_bonder_list(args) -> str:
+    bonder_str: str = args.bonderList
+    bonder_list = bonder_str.split(',')
+    params = {
+        'bonderList': bonder_list
+    }
+
+    writer = create_writer_by_args(args)
+    return writer.set_bonder_list(params)
+
+
+def _init_for_get_bonder_list(sub_parser, common_parent_parser):
+    name = "getBonderList"
+    desc = f"Get allowed bonder list of P-Rep"
+
+    parser = sub_parser.add_parser(
+        name,
+        parents=[common_parent_parser],
+        help=desc)
+
+    parser.add_argument(
+        "address",
+        type=str,
+        help="Address of P-Rep you are looking for"
+    )
+
+    parser.set_defaults(func=_get_bonder_list)
+
+
+def _get_bonder_list(args):
+    address = args.address
+
+    reader = create_reader_by_args(args)
+    response = reader.get_bonder_list(address)
+
+    return response
