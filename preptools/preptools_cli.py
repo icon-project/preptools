@@ -21,8 +21,8 @@ from typing import Dict, Any, Optional
 from .command import *
 from .exception import PRepToolsExceptionCode, PRepToolsBaseException
 from .utils.constants import DEFAULT_NID, DEFAULT_URL
-from .utils.utils import get_preptools_version
 from .utils.utils import print_response
+from .version import get_version
 
 
 def main() -> Optional:
@@ -40,7 +40,7 @@ def main() -> Optional:
         common_command.init,
     )
 
-    version = get_preptools_version()
+    version = get_version()
     parser = argparse.ArgumentParser(
         prog="preptools",
         formatter_class=argparse.RawDescriptionHelpFormatter,

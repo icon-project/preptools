@@ -19,10 +19,8 @@ import os
 from typing import TYPE_CHECKING, Union
 from urllib.parse import urlparse
 
-import pkg_resources
-
 from preptools.exception import InvalidFileWriteException
-from .constants import COLUMN, PROJECT_ROOT_PATH
+from .constants import COLUMN
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -66,22 +64,6 @@ def is_url_valid(url: str) -> bool:
     return ps.scheme in ("http", "https") \
         and len(ps.netloc) > 0 \
         and len(ps.path) > 0
-
-
-def get_preptools_version() -> str:
-    """Get version of tbears.
-    The location of the file that holds the version information is different when packaging and when executing.
-    :return: version of tbears.
-    """
-    try:
-        version = pkg_resources.get_distribution('preptools').version
-    except pkg_resources.DistributionNotFound:
-        version_path = os.path.join(PROJECT_ROOT_PATH, 'VERSION')
-        with open(version_path, mode='r') as version_file:
-            version = version_file.read()
-    except:
-        version = 'unknown'
-    return version
 
 
 def write_file(parent_directory: str, file_name: str, contents: str, overwrite: bool = False) -> None:
