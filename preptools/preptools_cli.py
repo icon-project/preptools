@@ -46,7 +46,7 @@ def main() -> Optional:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=f"P-Rep management command line interface v{version}")
 
-    sub_parser = parser.add_subparsers(title="subcommands")
+    sub_parser = parser.add_subparsers(title="Available commands", metavar="command")
 
     common_parent_parser = create_common_parser()
 

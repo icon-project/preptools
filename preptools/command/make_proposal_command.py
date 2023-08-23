@@ -27,7 +27,7 @@ def init(parent_sub_parsers, _: ArgumentParser):
 
     func = functools.partial(_run, parser=parser)
     parser.set_defaults(func=func)
-    sub_parsers = parser.add_subparsers()
+    sub_parsers = parser.add_subparsers(title="Available proposals", metavar="proposal")
 
     parent_parser = ArgumentParser(add_help=False)
     parent_parser.add_argument(

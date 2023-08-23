@@ -25,7 +25,7 @@ def init(sub_parser, common_parent_parser):
 
 def _init_for_get_prep(sub_parser, common_parent_parser):
     name = "getPRep"
-    desc = f"Inquire P-Rep information"
+    desc = f"Get the P-Rep information"
 
     parser = sub_parser.add_parser(
         name,
@@ -52,7 +52,7 @@ def _get_prep(args):
 
 def _init_for_get_preps(sub_parser, common_parent_parser):
     name = "getPReps"
-    desc = f"Get live status of all registered P-Rep candidates"
+    desc = f"Get status of all registered P-Rep candidates"
 
     parser = sub_parser.add_parser(
         name,

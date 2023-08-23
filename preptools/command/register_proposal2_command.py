@@ -38,8 +38,7 @@ class RegisterProposal2Command:
     def __init__(self):
         self._name = "registerProposal2"
         self._desc = (
-            "Register network proposals in a new format supported by governance2 score\n"
-            "CAUTION: a proposer will be charged a fee of 100 ICX to submit proposals every transaction"
+            "Register network proposals in a new format (WARNING: A submission fee of 100 ICX is required)"
         )
 
     def init(self, sub_parsers, *parent_parsers):

@@ -16,7 +16,6 @@
 import argparse
 import json
 
-from iconsdk.utils.convert_type import convert_int_to_hex_str
 from preptools.core.prep import create_writer_by_args, confirm_callback_for_registerPRep
 from preptools.exception import InvalidFormatException, InvalidFileReadException
 from preptools.utils import str_to_int
@@ -38,7 +37,7 @@ def init(sub_parser, common_parent_parser):
 
 def _init_for_register_prep(sub_parser, common_parent_parser, tx_parent_parser):
     name = "registerPRep"
-    desc = f"Register P-Rep"
+    desc = f"Register P-Rep (WARNING: A registration fee of 2000 ICX is required)"
 
     parser = sub_parser.add_parser(
         name,
@@ -181,7 +180,7 @@ def _get_prep_input(args, params: dict):
 
 def _init_for_unregister_prep(sub_parser, common_parent_parser, tx_parent_parser):
     name = "unregisterPRep"
-    desc = f"Unregister P-Rep\nWARNING!! Unregistering P-Rep does not return the registration fee"
+    desc = f"Unregister P-Rep (WARNING: Unregistering P-Rep does not return the registration fee)"
 
     parser = sub_parser.add_parser(
         name,
@@ -199,7 +198,7 @@ def _unregister_prep(args) -> str:
 
 def _init_for_set_prep(sub_parser, common_parent_parser, tx_parent_parser):
     name = "setPRep"
-    desc = f"Change enrolled P-Rep information"
+    desc = f"Update the P-Rep information"
 
     parser = sub_parser.add_parser(
         name,
