@@ -34,7 +34,7 @@ from ..utils.validation_checker import valid_proposal_param_by_type
 def init(sub_parser, common_parent_parser):
     tx_parent_parser = create_tx_parser()
 
-    _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_parser)
+    # _init_for_register_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_cancel_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_vote_proposal(sub_parser, common_parent_parser, tx_parent_parser)
     _init_for_apply_proposal(sub_parser, common_parent_parser, tx_parent_parser)
